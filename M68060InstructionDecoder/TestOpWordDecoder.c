@@ -18,6 +18,17 @@ int main(void)
 		0xd002, // ADD.B D2,D0
 		0xd003, // ADD.B D3,D0
 		0xd006, // ADD.B D6,D0
+		0xda4b, // ADD.W A3,D5
+		0xda53, // ADD.W (A3),D5
+		0xda5b, // ADD.W (A3)+,D5
+		0xda63, // ADD.W -(A3),D5
+		0xda6b, // ADD.W (d16,A3),D5
+		0xda73, // ADD.W d8(A3,Xn.q),D5
+		0xda78, // ADD.W xxx.W,D5
+		0xda79, // ADD.W xxx.L,D5
+		0xda7a, // ADD.W (d16,PC),D5
+		0xda7b, // ADD.W d8(PC,Xn.q),D5
+		0xda7c, // ADD.W #imm,D5
 	};
 	
 	uint i;
