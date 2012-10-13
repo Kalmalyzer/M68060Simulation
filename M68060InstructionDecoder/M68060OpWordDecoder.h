@@ -17,6 +17,8 @@ typedef struct
 	AguOperation aguOperation;
 	AguOffset aguOffset;
 	IeeImmediate ieeImmediate;
+	
+	uint numExtensionWords;
 
 } DecodedOpWord;
 

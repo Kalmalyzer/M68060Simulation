@@ -258,6 +258,41 @@ ExecutionResource decodeRegisterDnResource(uint16_t resourceBits)
 	return (ExecutionResource) (ExecutionResource_D0 + (resourceBits & 7));
 }
 
+uint aguOffsetToExtensionWords(AguOffset aguOffset)
+{
+	switch (aguOffset)
+	{
+		case AguOffset_None:
+			return 0;
+		case AguOffset_D8:
+			return 1;
+		case AguOffset_D16:
+			return 1;
+		case AguOffset_D32:
+			return 2;
+		default:
+			M68060_ERROR("aguOffsetToExtensionWords case not implemented");
+			return 0;
+	}
+}
+
+uint ieeImmediateToExtensionWords(IeeImmediate ieeImmediate)
+{
+	switch (ieeImmediate)
+	{
+		case IeeImmediate_None:
+			return 0;
+		case IeeImmediate_D8:
+			return 1;
+		case IeeImmediate_D16:
+			return 1;
+		case IeeImmediate_D32:
+			return 2;
+		default:
+			M68060_ERROR("ieeImmediateToExtensionWords case not implemented");
+			return 0;
+	}
+}
 
 DecodedOpWord decodeOpWord(uint16_t operationWord)
 {
@@ -321,6 +356,9 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 			M68060_ERROR("OperandBehavior case not implemented");
 	}
 
+	decodedOpWord.numExtensionWords = 0;
+	decodedOpWord.numExtensionWords += aguOffsetToExtensionWords(decodedOpWord.aguOffset);
+	decodedOpWord.numExtensionWords += ieeImmediateToExtensionWords(decodedOpWord.ieeImmediate);
 
 	return decodedOpWord;
 }
