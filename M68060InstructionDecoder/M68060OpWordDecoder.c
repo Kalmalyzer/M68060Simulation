@@ -191,7 +191,7 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 			decodedOpWord.ieeA = decodeRegisterDnResource(operationWord >> 9);
 			break;
 		default:
-			M68060_ERROR("OperandBehavior not implemented");
+			M68060_ERROR("OperandBehavior case not implemented");
 	}
 
 	switch (opWordDecodeInfo->sizeEncoding)
@@ -202,7 +202,7 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 			decodedOpWord.opMode = decodeOpMode(operationWord >> 6);
 			break;
 		default:
-			M68060_ERROR("SizeEncoding not implemented");
+			M68060_ERROR("SizeEncoding case not implemented");
 	}
 	
 	return decodedOpWord;
