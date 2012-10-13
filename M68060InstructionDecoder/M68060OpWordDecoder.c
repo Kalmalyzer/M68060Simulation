@@ -60,7 +60,7 @@ typedef enum
 	EA6BitMode_Lower3Bits_Mem_Absolute_Long,
 	EA6BitMode_Lower3Bits_Mem_D16_PC,
 	EA6BitMode_Lower3Bits_Mem_D8_PC_Xn,
-	EA6BitMode_Lower3Bits_Mem_Immediate,
+	EA6BitMode_Lower3Bits_Immediate,
 
 } EA6BitMode_Lower3Bits;
 
@@ -138,8 +138,12 @@ void decodeEA6BitResources(uint16_t resourceBits, ExecutionResource* aguBase, Ex
 					*hasMemoryReference = true;
 					*iee = ExecutionResource_AguResult;
 					return;
+				case EA6BitMode_Lower3Bits_Immediate:
+					*hasMemoryReference = false;
+					*iee = ExecutionResource_ImmediateOperand;
+					return;
 				default:
-					M68060_ERROR("Not implemented");
+					M68060_ERROR("EA6BitDecoder case not implemented");
 			}
 	}
 }
