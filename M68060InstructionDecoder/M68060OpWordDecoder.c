@@ -76,7 +76,7 @@ OpMode decodeOpMode(uint16_t opModeBits)
 		OpMode_RegisterToEa_Data_Byte,
 		OpMode_RegisterToEa_Data_Word,
 		OpMode_RegisterToEa_Data_Long,
-		OpMode_RegisterToEa_Address_Long,
+		OpMode_EaToRegister_Address_Long,
 	};
 
 	return opModes[opModeBits & 7];
@@ -111,7 +111,7 @@ void decodeEA6BitResources(uint16_t resourceBits, ExecutionResource* aguBase, Ex
 		case EA6BitMode_Upper3Bits_Mem_D8_An_Xn:
 			*aguBase = (ExecutionResource) (ExecutionResource_A0 + lower3Bits);
 			*hasMemoryReference = true;
-			// TODO: add Xn reference
+			*aguIndex = ExecutionResource_Unknown;
 			*iee = ExecutionResource_MemoryOperand;
 			return;
 		case EA6BitMode_Upper3Bits_CheckLower3Bits:
@@ -134,7 +134,7 @@ void decodeEA6BitResources(uint16_t resourceBits, ExecutionResource* aguBase, Ex
 					return;
 				case EA6BitMode_Lower3Bits_Mem_D8_PC_Xn:
 					*aguBase = ExecutionResource_PC;
-					// TODO: Add Xn reference
+					*aguIndex = ExecutionResource_Unknown;
 					*hasMemoryReference = true;
 					*iee = ExecutionResource_MemoryOperand;
 					return;
@@ -142,10 +142,115 @@ void decodeEA6BitResources(uint16_t resourceBits, ExecutionResource* aguBase, Ex
 					*hasMemoryReference = false;
 					*iee = ExecutionResource_ImmediateOperand;
 					return;
-				default:
-					M68060_ERROR("EA6BitDecoder case not implemented");
 			}
 	}
+
+	M68060_ERROR("EA6BitResourceDecoder case not implemented");
+}
+
+AguOperation decodeEA6BitAguOperation(uint16_t resourceBits)
+{
+	uint16_t upper3Bits = (resourceBits >> 3) & 7;
+	uint16_t lower3Bits = resourceBits & 7;
+
+	switch (upper3Bits)
+	{
+		case EA6BitMode_Upper3Bits_Dn:
+		case EA6BitMode_Upper3Bits_An:
+			return AguOperation_None;
+		case EA6BitMode_Upper3Bits_Mem_An:
+			return AguOperation_OffsetBaseIndexScale;
+		case EA6BitMode_Upper3Bits_Mem_An_PostIncrement:
+			return AguOperation_PostIncrement;
+		case EA6BitMode_Upper3Bits_Mem_PreDecrement_An:
+			return AguOperation_PreDecrement;
+		case EA6BitMode_Upper3Bits_Mem_D16_An:
+		case EA6BitMode_Upper3Bits_Mem_D8_An_Xn:
+			return AguOperation_OffsetBaseIndexScale;
+		case EA6BitMode_Upper3Bits_CheckLower3Bits:
+			switch (lower3Bits)
+			{
+				case EA6BitMode_Lower3Bits_Mem_Absolute_Word:
+				case EA6BitMode_Lower3Bits_Mem_Absolute_Long:
+				case EA6BitMode_Lower3Bits_Mem_D16_PC:
+				case EA6BitMode_Lower3Bits_Mem_D8_PC_Xn:
+					return AguOperation_OffsetBaseIndexScale;
+				case EA6BitMode_Lower3Bits_Immediate:
+					return AguOperation_None;
+			}
+	}
+
+	M68060_ERROR("EA6BitAguOperationDecoder case not implemented");
+	return AguOperation_None;
+}
+
+AguOffset decodeEA6BitAguOffset(uint16_t resourceBits)
+{
+	uint16_t upper3Bits = (resourceBits >> 3) & 7;
+	uint16_t lower3Bits = resourceBits & 7;
+
+	switch (upper3Bits)
+	{
+		case EA6BitMode_Upper3Bits_Dn:
+		case EA6BitMode_Upper3Bits_An:
+		case EA6BitMode_Upper3Bits_Mem_An:
+		case EA6BitMode_Upper3Bits_Mem_An_PostIncrement:
+		case EA6BitMode_Upper3Bits_Mem_PreDecrement_An:
+			return AguOffset_None;
+		case EA6BitMode_Upper3Bits_Mem_D16_An:
+			return AguOffset_D16;
+		case EA6BitMode_Upper3Bits_Mem_D8_An_Xn:
+			return AguOffset_D8;
+		case EA6BitMode_Upper3Bits_CheckLower3Bits:
+			switch (lower3Bits)
+			{
+				case EA6BitMode_Lower3Bits_Mem_Absolute_Word:
+					return AguOffset_D16;
+				case EA6BitMode_Lower3Bits_Mem_Absolute_Long:
+					return AguOffset_D32;
+				case EA6BitMode_Lower3Bits_Mem_D16_PC:
+					return AguOffset_D16;
+				case EA6BitMode_Lower3Bits_Mem_D8_PC_Xn:
+					return AguOffset_D8;
+				case EA6BitMode_Lower3Bits_Immediate:
+					return AguOffset_None;
+			}
+	}
+
+	M68060_ERROR("EA6BitAguOffsetDecoder case not implemented");
+	return AguOffset_None;
+}
+
+IeeImmediate decodeEA6BitIeeImmediate(uint16_t resourceBits, OpMode opMode)
+{
+	uint16_t upper3Bits = (resourceBits >> 3) & 7;
+	uint16_t lower3Bits = resourceBits & 7;
+
+	if (upper3Bits == EA6BitMode_Upper3Bits_CheckLower3Bits && lower3Bits == EA6BitMode_Lower3Bits_Immediate)
+	{
+		switch (opMode)
+		{
+			case OpMode_EaToRegister_Data_Byte:
+				return IeeImmediate_D8;
+			case OpMode_EaToRegister_Data_Word:
+				return IeeImmediate_D16;
+			case OpMode_EaToRegister_Data_Long:
+				return IeeImmediate_D32;
+			case OpMode_EaToRegister_Address_WordWithSignExtension:
+				return IeeImmediate_D16;
+			case OpMode_RegisterToEa_Data_Byte:
+			case OpMode_RegisterToEa_Data_Word:
+			case OpMode_RegisterToEa_Data_Long:
+				break; // Register-to-EA does not support #imm source operands
+			case OpMode_EaToRegister_Address_Long:
+				return IeeImmediate_D32;
+		}
+
+		M68060_ERROR("EA6BitIeeImmediateDecoder case not implemented");
+		return IeeImmediate_None;
+	}
+	else
+		return IeeImmediate_None;
 }
 
 ExecutionResource decodeRegisterDnResource(uint16_t resourceBits)
@@ -167,6 +272,9 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 	decodedOpWord.ieeA = ExecutionResource_None;
 	decodedOpWord.ieeB = ExecutionResource_None;
 	decodedOpWord.opMode = OpMode_None;
+	decodedOpWord.aguOperation = AguOperation_None;
+	decodedOpWord.aguOffset = AguOffset_None;
+	decodedOpWord.ieeImmediate = IeeImmediate_None;
 	
 	while ((operationWord & opWordDecodeInfo->mask) != opWordDecodeInfo->match)
 	{
@@ -178,22 +286,6 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 		
 	decodedOpWord.mnemonic = opWordDecodeInfo->mnemonic;
 
-	switch (opWordDecodeInfo->operandBehavior)
-	{
-		case OperandBehavior_None:
-			break;
-		case OperandBehavior_Read_EAOperand_ReadWrite_DnOperand:
-			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &hasMemoryReference, &decodedOpWord.ieeA);
-			decodedOpWord.ieeB = decodeRegisterDnResource(operationWord >> 9);
-			break;
-		case OperandBehavior_Read_DnOperand_ReadWrite_EAOperand:
-			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &hasMemoryReference, &decodedOpWord.ieeB);
-			decodedOpWord.ieeA = decodeRegisterDnResource(operationWord >> 9);
-			break;
-		default:
-			M68060_ERROR("OperandBehavior case not implemented");
-	}
-
 	switch (opWordDecodeInfo->sizeEncoding)
 	{
 		case SizeEncoding_None:
@@ -204,6 +296,31 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 		default:
 			M68060_ERROR("SizeEncoding case not implemented");
 	}
-	
+
+	switch (opWordDecodeInfo->operandBehavior)
+	{
+		case OperandBehavior_None:
+			break;
+		case OperandBehavior_Read_EAOperand_ReadWrite_DnOperand:
+			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &hasMemoryReference, &decodedOpWord.ieeA);
+			decodedOpWord.ieeB = decodeRegisterDnResource(operationWord >> 9);
+
+			decodedOpWord.aguOperation = decodeEA6BitAguOperation(operationWord);
+			decodedOpWord.aguOffset = decodeEA6BitAguOffset(operationWord);
+			decodedOpWord.ieeImmediate = decodeEA6BitIeeImmediate(operationWord, decodedOpWord.opMode);
+			break;
+		case OperandBehavior_Read_DnOperand_ReadWrite_EAOperand:
+			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &hasMemoryReference, &decodedOpWord.ieeB);
+			decodedOpWord.ieeA = decodeRegisterDnResource(operationWord >> 9);
+
+			decodedOpWord.aguOperation = decodeEA6BitAguOperation(operationWord);
+			decodedOpWord.aguOffset = decodeEA6BitAguOffset(operationWord);
+			decodedOpWord.ieeImmediate = decodeEA6BitIeeImmediate(operationWord, decodedOpWord.opMode);
+			break;
+		default:
+			M68060_ERROR("OperandBehavior case not implemented");
+	}
+
+
 	return decodedOpWord;
 }

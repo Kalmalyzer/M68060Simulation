@@ -30,6 +30,7 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 		"ImmediateOperand",
 		"AbsoluteMemoryAddress",
 		"PC",
+		"Unknown",
 	};
 
 	M68060_ASSERT((size_t) executionResource < (sizeof executionResourceStrings / sizeof executionResourceStrings[0]), "Invalid executionResource");
@@ -55,4 +56,49 @@ const char* OpModeToString(OpMode opMode)
 	M68060_ASSERT((size_t) opMode < (sizeof opModeStrings / sizeof opModeStrings[0]), "Invalid opMode");
 	
 	return opModeStrings[(int) opMode];
+}
+
+const char* AguOperationToString(AguOperation aguOperation)
+{
+	static const char* aguOperationStrings[] =
+	{
+		"None",
+		"PostIncrement",
+		"PreDecrement",
+		"OffsetBaseIndexScale",
+	};
+
+	M68060_ASSERT((size_t) aguOperation < (sizeof aguOperationStrings / sizeof aguOperationStrings[0]), "Invalid aguOperation");
+
+	return aguOperationStrings[(int) aguOperation];
+}
+
+const char* AguOffsetToString(AguOffset aguOffset)
+{
+	static const char* aguOffsetStrings[] =
+	{
+		"None",
+		"D8",
+		"D16",
+		"D32",
+	};
+		
+	M68060_ASSERT((size_t) aguOffset < (sizeof aguOffsetStrings / sizeof aguOffsetStrings[0]), "Invalid aguOffset");
+
+	return aguOffsetStrings[(int) aguOffset];
+}
+
+const char* IeeImmediateToString(IeeImmediate ieeImmediate)
+{
+	static const char* ieeImmediateStrings[] =
+	{
+		"None",
+		"D8",
+		"D16",
+		"D32",
+	};
+		
+	M68060_ASSERT((size_t) ieeImmediate < (sizeof ieeImmediateStrings / sizeof ieeImmediateStrings[0]), "Invalid ieeImmediate");
+
+	return ieeImmediateStrings[(int) ieeImmediate];
 }

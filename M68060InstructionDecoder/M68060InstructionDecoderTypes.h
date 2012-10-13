@@ -26,6 +26,7 @@ typedef enum
 	ExecutionResource_ImmediateOperand,
 	ExecutionResource_AbsoluteMemoryAddress,
 	ExecutionResource_PC,
+	ExecutionResource_Unknown,
 } ExecutionResource;
 
 const char* ExecutionResourceToString(ExecutionResource executionResource);
@@ -48,9 +49,41 @@ typedef enum
 	OpMode_RegisterToEa_Data_Byte,
 	OpMode_RegisterToEa_Data_Word,
 	OpMode_RegisterToEa_Data_Long,
-	OpMode_RegisterToEa_Address_Long,
+	OpMode_EaToRegister_Address_Long,
 } OpMode;
 
 const char* OpModeToString(OpMode opMode);
+
+typedef enum
+{
+	AguOperation_None,
+	AguOperation_PostIncrement,
+	AguOperation_PreDecrement,
+	AguOperation_OffsetBaseIndexScale,
+} AguOperation;
+
+const char* AguOperationToString(AguOperation aguOperation);
+
+typedef enum
+{
+	AguOffset_None,
+	AguOffset_D8,
+	AguOffset_D16,
+	AguOffset_D32,
+
+} AguOffset;
+
+const char* AguOffsetToString(AguOffset aguOffset);
+
+typedef enum
+{
+	IeeImmediate_None,
+	IeeImmediate_D8,
+	IeeImmediate_D16,
+	IeeImmediate_D32,
+
+} IeeImmediate;
+
+const char* IeeImmediateToString(IeeImmediate ieeImmediate);
 
 #endif

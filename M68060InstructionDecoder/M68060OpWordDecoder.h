@@ -13,6 +13,9 @@ typedef struct
 	ExecutionResource ieeA;
 	ExecutionResource ieeB;
 	OpMode opMode;
+	AguOperation aguOperation;
+	AguOffset aguOffset;
+	IeeImmediate ieeImmediate;
 
 } DecodedOpWord;
 

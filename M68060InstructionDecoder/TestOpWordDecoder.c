@@ -40,10 +40,15 @@ int main(void)
 		uint16_t opWord = instructionStream[i];
 		DecodedOpWord decodedOpWord = decodeOpWord(opWord);
 
-		printf("OpWord: %04x - mnemonic %s, opMode %s, aguBase %s, aguIndex %s, ieeA %s, ieeB %s\n", opWord, decodedOpWord.mnemonic,
-			OpModeToString(decodedOpWord.opMode),
+		printf("OpWord: %04x - mnemonic %s, opMode %s\n"
+			"\taguOperation %s, aguOffset %s, aguBase %s, aguIndex %s\n"
+			"\tieeImmediate %s, ieeA %s, ieeB %s\n",
+			opWord, decodedOpWord.mnemonic, OpModeToString(decodedOpWord.opMode),
+			AguOperationToString(decodedOpWord.aguOperation),
+			AguOffsetToString(decodedOpWord.aguOffset),
 			ExecutionResourceToString(decodedOpWord.aguBase),
 			ExecutionResourceToString(decodedOpWord.aguIndex),
+			IeeImmediateToString(decodedOpWord.ieeImmediate),
 			ExecutionResourceToString(decodedOpWord.ieeA),
 			ExecutionResourceToString(decodedOpWord.ieeB));
 	}
