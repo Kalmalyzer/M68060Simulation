@@ -12,6 +12,7 @@ typedef struct
 	ExecutionResource aguIndex;
 	ExecutionResource ieeA;
 	ExecutionResource ieeB;
+	OpMode opMode;
 
 } DecodedOpWord;
 

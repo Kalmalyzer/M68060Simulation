@@ -7,11 +7,18 @@
 
 typedef enum
 {
-	OperandBehavior_Unknown,
+	OperandBehavior_None,
 	OperandBehavior_Read_EAOperand_ReadWrite_DnOperand,
 	OperandBehavior_Read_DnOperand_ReadWrite_EAOperand,
 
 } OperandBehavior;
+
+typedef enum
+{
+	SizeEncoding_None,
+	SizeEncoding_OpMode,
+
+} SizeEncoding;
 
 typedef struct 
 {
@@ -21,16 +28,17 @@ typedef struct
 	const char* mnemonic;
 	PairingType standardInstructionPairingType;
 	OperandBehavior operandBehavior;
+	SizeEncoding sizeEncoding;
 
 } OpWordDecodeInfo;
 
 static OpWordDecodeInfo opWordDecodeInformation[] =
 {
-	{ 0xf1f8, 0xc100, "ABCD Rx,Ry", PairingType_pOEP_Only },
-	{ 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", PairingType_pOEP_Only },
-	{ 0xd000, 0xf100, "ADD <ea>,Dn", PairingType_pOEP_Or_sOEP, OperandBehavior_Read_EAOperand_ReadWrite_DnOperand },
-	{ 0xd100, 0xf100, "ADD Dn,<ea>", PairingType_pOEP_Or_sOEP, OperandBehavior_Read_DnOperand_ReadWrite_EAOperand },
-	{ 0, 0, "Unknown instruction", PairingType_pOEP_But_Allows_sOEP },
+	{ 0xf1f8, 0xc100, "ABCD Rx,Ry", PairingType_pOEP_Only, OperandBehavior_None, SizeEncoding_None },
+	{ 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", PairingType_pOEP_Only, OperandBehavior_None, SizeEncoding_None },
+	{ 0xf100, 0xd000, "ADD <ea>,Dn", PairingType_pOEP_Or_sOEP, OperandBehavior_Read_EAOperand_ReadWrite_DnOperand, SizeEncoding_OpMode },
+	{ 0xf100, 0xd100, "ADD Dn,<ea>", PairingType_pOEP_Or_sOEP, OperandBehavior_Read_DnOperand_ReadWrite_EAOperand, SizeEncoding_OpMode },
+	{ 0, 0, "Unknown instruction", PairingType_pOEP_But_Allows_sOEP, OperandBehavior_None, SizeEncoding_None },
 };
 
 typedef enum
@@ -56,10 +64,28 @@ typedef enum
 
 } EA6BitMode_Lower3Bits;
 
-void decodeEA6BitResources(uint16_t operationWord, ExecutionResource* aguBase, ExecutionResource* aguIndex, bool* hasMemoryReference, ExecutionResource* iee)
+
+OpMode decodeOpMode(uint16_t opModeBits)
 {
-	uint16_t upper3Bits = (operationWord >> 3) & 7;
-	uint16_t lower3Bits = operationWord & 7;
+	static OpMode opModes[] =
+	{
+		OpMode_EaToRegister_Data_Byte,
+		OpMode_EaToRegister_Data_Word,
+		OpMode_EaToRegister_Data_Long,
+		OpMode_EaToRegister_Address_WordWithSignExtension,
+		OpMode_RegisterToEa_Data_Byte,
+		OpMode_RegisterToEa_Data_Word,
+		OpMode_RegisterToEa_Data_Long,
+		OpMode_RegisterToEa_Address_Long,
+	};
+
+	return opModes[opModeBits & 7];
+}
+
+void decodeEA6BitResources(uint16_t resourceBits, ExecutionResource* aguBase, ExecutionResource* aguIndex, bool* hasMemoryReference, ExecutionResource* iee)
+{
+	uint16_t upper3Bits = (resourceBits >> 3) & 7;
+	uint16_t lower3Bits = resourceBits & 7;
 
 	*aguBase = ExecutionResource_None;
 	*aguIndex = ExecutionResource_None;
@@ -118,16 +144,16 @@ void decodeEA6BitResources(uint16_t operationWord, ExecutionResource* aguBase, E
 	}
 }
 
-ExecutionResource decodeRegisterDnResource(uint16_t operationWord)
+ExecutionResource decodeRegisterDnResource(uint16_t resourceBits)
 {
-	return (ExecutionResource) (ExecutionResource_D0 + (operationWord & 7));
+	return (ExecutionResource) (ExecutionResource_D0 + (resourceBits & 7));
 }
 
 
 DecodedOpWord decodeOpWord(uint16_t operationWord)
 {
 	int i;
-	OpWordDecodeInfo* opWordDecodeInfo = opWordDecodeInformation;
+	const OpWordDecodeInfo* opWordDecodeInfo = opWordDecodeInformation;
 	DecodedOpWord decodedOpWord;
 	bool hasMemoryReference;
 
@@ -136,15 +162,22 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 	decodedOpWord.aguIndex = ExecutionResource_None;
 	decodedOpWord.ieeA = ExecutionResource_None;
 	decodedOpWord.ieeB = ExecutionResource_None;
+	decodedOpWord.opMode = OpMode_None;
 	
 	while ((operationWord & opWordDecodeInfo->mask) != opWordDecodeInfo->match)
+	{
 		opWordDecodeInfo++;
+	}
 
 	if (opWordDecodeInfo->mask == 0 && opWordDecodeInfo->match == 0)
 		return decodedOpWord;
 		
+	decodedOpWord.mnemonic = opWordDecodeInfo->mnemonic;
+
 	switch (opWordDecodeInfo->operandBehavior)
 	{
+		case OperandBehavior_None:
+			break;
 		case OperandBehavior_Read_EAOperand_ReadWrite_DnOperand:
 			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &hasMemoryReference, &decodedOpWord.ieeA);
 			decodedOpWord.ieeB = decodeRegisterDnResource(operationWord >> 9);
@@ -154,8 +187,19 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 			decodedOpWord.ieeA = decodeRegisterDnResource(operationWord >> 9);
 			break;
 		default:
-			M68060_ERROR("OperandBehavior not supported");
+			M68060_ERROR("OperandBehavior not implemented");
 	}
 
+	switch (opWordDecodeInfo->sizeEncoding)
+	{
+		case SizeEncoding_None:
+			break;
+		case SizeEncoding_OpMode:
+			decodedOpWord.opMode = decodeOpMode(operationWord >> 6);
+			break;
+		default:
+			M68060_ERROR("SizeEncoding not implemented");
+	}
+	
 	return decodedOpWord;
 }
