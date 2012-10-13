@@ -264,13 +264,13 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 	int i;
 	const OpWordDecodeInfo* opWordDecodeInfo = opWordDecodeInformation;
 	DecodedOpWord decodedOpWord;
-	bool hasMemoryReference;
 
 	decodedOpWord.mnemonic = "Unknown instruction";
 	decodedOpWord.aguBase = ExecutionResource_None;
 	decodedOpWord.aguIndex = ExecutionResource_None;
 	decodedOpWord.ieeA = ExecutionResource_None;
 	decodedOpWord.ieeB = ExecutionResource_None;
+	decodedOpWord.hasMemoryReference = false;
 	decodedOpWord.opMode = OpMode_None;
 	decodedOpWord.aguOperation = AguOperation_None;
 	decodedOpWord.aguOffset = AguOffset_None;
@@ -302,7 +302,7 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 		case OperandBehavior_None:
 			break;
 		case OperandBehavior_Read_EAOperand_ReadWrite_DnOperand:
-			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &hasMemoryReference, &decodedOpWord.ieeA);
+			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &decodedOpWord.hasMemoryReference, &decodedOpWord.ieeA);
 			decodedOpWord.ieeB = decodeRegisterDnResource(operationWord >> 9);
 
 			decodedOpWord.aguOperation = decodeEA6BitAguOperation(operationWord);
@@ -310,7 +310,7 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 			decodedOpWord.ieeImmediate = decodeEA6BitIeeImmediate(operationWord, decodedOpWord.opMode);
 			break;
 		case OperandBehavior_Read_DnOperand_ReadWrite_EAOperand:
-			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &hasMemoryReference, &decodedOpWord.ieeB);
+			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &decodedOpWord.hasMemoryReference, &decodedOpWord.ieeB);
 			decodedOpWord.ieeA = decodeRegisterDnResource(operationWord >> 9);
 
 			decodedOpWord.aguOperation = decodeEA6BitAguOperation(operationWord);

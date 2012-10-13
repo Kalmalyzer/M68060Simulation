@@ -12,6 +12,7 @@ typedef struct
 	ExecutionResource aguIndex;
 	ExecutionResource ieeA;
 	ExecutionResource ieeB;
+	bool hasMemoryReference;
 	OpMode opMode;
 	AguOperation aguOperation;
 	AguOffset aguOffset;
