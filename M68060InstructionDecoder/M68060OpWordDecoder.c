@@ -124,27 +124,38 @@ ExecutionResource decodeRegisterDnResource(uint16_t operationWord)
 }
 
 
-void decodeOpWord(uint16_t operationWord)
+DecodedOpWord decodeOpWord(uint16_t operationWord)
 {
 	int i;
 	OpWordDecodeInfo* opWordDecodeInfo = opWordDecodeInformation;
-	ExecutionResource aguBase, aguIndex, ieeA, ieeB;
+	DecodedOpWord decodedOpWord;
 	bool hasMemoryReference;
 
+	decodedOpWord.mnemonic = "Unknown instruction";
+	decodedOpWord.aguBase = ExecutionResource_None;
+	decodedOpWord.aguIndex = ExecutionResource_None;
+	decodedOpWord.ieeA = ExecutionResource_None;
+	decodedOpWord.ieeB = ExecutionResource_None;
+	
 	while ((operationWord & opWordDecodeInfo->mask) != opWordDecodeInfo->match)
 		opWordDecodeInfo++;
 
+	if (opWordDecodeInfo->mask == 0 && opWordDecodeInfo->match == 0)
+		return decodedOpWord;
+		
 	switch (opWordDecodeInfo->operandBehavior)
 	{
 		case OperandBehavior_Read_EAOperand_ReadWrite_DnOperand:
-			decodeEA6BitResources(operationWord, &aguBase, &aguIndex, &hasMemoryReference, &ieeA);
-			ieeB = decodeRegisterDnResource(operationWord >> 9);
+			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &hasMemoryReference, &decodedOpWord.ieeA);
+			decodedOpWord.ieeB = decodeRegisterDnResource(operationWord >> 9);
 			break;
 		case OperandBehavior_Read_DnOperand_ReadWrite_EAOperand:
-			decodeEA6BitResources(operationWord, &aguBase, &aguIndex, &hasMemoryReference, &ieeB);
-			ieeA = decodeRegisterDnResource(operationWord >> 9);
+			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &hasMemoryReference, &decodedOpWord.ieeB);
+			decodedOpWord.ieeA = decodeRegisterDnResource(operationWord >> 9);
 			break;
 		default:
 			M68060_ERROR("OperandBehavior not supported");
 	}
+
+	return decodedOpWord;
 }

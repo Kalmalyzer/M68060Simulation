@@ -4,6 +4,7 @@
 
 typedef enum
 {
+	ExecutionResource_None,
 	ExecutionResource_D0,
 	ExecutionResource_D1,
 	ExecutionResource_D2,
@@ -24,8 +25,9 @@ typedef enum
 	ExecutionResource_MemoryOperand,
 	ExecutionResource_ImmediateOperand,
 	ExecutionResource_PC,
-	ExecutionResource_None,
 } ExecutionResource;
+
+const char* ExecutionResourceToString(ExecutionResource executionResource);
 
 typedef enum
 {

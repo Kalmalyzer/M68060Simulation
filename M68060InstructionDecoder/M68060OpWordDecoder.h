@@ -3,7 +3,18 @@
 #define M68060OPWORDDECODER_H
 
 #include "../Types.h"
+#include "M68060InstructionDecoderTypes.h"
 
-void decodeOpWord(uint16_t operationWord);
+typedef struct
+{
+	const char* mnemonic;
+	ExecutionResource aguBase;
+	ExecutionResource aguIndex;
+	ExecutionResource ieeA;
+	ExecutionResource ieeB;
+
+} DecodedOpWord;
+
+DecodedOpWord decodeOpWord(uint16_t operationWord);
 
 #endif

@@ -9,13 +9,14 @@ Program {
 }
 
 Program {
-	Name = "TestInstructionDecoder",
+	Name = "TestOpWordDecoder",
 	Sources = {
 		"M68060InstructionDecoder/M68060OpWordDecoder.c",
-		"M68060InstructionDecoder/Tests.c",
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionDecoder/TestOpWordDecoder.c",
 	},
 }
 
 Default "TestCache"
-Default "TestInstructionDecoder"
+Default "TestOpWordDecoder"
 
