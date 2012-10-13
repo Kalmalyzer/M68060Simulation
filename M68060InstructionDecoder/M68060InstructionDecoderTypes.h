@@ -24,6 +24,7 @@ typedef enum
 	ExecutionResource_AguResult,
 	ExecutionResource_MemoryOperand,
 	ExecutionResource_ImmediateOperand,
+	ExecutionResource_AbsoluteMemoryAddress,
 	ExecutionResource_PC,
 } ExecutionResource;
 

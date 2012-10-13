@@ -106,37 +106,37 @@ void decodeEA6BitResources(uint16_t resourceBits, ExecutionResource* aguBase, Ex
 		case EA6BitMode_Upper3Bits_Mem_D16_An:
 			*aguBase = (ExecutionResource) (ExecutionResource_A0 + lower3Bits);
 			*hasMemoryReference = true;
-			*iee = ExecutionResource_AguResult;
+			*iee = ExecutionResource_MemoryOperand;
 			return;
 		case EA6BitMode_Upper3Bits_Mem_D8_An_Xn:
 			*aguBase = (ExecutionResource) (ExecutionResource_A0 + lower3Bits);
 			*hasMemoryReference = true;
 			// TODO: add Xn reference
-			*iee = ExecutionResource_AguResult;
+			*iee = ExecutionResource_MemoryOperand;
 			return;
 		case EA6BitMode_Upper3Bits_CheckLower3Bits:
 			switch (lower3Bits)
 			{
 				case EA6BitMode_Lower3Bits_Mem_Absolute_Word:
-					*aguBase = ExecutionResource_MemoryOperand;
+					*aguBase = ExecutionResource_AbsoluteMemoryAddress;
 					*hasMemoryReference = true;
-					*iee = ExecutionResource_AguResult;
+					*iee = ExecutionResource_MemoryOperand;
 					return;
 				case EA6BitMode_Lower3Bits_Mem_Absolute_Long:
-					*aguBase = ExecutionResource_MemoryOperand;
+					*aguBase = ExecutionResource_AbsoluteMemoryAddress;
 					*hasMemoryReference = true;
-					*iee = ExecutionResource_AguResult;
+					*iee = ExecutionResource_MemoryOperand;
 					return;
 				case EA6BitMode_Lower3Bits_Mem_D16_PC:
 					*aguBase = ExecutionResource_PC;
 					*hasMemoryReference = true;
-					*iee = ExecutionResource_AguResult;
+					*iee = ExecutionResource_MemoryOperand;
 					return;
 				case EA6BitMode_Lower3Bits_Mem_D8_PC_Xn:
 					*aguBase = ExecutionResource_PC;
 					// TODO: Add Xn reference
 					*hasMemoryReference = true;
-					*iee = ExecutionResource_AguResult;
+					*iee = ExecutionResource_MemoryOperand;
 					return;
 				case EA6BitMode_Lower3Bits_Immediate:
 					*hasMemoryReference = false;

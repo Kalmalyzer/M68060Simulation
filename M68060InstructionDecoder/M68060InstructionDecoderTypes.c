@@ -28,6 +28,7 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 		"AguResult",
 		"MemoryOperand",
 		"ImmediateOperand",
+		"AbsoluteMemoryAddress",
 		"PC",
 	};
 

@@ -29,6 +29,8 @@ int main(void)
 		0xda7a, // ADD.W (d16,PC),D5
 		0xda7b, // ADD.W d8(PC,Xn.q),D5
 		0xda7c, // ADD.W #imm,D5
+		0xdb53, // ADD.W D5,(A3)
+		0xdb5b, // ADD.W D5,(A3)+
 	};
 	
 	uint i;
