@@ -2,7 +2,7 @@
 #ifndef M68060Cache_h
 #define M68060Cache_h
 
-#include "Types.h"
+#include "../Types.h"
 #include "M68060CacheMetrics.h"
 
 // The 68060 has two caches: an instruction cache and a datacache.

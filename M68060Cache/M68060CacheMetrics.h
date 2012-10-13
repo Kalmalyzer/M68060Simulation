@@ -2,7 +2,7 @@
 #ifndef M68060CacheMetrics_h
 #define M68060CacheMetrics_h
 
-#include "Types.h"
+#include "../Types.h"
 
 typedef struct
 {
