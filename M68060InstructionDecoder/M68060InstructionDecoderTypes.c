@@ -38,6 +38,12 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 	return executionResourceStrings[(int) executionResource];
 }
 
+bool isRegister(ExecutionResource executionResource)
+{
+	return (uint) executionResource >= (uint) ExecutionResource_D0
+		&& (uint) executionResource <= (uint) ExecutionResource_A7;
+}
+
 const char* PairabilityToString(Pairability pairability)
 {
 	static const char* pairabilityStrings[] =

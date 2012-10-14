@@ -11,6 +11,8 @@ const char* PairabilityTestResultToString(PairabilityTestResult pairabilityTestR
 		"Test2Failure_SecondInstructionIsNot_pOEPOrsOEP",
 		"Test3Failure_SecondInstructionUsesPCRelativeAddressing",
 		"Test4Failure_BothInstructionsReferenceMemory",
+		"Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionResult",
+		"Test5Failure_SecondInstructionIndexRegisterDependsOnFirstInstructionResult",
 	};
 
 	M68060_ASSERT((size_t) pairabilityTestResult < (sizeof pairabilityTestResultStrings / sizeof pairabilityTestResultStrings[0]), "Invalid pairabilityTestResult");
@@ -47,12 +49,22 @@ PairabilityTestResult checkPairability_Test4_AllowableOperandDataMemoryReference
 	return PairabilityTestResult_Success;
 }
 
+PairabilityTestResult checkPairability_Test5_RegisterConflictsOnAguResources(DecodedOpWord* opWord0, DecodedOpWord* opWord1)
+{
+	if (isRegister(opWord1->aguBase) && (opWord1->aguBase == opWord0->aguResult || opWord1->aguBase == opWord0->ieeResult))
+		return PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionResult;
+	if (isRegister(opWord1->aguIndex) && (opWord1->aguIndex == opWord0->aguResult || opWord1->aguIndex == opWord0->ieeResult))
+		return PairabilityTestResult_Test5Failure_SecondInstructionIndexRegisterDependsOnFirstInstructionResult;
+
+	return PairabilityTestResult_Success;
+}
 
 PairabilityTestResult checkPairability(DecodedOpWord* opWord0, DecodedOpWord* opWord1)
 {
 	PairabilityTestResult test2Result = checkPairability_Test2_InstructionClassification(opWord0, opWord1);
 	PairabilityTestResult test3Result = checkPairability_Test3_AllowableAddressingModesInsOEP(opWord1);
 	PairabilityTestResult test4Result = checkPairability_Test4_AllowableOperandDataMemoryReference(opWord0, opWord1);
+	PairabilityTestResult test5Result = checkPairability_Test5_RegisterConflictsOnAguResources(opWord0, opWord1);
 
 	if (test2Result != PairabilityTestResult_Success)
 		return test2Result;
@@ -62,6 +74,9 @@ PairabilityTestResult checkPairability(DecodedOpWord* opWord0, DecodedOpWord* op
 
 	if (test4Result != PairabilityTestResult_Success)
 		return test4Result;
+
+	if (test5Result != PairabilityTestResult_Success)
+		return test5Result;
 
 	return PairabilityTestResult_Success;
 }

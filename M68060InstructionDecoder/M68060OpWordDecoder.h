@@ -10,8 +10,10 @@ typedef struct
 	const char* mnemonic;
 	ExecutionResource aguBase;
 	ExecutionResource aguIndex;
+	ExecutionResource aguResult;
 	ExecutionResource ieeA;
 	ExecutionResource ieeB;
+	ExecutionResource ieeResult;
 	bool hasMemoryReference;
 	OpMode opMode;
 	AguOperation aguOperation;

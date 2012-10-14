@@ -2,6 +2,8 @@
 #ifndef M68060INSTRUCTIONDECODERTYPES_H
 #define M68060INSTRUCTIONDECODERTYPES_H
 
+#include "../Types.h"
+
 typedef enum
 {
 	ExecutionResource_None,
@@ -31,6 +33,8 @@ typedef enum
 } ExecutionResource;
 
 const char* ExecutionResourceToString(ExecutionResource executionResource);
+
+bool isRegister(ExecutionResource executionResource);
 
 typedef enum
 {

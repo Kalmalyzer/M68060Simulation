@@ -36,9 +36,13 @@ int main(void)
 		  0xda7a,	// ADD.W d16(PC),D5		pOEP|sOEP			<- PC relative addressing modes not allowed in sOEP
 		  PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing },
 
-		{ 0xda53,	// ADD.W (A3),D5		pOEP|sOEP
-		  0xdc54, 	// ADD.W (A4),D6		pOEP|sOEP			<- both instructions must not reference memory
-		  PairabilityTestResult_Test4Failure_BothInstructionsReferenceMemory },
+		{ 0xd10a,	// ADD.W D0,A2			pOEP|sOEP
+		  0xd213, 	// ADD.W (A3),D1		pOEP|sOEP
+		  PairabilityTestResult_Success },
+		  
+		{ 0xd10b,	// ADD.W D0,A3			pOEP|sOEP
+		  0xd213, 	// ADD.W (A3),D1		pOEP|sOEP			<- Second instruction uses base register which is written by first instruction
+		  PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionResult },
 	  };
 	
 	uint i;

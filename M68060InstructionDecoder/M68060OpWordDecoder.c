@@ -82,13 +82,14 @@ OpMode decodeOpMode(uint16_t opModeBits)
 	return opModes[opModeBits & 7];
 }
 
-void decodeEA6BitResources(uint16_t resourceBits, ExecutionResource* aguBase, ExecutionResource* aguIndex, bool* hasMemoryReference, ExecutionResource* iee)
+void decodeEA6BitResources(uint16_t resourceBits, ExecutionResource* aguBase, ExecutionResource* aguIndex, ExecutionResource* aguResult, bool* hasMemoryReference, ExecutionResource* iee)
 {
 	uint16_t upper3Bits = (resourceBits >> 3) & 7;
 	uint16_t lower3Bits = resourceBits & 7;
 
 	*aguBase = ExecutionResource_None;
 	*aguIndex = ExecutionResource_None;
+	*aguResult = ExecutionResource_None;
 	*hasMemoryReference = false;
 	*iee = ExecutionResource_None;
 	
@@ -101,8 +102,17 @@ void decodeEA6BitResources(uint16_t resourceBits, ExecutionResource* aguBase, Ex
 			*iee = (ExecutionResource) (ExecutionResource_A0 + lower3Bits);
 			return;
 		case EA6BitMode_Upper3Bits_Mem_An:
+			*aguBase = (ExecutionResource) (ExecutionResource_A0 + lower3Bits);
+			*hasMemoryReference = true;
+			*iee = ExecutionResource_MemoryOperand;
+			return;
 		case EA6BitMode_Upper3Bits_Mem_An_PostIncrement:
 		case EA6BitMode_Upper3Bits_Mem_PreDecrement_An:
+			*aguBase = (ExecutionResource) (ExecutionResource_A0 + lower3Bits);
+			*aguResult = *aguBase;
+			*hasMemoryReference = true;
+			*iee = ExecutionResource_MemoryOperand;
+			return;
 		case EA6BitMode_Upper3Bits_Mem_D16_An:
 			*aguBase = (ExecutionResource) (ExecutionResource_A0 + lower3Bits);
 			*hasMemoryReference = true;
@@ -298,8 +308,10 @@ bool areAllResourcesKnown(DecodedOpWord* decodedOpWord)
 {
 	return decodedOpWord->aguBase != ExecutionResource_Unknown
 		&& decodedOpWord->aguIndex != ExecutionResource_Unknown
+		&& decodedOpWord->aguResult != ExecutionResource_Unknown
 		&& decodedOpWord->ieeA != ExecutionResource_Unknown
-		&& decodedOpWord->ieeB != ExecutionResource_Unknown;
+		&& decodedOpWord->ieeB != ExecutionResource_Unknown
+		&& decodedOpWord->ieeResult != ExecutionResource_Unknown;
 }
 
 bool isStandardInstruction(DecodedOpWord* decodedOpWord)
@@ -326,8 +338,10 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 	decodedOpWord.mnemonic = "Unknown instruction";
 	decodedOpWord.aguBase = ExecutionResource_None;
 	decodedOpWord.aguIndex = ExecutionResource_None;
+	decodedOpWord.aguResult = ExecutionResource_None;
 	decodedOpWord.ieeA = ExecutionResource_None;
 	decodedOpWord.ieeB = ExecutionResource_None;
+	decodedOpWord.ieeResult = ExecutionResource_None;
 	decodedOpWord.hasMemoryReference = false;
 	decodedOpWord.opMode = OpMode_None;
 	decodedOpWord.aguOperation = AguOperation_None;
@@ -360,16 +374,18 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 		case OperandBehavior_None:
 			break;
 		case OperandBehavior_Read_EAOperand_ReadWrite_DnOperand:
-			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &decodedOpWord.hasMemoryReference, &decodedOpWord.ieeA);
+			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &decodedOpWord.aguResult, &decodedOpWord.hasMemoryReference, &decodedOpWord.ieeA);
 			decodedOpWord.ieeB = decodeRegisterDnResource(operationWord >> 9);
+			decodedOpWord.ieeResult = decodedOpWord.ieeB;
 
 			decodedOpWord.aguOperation = decodeEA6BitAguOperation(operationWord);
 			decodedOpWord.aguOffset = decodeEA6BitAguOffset(operationWord);
 			decodedOpWord.ieeImmediate = decodeEA6BitIeeImmediate(operationWord, decodedOpWord.opMode);
 			break;
 		case OperandBehavior_Read_DnOperand_ReadWrite_EAOperand:
-			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &decodedOpWord.hasMemoryReference, &decodedOpWord.ieeB);
+			decodeEA6BitResources(operationWord, &decodedOpWord.aguBase, &decodedOpWord.aguIndex, &decodedOpWord.aguResult, &decodedOpWord.hasMemoryReference, &decodedOpWord.ieeB);
 			decodedOpWord.ieeA = decodeRegisterDnResource(operationWord >> 9);
+			decodedOpWord.ieeResult = decodedOpWord.ieeB;
 
 			decodedOpWord.aguOperation = decodeEA6BitAguOperation(operationWord);
 			decodedOpWord.aguOffset = decodeEA6BitAguOffset(operationWord);
