@@ -35,6 +35,10 @@ int main(void)
 		{ 0xd000,	// ADD.B D0,D0			pOEP|sOEP
 		  0xda7a,	// ADD.W d16(PC),D5		pOEP|sOEP			<- PC relative addressing modes not allowed in sOEP
 		  PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing },
+
+		{ 0xda53,	// ADD.W (A3),D5		pOEP|sOEP
+		  0xdc54, 	// ADD.W (A4),D6		pOEP|sOEP			<- both instructions must not reference memory
+		  PairabilityTestResult_Test4Failure_BothInstructionsReferenceMemory },
 	  };
 	
 	uint i;

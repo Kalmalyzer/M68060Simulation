@@ -10,6 +10,7 @@ typedef enum
 	PairabilityTestResult_Test2Failure_FirstInstructionIs_pOEPOnly,
 	PairabilityTestResult_Test2Failure_SecondInstructionIsNot_pOEPOrsOEP,
 	PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing,
+	PairabilityTestResult_Test4Failure_BothInstructionsReferenceMemory,
 } PairabilityTestResult;
 
 const char* PairabilityTestResultToString(PairabilityTestResult pairabilityTestResult);
