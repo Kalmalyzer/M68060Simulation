@@ -17,9 +17,7 @@ int main(void)
 		{ 0x4e71,	// NOP					pOEP-only
 		  0xd000,	// ADD.B D0,D0			pOEP|sOEP	<- instruction class mismatch
 		  PairabilityTestResult_Test2Failure_FirstInstructionIs_pOEPOnly },
-		{ 0xd000,	// ADD.B D0,D0			pOEP|sOEP
-		  0xd000,	// ADD.B D0,D0			pOEP|sOEP	<- register dependency
-		  PairabilityTestResult_Success },
+
 		{ 0xd201,	// ADD.B D1,D1			pOEP|sOEP
 		  0xd000,	// ADD.B D0,D0			pOEP|sOEP
 		  PairabilityTestResult_Success },
@@ -36,14 +34,30 @@ int main(void)
 		  0xda7a,	// ADD.W d16(PC),D5		pOEP|sOEP			<- PC relative addressing modes not allowed in sOEP
 		  PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing },
 
-		{ 0xd10a,	// ADD.W D0,A2			pOEP|sOEP
+		{ 0xd1ca,	// ADD.W D0,A2			pOEP|sOEP
 		  0xd213, 	// ADD.W (A3),D1		pOEP|sOEP
 		  PairabilityTestResult_Success },
 		  
-		{ 0xd10b,	// ADD.W D0,A3			pOEP|sOEP
+		{ 0xd1cb,	// ADDA.W D0,A3			pOEP|sOEP
 		  0xd213, 	// ADD.W (A3),D1		pOEP|sOEP			<- Second instruction uses base register which is written by first instruction
-		  PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionResult },
-	  };
+		  PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionIeeResult },
+
+		{ 0xd000,	// ADD.B D0,D0			pOEP|sOEP
+		  0xd000,	// ADD.B D0,D0			pOEP|sOEP	<- register dependency
+		  PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionIeeResult },
+
+		{ 0xd000,	// ADD.B D0,D0			pOEP|sOEP
+		  0xd001,	// ADD.B D1,D0			pOEP|sOEP	<- register dependency
+		  PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionIeeResult },
+
+		{ 0xd018,	// ADD.B (A0)+,D0		pOEP|sOEP
+		  0xd248,	// ADD.W A0,D1			pOEP|sOEP	<- register dependency
+		  PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionAguResult },
+
+		{ 0xd018,	// ADD.B (A0)+,D0		pOEP|sOEP
+		  0xd3c8,	// ADDA.W D1,A0			pOEP|sOEP	<- register dependency
+		  PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionAguResult },
+	};
 	
 	uint i;
 
