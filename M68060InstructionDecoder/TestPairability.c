@@ -27,7 +27,15 @@ int main(void)
 		{ 0xda73,	// ADD.W d8(A3,Xn.q),D5	pOEP-until-last		<- not a standard instruction due to Xn not being part of opword
 		  0xd000,	// ADD.B D0,D0			pOEP|sOEP
 		  PairabilityTestResult_Success },
-	};
+
+		{ 0xda7a,	// ADD.W d16(PC),D5		pOEP|sOEP
+		  0xd000,	// ADD.B D0,D0			pOEP|sOEP
+		  PairabilityTestResult_Success },
+
+		{ 0xd000,	// ADD.B D0,D0			pOEP|sOEP
+		  0xda7a,	// ADD.W d16(PC),D5		pOEP|sOEP			<- PC relative addressing modes not allowed in sOEP
+		  PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing },
+	  };
 	
 	uint i;
 
