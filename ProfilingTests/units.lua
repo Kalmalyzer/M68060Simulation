@@ -8,4 +8,15 @@ Program {
 	},
 }
 
+Program {
+	Name = "EABehavior",
+	Sources = {
+		"EABehaviorAsm.s",
+		"TimingTools.c",
+		"EABehavior.c",
+	},
+}
+
+
 Default "Example"
+Default "EABehavior"
