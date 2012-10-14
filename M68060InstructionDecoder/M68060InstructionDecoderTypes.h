@@ -27,17 +27,21 @@ typedef enum
 	ExecutionResource_AbsoluteMemoryAddress,
 	ExecutionResource_PC,
 	ExecutionResource_Unknown,
+
 } ExecutionResource;
 
 const char* ExecutionResourceToString(ExecutionResource executionResource);
 
 typedef enum
 {
-	PairingType_pOEP_Or_sOEP,
-	PairingType_pOEP_But_Allows_sOEP,
-	PairingType_pOEP_Only,
-	PairingType_pOEP_Until_Last
-} PairingType;
+	Pairability_pOEP_Or_sOEP,
+	Pairability_pOEP_But_Allows_sOEP,
+	Pairability_pOEP_Only,
+	Pairability_pOEP_Until_Last,
+
+} Pairability;
+
+const char* PairabilityToString(Pairability pairability);
 
 typedef enum
 {
@@ -50,6 +54,7 @@ typedef enum
 	OpMode_RegisterToEa_Data_Word,
 	OpMode_RegisterToEa_Data_Long,
 	OpMode_EaToRegister_Address_Long,
+
 } OpMode;
 
 const char* OpModeToString(OpMode opMode);
@@ -60,6 +65,7 @@ typedef enum
 	AguOperation_PostIncrement,
 	AguOperation_PreDecrement,
 	AguOperation_OffsetBaseIndexScale,
+
 } AguOperation;
 
 const char* AguOperationToString(AguOperation aguOperation);

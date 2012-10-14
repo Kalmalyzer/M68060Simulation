@@ -20,6 +20,8 @@ typedef struct
 	
 	uint numExtensionWords;
 
+	Pairability pairability;
+	
 } DecodedOpWord;
 
 DecodedOpWord decodeOpWord(uint16_t operationWord);

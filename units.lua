@@ -17,6 +17,17 @@ Program {
 	},
 }
 
+Program {
+	Name = "TestPairability",
+	Sources = {
+		"M68060InstructionDecoder/M68060OpWordDecoder.c",
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionDecoder/M68060PairabilityTests.c",
+		"M68060InstructionDecoder/TestPairability.c",
+	},
+}
+
 Default "TestCache"
 Default "TestOpWordDecoder"
+Default "TestPairability"
 

@@ -26,7 +26,7 @@ typedef struct
 	uint16_t match;
 
 	const char* mnemonic;
-	PairingType standardInstructionPairingType;
+	Pairability defaultPairability;
 	OperandBehavior operandBehavior;
 	SizeEncoding sizeEncoding;
 
@@ -34,11 +34,11 @@ typedef struct
 
 static OpWordDecodeInfo opWordDecodeInformation[] =
 {
-	{ 0xf1f8, 0xc100, "ABCD Rx,Ry", PairingType_pOEP_Only, OperandBehavior_None, SizeEncoding_None },
-	{ 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", PairingType_pOEP_Only, OperandBehavior_None, SizeEncoding_None },
-	{ 0xf100, 0xd000, "ADD <ea>,Dn", PairingType_pOEP_Or_sOEP, OperandBehavior_Read_EAOperand_ReadWrite_DnOperand, SizeEncoding_OpMode },
-	{ 0xf100, 0xd100, "ADD Dn,<ea>", PairingType_pOEP_Or_sOEP, OperandBehavior_Read_DnOperand_ReadWrite_EAOperand, SizeEncoding_OpMode },
-	{ 0, 0, "Unknown instruction", PairingType_pOEP_But_Allows_sOEP, OperandBehavior_None, SizeEncoding_None },
+	{ 0xf1f8, 0xc100, "ABCD Rx,Ry", Pairability_pOEP_Only, OperandBehavior_None, SizeEncoding_None },
+	{ 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", Pairability_pOEP_Only, OperandBehavior_None, SizeEncoding_None },
+	{ 0xf100, 0xd000, "ADD <ea>,Dn", Pairability_pOEP_Or_sOEP, OperandBehavior_Read_EAOperand_ReadWrite_DnOperand, SizeEncoding_OpMode },
+	{ 0xf100, 0xd100, "ADD Dn,<ea>", Pairability_pOEP_Or_sOEP, OperandBehavior_Read_DnOperand_ReadWrite_EAOperand, SizeEncoding_OpMode },
+	{ 0, 0, "Unknown instruction", Pairability_pOEP_But_Allows_sOEP, OperandBehavior_None, SizeEncoding_None },
 };
 
 typedef enum
@@ -294,6 +294,29 @@ uint ieeImmediateToExtensionWords(IeeImmediate ieeImmediate)
 	}
 }
 
+bool areAllResourcesKnown(DecodedOpWord* decodedOpWord)
+{
+	return decodedOpWord->aguBase != ExecutionResource_Unknown
+		&& decodedOpWord->aguIndex != ExecutionResource_Unknown
+		&& decodedOpWord->ieeA != ExecutionResource_Unknown
+		&& decodedOpWord->ieeB != ExecutionResource_Unknown;
+}
+
+bool isStandardInstruction(DecodedOpWord* decodedOpWord)
+{
+	// TODO: add check for number of memory accesses in instruction as well
+	return decodedOpWord->numExtensionWords <= 2
+		&& areAllResourcesKnown(decodedOpWord);
+}
+
+Pairability determinePairability(Pairability defaultPairability, bool isStandardInstruction)
+{
+	if (defaultPairability == Pairability_pOEP_Or_sOEP && !isStandardInstruction)
+		return Pairability_pOEP_Until_Last;
+	else
+		return defaultPairability;
+}
+
 DecodedOpWord decodeOpWord(uint16_t operationWord)
 {
 	int i;
@@ -359,6 +382,8 @@ DecodedOpWord decodeOpWord(uint16_t operationWord)
 	decodedOpWord.numExtensionWords = 0;
 	decodedOpWord.numExtensionWords += aguOffsetToExtensionWords(decodedOpWord.aguOffset);
 	decodedOpWord.numExtensionWords += ieeImmediateToExtensionWords(decodedOpWord.ieeImmediate);
+
+	decodedOpWord.pairability = determinePairability(opWordDecodeInfo->defaultPairability, isStandardInstruction(&decodedOpWord));
 
 	return decodedOpWord;
 }
