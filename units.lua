@@ -27,7 +27,17 @@ Program {
 	},
 }
 
+Program {
+	Name = "TestAguAlu",
+	Sources = {
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionExecution/M68060AguAlu.c",
+		"M68060InstructionExecution/TestAguAlu.c",
+	},
+}
+
 Default "TestCache"
 Default "TestOpWordDecoder"
 Default "TestPairability"
+Default "TestAguAlu"
 
