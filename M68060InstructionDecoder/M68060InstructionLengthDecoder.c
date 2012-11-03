@@ -98,7 +98,9 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xffc0, 0x42c0, "MOVE CCR,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows CLR
 
 	{ 0xff00, 0x4200, "CLR <ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
-	{ 0xf100, 0xb100, "EOR Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows CMP
+	{ 0xf1c0, 0xb100, "EOR.B Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows CMP
+	{ 0xf1c0, 0xb140, "EOR.W Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows CMP
+	{ 0xf1c0, 0xb180, "EOR.L Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows CMP
 	{ 0xf000, 0xb000, "CMP <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xff00, 0x0c00, "CMPI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf138, 0xb108, "CMPM (Ax)+,(Ay)+", },
