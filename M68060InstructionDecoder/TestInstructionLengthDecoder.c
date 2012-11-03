@@ -152,6 +152,14 @@ static const InstructionLengthDecoderTest shiftRotateTests[] =
 	{ "LSL.L D2,D3", { 0xe5ab, }, 1 },
 	{ "LSR.W #2,D7", { 0xe44f, }, 1 },
 	{ "LSL.W ([A4])", { 0xe3f4, 0x0151, }, 2 },
+
+	{ "ROL.W #2,D3", { 0xe55b, }, 1 },
+	{ "ROR.L D2,D7", { 0xe4bf, }, 1 },
+	{ "ROL (A2)", { 0xe7d2, }, 1 },
+
+	{ "ROXL.W #1,D4", { 0xe354, }, 1 },
+	{ "ROXL ([$12345678,A5])", { 0xe5f5, 0x0171, 0x1234, 0x5678, }, 4 },
+	{ "ROXR.L D2,D2", { 0xe4b2, }, 1 },
 };
 
 static const InstructionLengthDecoderTest integerLogicTests[] =
@@ -227,6 +235,31 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "LINK.L A3,#$12345678", { 0x480c, 0x1234, 0x5678, }, 3 },
 
 	{ "NOP", { 0x4e71, }, 1 },
+
+	{ "PACK D1,D2,#$1234", { 0x8541, 0x1234, }, 2 },
+	{ "PACK -(A2),-(A1),#$1234", { 0x834a, 0x1234, }, 2 },
+	{ "UNPK D2,D3,#$1234", { 0x8782, 0x1234, }, 2 },
+	{ "UNPK -(A7),-(A6),#$1234", { 0x8d8f, 0x1234, }, 2 },
+
+	{ "PEA $12(A3,D1.W)", { 0x4873, 0x1012, }, 2 },
+	
+	{ "RTS", { 0x4e75, }, 1 },
+
+	{ "SBCD D2,D3", { 0x8702, }, 1 },
+	{ "SBCD -(A1),-(A3)", { 0x8709, }, 1 },
+
+	{ "ST D7", { 0x50c7, }, 1 },
+	{ "SNE (A2)", { 0x56d2, }, 1 },
+	{ "SEQ $1234(A3)", { 0x57eb, 0x1234, }, 2 },
+	{ "SUB.B D1,D2", { 0x9401, }, 1 },
+	{ "SUBA.W D4,A5", { 0x9ac4, }, 1 },
+	{ "SUB.L D2,-(A6)", { 0x95a6, }, 1 },
+	{ "SUBI.W #$1234,D5", { 0x0445, 0x1234, }, 2 },
+	{ "SUBQ.L #4,D0", { 0x5980, }, 1 },
+	{ "SUBQ.B #3,([A5])", { 0x5735, 0x0151, }, 2 },
+
+	{ "SUBX.W D1,D1", { 0x9341, }, 1 },
+	{ "SUBX.B -(A4),-(A3)", { 0x970c, }, 1 },
 	
 };
 

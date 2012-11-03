@@ -44,12 +44,12 @@ static OpWordLengthInfo opWordLengthInformation[] =
 {
 	{ 0xf1f8, 0xc100, "ABCD Dx,Dy", },
 	{ 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", },
+	{ 0xf138, 0xd100, "ADDX Dx,Dy", }, // Shadows ADD Dn,<ea>
+	{ 0xf138, 0xd108, "ADDX -(Ax),-(Ay)", }, // Shadows ADD Dn,<ea>
 	{ 0xf100, 0xd000, "ADD <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf100, 0xd100, "ADD Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xff00, 0x0600, "ADDI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf100, 0x5000, "ADDQ #imm,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
-	{ 0xf1f8, 0xd100, "ADDX Dx,Dy", },
-	{ 0xf1f8, 0xd108, "ADDX -(Ax),-(Ay)", },
 	{ 0xf1f8, 0xc140, "EXG Dn,Dn", }, // Shadows AND
 	{ 0xf1f8, 0xc148, "EXG Am,An", }, // Shadows AND
 	{ 0xf1f8, 0xc188, "EXG Dm,An", }, // Shadows AND
@@ -74,7 +74,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xffc0, 0x0840, "BCHG #imm,<ea>", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf1c0, 0x0180, "BCLR Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0x0880, "BCLR #imm,<ea>", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
-	{ 0xfff8, 0x4848, "BKPT #imm", },
+	{ 0xfff8, 0x4848, "BKPT #imm", }, // Shadows PEA
 	{ 0xf1c0, 0x01c0, "BSET Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0x08c0, "BSET #imm,<ea>", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf1c0, 0x0100, "BTST Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
@@ -138,11 +138,38 @@ static OpWordLengthInfo opWordLengthInformation[] =
 
 	{ 0xff00, 0x4600, "NOT <ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
 
+	{ 0xf1f8, 0x8140, "PACK Dm,Dn,#imm", 0, SizeEncoding_Word, EAEncoding_Immediate, EAEncoding_None, }, // Shadows OR/ORI
+	{ 0xf1f8, 0x8148, "PACK -(Am),-(An),#imm", 0, SizeEncoding_Word, EAEncoding_Immediate, EAEncoding_None, }, // Shadows OR/ORI
+	{ 0xf1f8, 0x8180, "UNPK Dm,Dn,#imm", 0, SizeEncoding_Word, EAEncoding_Immediate, EAEncoding_None, }, // Shadows OR/ORI
+	{ 0xf1f8, 0x8188, "UNPK -(Am),-(An),#imm", 0, SizeEncoding_Word, EAEncoding_Immediate, EAEncoding_None, }, // Shadows OR/ORI
+
 	{ 0xf100, 0x8000, "OR <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf100, 0x8100, "OR Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
 
 	{ 0xffff, 0x003c, "ORI #imm,CCR", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_None, }, // Shadows ANDI #imm,<ea>
 	{ 0xff00, 0x0000, "ORI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
+
+	{ 0xffc0, 0x4840, "PEA <ea>", 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
+
+	{ 0xfec0, 0xe6c0, "ROL/ROR <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows ROL/ROR #imm/Dm,Dn
+	{ 0xf018, 0xe018, "ROL/ROR #imm/Dm,Dn", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_None, },
+	
+	{ 0xfec0, 0xe4c0, "ROXL/ROXR <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows ROXL/ROXR #imm/Dm,Dn
+	{ 0xf018, 0xe010, "ROXL/ROXR #imm/Dm,Dn", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_None, },
+
+	{ 0xffff, 0x4e75, "RTS", },
+
+	{ 0xf1f8, 0x8100, "SBCD Dx,Dy", },
+	{ 0xf1f8, 0x8108, "SBCD -(Ax),-(Ay)", },
+
+	{ 0xf0c0, 0x50c0, "Scc <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
+
+	{ 0xf138, 0x9100, "SUBX Dx,Dy", }, // Shadows SUB Dn,<e>
+	{ 0xf138, 0x9108, "SUBX -(Ax),-(Ay)", }, // Shadows SUB Dn,<e>
+	{ 0xf100, 0x9000, "SUB <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xf100, 0x9100, "SUB Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
+	{ 0xff00, 0x0400, "SUBI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
+	{ 0xf100, 0x5100, "SUBQ #imm,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 
 	{ 0, 0, "Unknown instruction", },
 };
