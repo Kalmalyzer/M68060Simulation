@@ -85,6 +85,12 @@ static const InstructionLengthDecoderTest relativeBranchTests[] =
 	{ "DBEQ *+$12", { 0x57ca, 0x1234, }, 2 },
 };
 
+static const InstructionLengthDecoderTest absoluteJumpTests[] =
+{
+	{ "JMP $1234(A3)", { 0x4eeb, 0x1234, }, 2 },
+	{ "JSR ([$12345678.L,PC])", { 0x4ebb, 0x0171, 0x1234, 0x5678, }, 4 },
+};
+
 static const InstructionLengthDecoderTest singleBitInstructionTests[] =
 {
 	{ "BTST D1,$12345678.L", { 0x0339, 0x1234, 0x5678, }, 3 },
@@ -124,6 +130,12 @@ static const InstructionLengthDecoderTest integerArithmeticTests[] =
 	{ "DIVS.L $1234(A1),D0", { 0x4c69, 0x0800, 0x1234 }, 3 },
 	{ "DIVS.L $1234(A1),D0:D2", { 0x4c69, 0x2c00, 0x1234 }, 3 },
 	{ "DIVUL.L $1234(A1),D0:D2", { 0x4c69, 0x2000, 0x1234 }, 3 },
+
+	{ "MULS.W #$1234,D1", { 0xc3fc, 0x1234, }, 2 },
+	{ "MULS.W $1234(A1),D1", { 0xc3e9, 0x1234, }, 2 },
+	{ "MULU.W $12(A1,D2.L),D3", { 0xc6f1, 0x2812, }, 2 },
+	{ "MULS.L $1234(A1),D0", { 0x4c29, 0x0800, 0x1234 }, 3 },
+	{ "MULS.L $1234(A1),D0:D2", { 0x4c29, 0x2c00, 0x1234 }, 3 },
 };
 
 static const InstructionLengthDecoderTest shiftRotateTests[] =
@@ -150,6 +162,10 @@ static const InstructionLengthDecoderTest integerLogicTests[] =
 
 static const InstructionLengthDecoderTest moveTests[] =
 {
+	{ "EXG D2,D3", { 0xc543, }, 1 },
+	{ "EXG A4,A5", { 0xc94d, }, 1 },
+	{ "EXG D3,A7", { 0xc78f, }, 1 },
+
 	{ "MOVE.W D3,D4", { 0x3803, }, 1 },
 	{ "MOVE.B #$12,D2", { 0x143c, 0x0012, }, 2 },
 	{ "MOVE.L #$12345678,(A6)", { 0x2cbc, 0x1234, 0x5678, }, 3 },
@@ -159,6 +175,23 @@ static const InstructionLengthDecoderTest moveTests[] =
 	{ "MOVE.L ([$12345678.L,PC]),([D0],$12345678.L)", { 0x21bb, 0x0171, 0x1234, 0x5678, 0x0193, 0x1234, 0x5678, }, 7 },
 	{ "MOVE.W D2,A2", { 0x3442, }, 1 },
 	{ "MOVE.L A2,D3", { 0x260a, }, 1 },
+
+	{ "MOVE CCR,$1234(A3)", { 0x42eb, 0x1234, }, 2 },
+	{ "MOVE $1234(A2),CCR", { 0x44ea, 0x1234, }, 2 },
+
+	{ "MOVE SR,$1234(A3)", { 0x40eb, 0x1234, }, 2 },
+	
+	{ "MOVEQ #$12,D2", { 0x7412, }, 1 },
+
+	{ "MOVE16 (A2)+,(A3)+", { 0xf622, 0xb000, }, 2 },
+	{ "MOVE16 $12345678.L,(A1)", { 0xf619, 0x1234, 0x5678, }, 3 },
+	{ "MOVE16 (A2)+,$12345678.L", { 0xf602, 0x1234, 0x5678, }, 3 },
+	
+	{ "MOVEM.L D2-D7,-(A7)", { 0x48e7, 0x3f00, }, 2 },
+	{ "MOVEM.W (A3),D0/D2", { 0x4c93, 0x0005, }, 2 },
+
+	{ "MOVEP.W D2,$1234(A1)", { 0x0589, 0x1234, }, 2 },
+	{ "MOVEP.L $1234(A2),D3", { 0x074a, 0x1234, }, 2 },
 };
 
 static const InstructionLengthDecoderTest miscellaneousTests[] =
@@ -168,9 +201,6 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "CHK.L #$12345678,D1", { 0x433c, 0x1234, 0x5678, }, 3 },
 	{ "CLR.W $1234(A1)", { 0x4269, 0x1234, }, 2 },
 
-	{ "EXG D2,D3", { 0xc543, }, 1 },
-	{ "EXG A4,A5", { 0xc94d, }, 1 },
-	{ "EXG D3,A7", { 0xc78f, }, 1 },
 	{ "ANDI #$12,CCR", { 0x023c, 0x0012, }, 2 },
 	
 	{ "EXT.W D2", { 0x4882, }, 1 },
@@ -178,22 +208,10 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "EXTB.L D4", { 0x49c4, }, 1 },
 	{ "ILLEGAL", { 0x4afc, }, 1 },
 	
-	{ "JMP $1234(A3)", { 0x4eeb, 0x1234, }, 2 },
-	{ "JSR ([$12345678.L,PC])", { 0x4ebb, 0x0171, 0x1234, 0x5678, }, 4 },
-	
 	{ "LEA ([A3,D2.L*4],$1234.W),A2", { 0x45f3, 0x2d12, 0x1234, }, 3 },
 	
 	{ "LINK.W A3,#$1234", { 0x4e53, 0x1234, }, 2 },
 	{ "LINK.L A3,#$12345678", { 0x480c, 0x1234, 0x5678, }, 3 },
-
-	{ "MOVE CCR,$1234(A3)", { 0x42eb, 0x1234, }, 2 },
-	{ "MOVE $1234(A2),CCR", { 0x44ea, 0x1234, }, 2 },
-
-	{ "MOVE SR,$1234(A3)", { 0x40eb, 0x1234, }, 2 },
-
-	{ "MOVE16 (A2)+,(A3)+", { 0xf622, 0xb000, }, 2 },
-	{ "MOVE16 $12345678.L,(A1)", { 0xf619, 0x1234, 0x5678, }, 3 },
-	{ "MOVE16 (A2)+,$12345678.L", { 0xf602, 0x1234, 0x5678, }, 3 },
 };
 
 TestSuite testSuites[] =
@@ -201,12 +219,13 @@ TestSuite testSuites[] =
 	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
 	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
 	{ "Relative branch tests", relativeBranchTests, (sizeof relativeBranchTests / sizeof relativeBranchTests[0]) },
+	{ "Absolute jump tests", absoluteJumpTests, (sizeof absoluteJumpTests / sizeof absoluteJumpTests[0]) },
 	{ "Single-bit instruction tests", singleBitInstructionTests, (sizeof singleBitInstructionTests / sizeof singleBitInstructionTests[0]) },
 	{ "Bit field instruction tests", bitFieldInstructionTests, (sizeof bitFieldInstructionTests / sizeof bitFieldInstructionTests[0]) },
 	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },
 	{ "Shift/rotate tests", shiftRotateTests, (sizeof shiftRotateTests / sizeof shiftRotateTests[0]) },
 	{ "Integer logic tests", integerLogicTests, (sizeof integerLogicTests / sizeof integerLogicTests[0]) },
-	{ "Move tests", moveTests, (sizeof moveTests / sizeof moveTests[0]) },
+	{ "Move/Exchange tests", moveTests, (sizeof moveTests / sizeof moveTests[0]) },
 	{ "Miscellaneous tests", miscellaneousTests, (sizeof miscellaneousTests / sizeof miscellaneousTests[0]) },
 };
 

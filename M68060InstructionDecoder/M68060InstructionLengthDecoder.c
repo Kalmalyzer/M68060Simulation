@@ -53,6 +53,8 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf1f8, 0xc140, "EXG Dn,Dn", }, // Shadows AND
 	{ 0xf1f8, 0xc148, "EXG Am,An", }, // Shadows AND
 	{ 0xf1f8, 0xc188, "EXG Dm,An", }, // Shadows AND
+	{ 0xf1c0, 0xc1c0, "MULS.W <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, }, // Shadows AND
+	{ 0xf1c0, 0xc0c0, "MULU.W <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, }, // Shadows AND
 	{ 0xf100, 0xc000, "AND <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf100, 0xc100, "AND Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
 
@@ -67,6 +69,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	
 	{ 0xff00, 0x6100, "BSR <relative address>", 0, SizeEncoding_RelativeBranchEncoding, EAEncoding_RelativeBranch, EAEncoding_None, }, // Shadows Bcc
 	{ 0xf000, 0x6000, "Bcc <relative address>", 0, SizeEncoding_RelativeBranchEncoding, EAEncoding_RelativeBranch, EAEncoding_None, },
+	{ 0xf138, 0x0108, "MOVEP Dx <-> d16(An)", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_None, }, // Shadows BCLR/BCHG Dn,<ea>
 	{ 0xf1c0, 0x0140, "BCHG Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0x0840, "BCHG #imm,<ea>", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf1c0, 0x0180, "BCLR Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
@@ -94,7 +97,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf138, 0xb108, "CMPM (Ax)+,(Ay)+", },
 	{ 0xf0f8, 0x50c8, "DBcc <relative address>", 1, SizeEncoding_Word, EAEncoding_None, EAEncoding_None, },
 	{ 0xf1c0, 0x81c0, "DIVS.W <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
-	{ 0xffc0, 0x4c40, "DIVS/DIVU.L <ea>,Dn (can be 32bit or 64bit division)", 1, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xffc0, 0x4c40, "DIVS/DIVU.L <ea>,Dr:Dq (can be 32bit or 64bit division)", 1, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf1c0, 0x80c0, "DIVU.W <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xff00, 0x0a00, "EORI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xfff8, 0x4880, "EXT.W Dn", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_None, },
@@ -120,6 +123,12 @@ static OpWordLengthInfo opWordLengthInformation[] =
 
 	{ 0xfff8, 0xf620, "MOVE16 (Ax)+,(Ay)+", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_None, },
 	{ 0xffe0, 0xf600, "MOVE16 (An <-> xxx.L)", 2, SizeEncoding_None, EAEncoding_None, EAEncoding_None, },
+
+	{ 0xfb80, 0x4880, "MOVEM <ea> <-> reglist", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
+
+	{ 0xf100, 0x7000, "MOVEQ #imm,Dn", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_None, },
+
+	{ 0xffc0, 0x4c00, "MULS/MULU.L <ea>,Dm:Dn (can be 32bit or 64bit multiply)", 1, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
 
 	{ 0, 0, "Unknown instruction", },
 };
