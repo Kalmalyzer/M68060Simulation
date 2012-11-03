@@ -84,6 +84,9 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xffc0, 0xe8c0, "BFTST <ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xf1c0, 0x4180, "CHK <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf1c0, 0x4100, "CHK <ea>,Dn", 0, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
+
+	{ 0xffc0, 0x42c0, "MOVE CCR,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows CLR
+
 	{ 0xff00, 0x4200, "CLR <ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xf100, 0xb100, "EOR Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows CMP
 	{ 0xf000, 0xb000, "CMP <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
@@ -110,6 +113,13 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf000, 0x1000, "MOVE.B <ea>,<ea>", 0, SizeEncoding_Byte, EAEncoding_DefaultEALocation, EAEncoding_MoveDestinationEALocation, },
 	{ 0xf000, 0x2000, "MOVE.L <ea>,<ea>", 0, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_MoveDestinationEALocation, },
 	{ 0xf000, 0x3000, "MOVE.W <ea>,<ea>", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_MoveDestinationEALocation, },
+
+	{ 0xffc0, 0x44c0, "MOVE <ea>,CCR", 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
+
+	{ 0xffc0, 0x40c0, "MOVE SR,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
+
+	{ 0xfff8, 0xf620, "MOVE16 (Ax)+,(Ay)+", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_None, },
+	{ 0xffe0, 0xf600, "MOVE16 (An <-> xxx.L)", 2, SizeEncoding_None, EAEncoding_None, EAEncoding_None, },
 
 	{ 0, 0, "Unknown instruction", },
 };
@@ -386,7 +396,7 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 
 	instructionLength->numSpecialOperandSpecifierWords = opWordLengthInfo->numSpecialOperandSpecifierWords;
 	instructionLength->mnemonic = opWordLengthInfo->mnemonic;
-	
+
 	operationSize = decodeOperationSize(opWord, opWordLengthInfo->sizeEncoding);
 	
 	operandOffset = 1 + instructionLength->numSpecialOperandSpecifierWords;

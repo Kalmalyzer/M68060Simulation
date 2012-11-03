@@ -186,6 +186,14 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "LINK.W A3,#$1234", { 0x4e53, 0x1234, }, 2 },
 	{ "LINK.L A3,#$12345678", { 0x480c, 0x1234, 0x5678, }, 3 },
 
+	{ "MOVE CCR,$1234(A3)", { 0x42eb, 0x1234, }, 2 },
+	{ "MOVE $1234(A2),CCR", { 0x44ea, 0x1234, }, 2 },
+
+	{ "MOVE SR,$1234(A3)", { 0x40eb, 0x1234, }, 2 },
+
+	{ "MOVE16 (A2)+,(A3)+", { 0xf622, 0xb000, }, 2 },
+	{ "MOVE16 $12345678.L,(A1)", { 0xf619, 0x1234, 0x5678, }, 3 },
+	{ "MOVE16 (A2)+,$12345678.L", { 0xf602, 0x1234, 0x5678, }, 3 },
 };
 
 TestSuite testSuites[] =
