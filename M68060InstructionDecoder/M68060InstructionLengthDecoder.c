@@ -8,6 +8,7 @@ typedef enum
 {
 	EAEncoding_None,
 	EAEncoding_DefaultEALocation,
+	EAEncoding_MoveDestinationEALocation,
 	EAEncoding_Immediate,
 	EAEncoding_RelativeBranch,
 
@@ -100,6 +101,16 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xffc0, 0x4ec0, "JMP <ea>", 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xffc0, 0x4e80, "JSR <ea>", 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf1c0, 0x41c0, "LEA <ea>,An", 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xfff8, 0x4e50, "LINK.W An,#imm", 0, SizeEncoding_Word, EAEncoding_Immediate, EAEncoding_None, },
+	{ 0xfff8, 0x4808, "LINK.L An,#imm", 0, SizeEncoding_Long, EAEncoding_Immediate, EAEncoding_None, },
+
+	{ 0xfec0, 0xe2c0, "LSL/LSR <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows LSL/LSR #imm/Dm,Dn
+	{ 0xf018, 0xe008, "LSL/LSR #imm/Dm,Dn", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_None, },
+
+	{ 0xf000, 0x1000, "MOVE.B <ea>,<ea>", 0, SizeEncoding_Byte, EAEncoding_DefaultEALocation, EAEncoding_MoveDestinationEALocation, },
+	{ 0xf000, 0x2000, "MOVE.L <ea>,<ea>", 0, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_MoveDestinationEALocation, },
+	{ 0xf000, 0x3000, "MOVE.W <ea>,<ea>", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_MoveDestinationEALocation, },
+
 	{ 0, 0, "Unknown instruction", },
 };
 
@@ -145,7 +156,67 @@ uint decodeBriefOrFullExtensionWordLength(uint16_t firstExtensionWord)
 	return numExtensionWords;
 }
 
-bool decodeOperandLength(uint16_t opWord, uint16_t firstExtensionWord, bool firstExtensionWordAvailable, EAEncoding eaEncoding, OperationSize operationSize, uint* numExtensionWords)
+bool decodeEA6BitModeLength(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lower3Bits eaLower3Bits, bool firstExtensionWordAvailable, uint16_t firstExtensionWord, OperationSize operationSize, uint* numExtensionWords)
+{
+	switch (eaUpper3Bits)
+	{
+		case EA6BitMode_Upper3Bits_Dn:
+		case EA6BitMode_Upper3Bits_An:
+		case EA6BitMode_Upper3Bits_Mem_An:
+		case EA6BitMode_Upper3Bits_Mem_An_PostIncrement:
+		case EA6BitMode_Upper3Bits_Mem_PreDecrement_An:
+			*numExtensionWords = 0;
+			break;
+		case EA6BitMode_Upper3Bits_Mem_D16_An:
+			*numExtensionWords = 1;
+			break;
+		case EA6BitMode_Upper3Bits_Mem_BriefOrFullExtensionWord_An:
+			if (!firstExtensionWordAvailable)
+				return false;
+			*numExtensionWords = decodeBriefOrFullExtensionWordLength(firstExtensionWord);
+			break;
+		case EA6BitMode_Upper3Bits_CheckLower3Bits:
+			
+			switch (eaLower3Bits)
+			{
+				case EA6BitMode_Lower3Bits_Mem_Absolute_Word:
+					*numExtensionWords = 1;
+					break;
+				case EA6BitMode_Lower3Bits_Mem_Absolute_Long:
+					*numExtensionWords = 2;
+					break;
+				case EA6BitMode_Lower3Bits_Mem_D16_PC:
+					*numExtensionWords = 1;
+					break;
+				case EA6BitMode_Lower3Bits_Mem_BriefOrFullExtensionWord_PC:
+					if (!firstExtensionWordAvailable)
+						return false;
+					*numExtensionWords = decodeBriefOrFullExtensionWordLength(firstExtensionWord);
+					break;
+				case EA6BitMode_Lower3Bits_Immediate:
+					switch (operationSize)
+					{
+						case OperationSize_Byte:
+						case OperationSize_Word:
+							*numExtensionWords = 1;
+							break;
+						case OperationSize_Long:
+							*numExtensionWords = 2;
+							break;
+						default:
+							M68060_ERROR("Invalid operation size");
+					}
+					break;
+				default:
+					M68060_ERROR("Invalid 6-bit EA");
+			}
+			break;
+	}
+	
+	return true;
+}
+
+bool decodeOperandLength(uint16_t opWord, bool firstExtensionWordAvailable, uint16_t firstExtensionWord, EAEncoding eaEncoding, OperationSize operationSize, uint* numExtensionWords)
 {
 	if (eaEncoding == EAEncoding_None)
 	{
@@ -153,63 +224,21 @@ bool decodeOperandLength(uint16_t opWord, uint16_t firstExtensionWord, bool firs
 	}
 	else if (eaEncoding == EAEncoding_DefaultEALocation)
 	{
-		EA6BitMode_Upper3Bits eaUpper3Bits = (opWord >> 3) & 7;
-		EA6BitMode_Lower3Bits eaLower3Bits = opWord & 7;
-		
-		switch (eaUpper3Bits)
-		{
-			case EA6BitMode_Upper3Bits_Dn:
-			case EA6BitMode_Upper3Bits_An:
-			case EA6BitMode_Upper3Bits_Mem_An:
-			case EA6BitMode_Upper3Bits_Mem_An_PostIncrement:
-			case EA6BitMode_Upper3Bits_Mem_PreDecrement_An:
-				*numExtensionWords = 0;
-				break;
-			case EA6BitMode_Upper3Bits_Mem_D16_An:
-				*numExtensionWords = 1;
-				break;
-			case EA6BitMode_Upper3Bits_Mem_BriefOrFullExtensionWord_An:
-				if (!firstExtensionWordAvailable)
-					return false;
-				*numExtensionWords = decodeBriefOrFullExtensionWordLength(firstExtensionWord);
-				break;
-			case EA6BitMode_Upper3Bits_CheckLower3Bits:
-				
-				switch (eaLower3Bits)
-				{
-					case EA6BitMode_Lower3Bits_Mem_Absolute_Word:
-						*numExtensionWords = 1;
-						break;
-					case EA6BitMode_Lower3Bits_Mem_Absolute_Long:
-						*numExtensionWords = 2;
-						break;
-					case EA6BitMode_Lower3Bits_Mem_D16_PC:
-						*numExtensionWords = 1;
-						break;
-					case EA6BitMode_Lower3Bits_Mem_BriefOrFullExtensionWord_PC:
-						if (!firstExtensionWordAvailable)
-							return false;
-						*numExtensionWords = decodeBriefOrFullExtensionWordLength(firstExtensionWord);
-						break;
-					case EA6BitMode_Lower3Bits_Immediate:
-						switch (operationSize)
-						{
-							case OperationSize_Byte:
-							case OperationSize_Word:
-								*numExtensionWords = 1;
-								break;
-							case OperationSize_Long:
-								*numExtensionWords = 2;
-								break;
-							default:
-								M68060_ERROR("Invalid operation size");
-						}
-						break;
-					default:
-						M68060_ERROR("Invalid 6-bit EA");
-				}
-				break;
-		}
+		uint ea6BitMode = opWord & 0x3f;
+		EA6BitMode_Upper3Bits eaUpper3Bits = (ea6BitMode >> 3) & 7;
+		EA6BitMode_Lower3Bits eaLower3Bits = ea6BitMode & 7;
+		bool success = decodeEA6BitModeLength(eaUpper3Bits, eaLower3Bits, firstExtensionWordAvailable, firstExtensionWord, operationSize, numExtensionWords);
+		if (!success)
+			return false;
+	}
+	else if (eaEncoding == EAEncoding_MoveDestinationEALocation)
+	{
+		uint ea6BitMode = (opWord >> 6) & 0x3f;
+		EA6BitMode_Upper3Bits eaUpper3Bits = ea6BitMode & 7;
+		EA6BitMode_Lower3Bits eaLower3Bits = (ea6BitMode >> 3) & 7;
+		bool success = decodeEA6BitModeLength(eaUpper3Bits, eaLower3Bits, firstExtensionWordAvailable, firstExtensionWord, operationSize, numExtensionWords);
+		if (!success)
+			return false;
 	}
 	else if (eaEncoding == EAEncoding_Immediate)
 	{
@@ -365,7 +394,7 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 	{
 		bool firstExtensionWordAvailable = (operandOffset < numInstructionWordsAvailable);
 		uint16_t firstExtensionWord = (firstExtensionWordAvailable ? instructionWords[operandOffset] : 0);
-		if (!decodeOperandLength(opWord, firstExtensionWord, firstExtensionWordAvailable, opWordLengthInfo->sourceEAEncoding, operationSize, &instructionLength->numSourceEAExtensionWords))
+		if (!decodeOperandLength(opWord, firstExtensionWordAvailable, firstExtensionWord, opWordLengthInfo->sourceEAEncoding, operationSize, &instructionLength->numSourceEAExtensionWords))
 			return false;
 	}
 
@@ -374,7 +403,7 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 	{
 		bool firstExtensionWordAvailable = (operandOffset < numInstructionWordsAvailable);
 		uint16_t firstExtensionWord = (firstExtensionWordAvailable ? instructionWords[operandOffset] : 0);
-		if (!decodeOperandLength(opWord, firstExtensionWord, firstExtensionWordAvailable, opWordLengthInfo->destinationEAEncoding, operationSize, &instructionLength->numDestinationEAExtensionWords))
+		if (!decodeOperandLength(opWord, firstExtensionWordAvailable, firstExtensionWord, opWordLengthInfo->destinationEAEncoding, operationSize, &instructionLength->numDestinationEAExtensionWords))
 			return false;
 	}
 

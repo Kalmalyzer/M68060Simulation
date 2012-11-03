@@ -132,6 +132,10 @@ static const InstructionLengthDecoderTest shiftRotateTests[] =
 	{ "ASL.L #3,D2", { 0xe782, }, 1 },
 	{ "ASR.B #1,D1", { 0xe201, }, 1 },
 	{ "ASR.W $1234(A5)", { 0xe0ed, 0x1234, }, 2 },
+
+	{ "LSL.L D2,D3", { 0xe5ab, }, 1 },
+	{ "LSR.W #2,D7", { 0xe44f, }, 1 },
+	{ "LSL.W ([A4])", { 0xe3f4, 0x0151, }, 2 },
 };
 
 static const InstructionLengthDecoderTest integerLogicTests[] =
@@ -142,6 +146,19 @@ static const InstructionLengthDecoderTest integerLogicTests[] =
 
 	{ "EOR.L D1,(A3)", { 0xb393, }, 1 },
 	{ "EORI.L #$12345678,$1234(A3)", { 0x0aab, 0x1234, 0x5678, 0x1234, }, 4 },
+};
+
+static const InstructionLengthDecoderTest moveTests[] =
+{
+	{ "MOVE.W D3,D4", { 0x3803, }, 1 },
+	{ "MOVE.B #$12,D2", { 0x143c, 0x0012, }, 2 },
+	{ "MOVE.L #$12345678,(A6)", { 0x2cbc, 0x1234, 0x5678, }, 3 },
+	{ "MOVE.W (A7),D5", { 0x3a17, }, 1 },
+	{ "MOVE.L #$12345678,([$12345678.L,A1])", { 0x23bc, 0x1234, 0x5678, 0x0171, 0x1234, 0x5678, }, 6 },
+	{ "MOVE.L ([$12345678.L,A1]),([$12345678.L,A2])", { 0x25b1, 0x0171, 0x1234, 0x5678, 0x0171, 0x1234, 0x5678, }, 7 },
+	{ "MOVE.L ([$12345678.L,PC]),([D0],$12345678.L)", { 0x21bb, 0x0171, 0x1234, 0x5678, 0x0193, 0x1234, 0x5678, }, 7 },
+	{ "MOVE.W D2,A2", { 0x3442, }, 1 },
+	{ "MOVE.L A2,D3", { 0x260a, }, 1 },
 };
 
 static const InstructionLengthDecoderTest miscellaneousTests[] =
@@ -165,6 +182,10 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "JSR ([$12345678.L,PC])", { 0x4ebb, 0x0171, 0x1234, 0x5678, }, 4 },
 	
 	{ "LEA ([A3,D2.L*4],$1234.W),A2", { 0x45f3, 0x2d12, 0x1234, }, 3 },
+	
+	{ "LINK.W A3,#$1234", { 0x4e53, 0x1234, }, 2 },
+	{ "LINK.L A3,#$12345678", { 0x480c, 0x1234, 0x5678, }, 3 },
+
 };
 
 TestSuite testSuites[] =
@@ -177,6 +198,7 @@ TestSuite testSuites[] =
 	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },
 	{ "Shift/rotate tests", shiftRotateTests, (sizeof shiftRotateTests / sizeof shiftRotateTests[0]) },
 	{ "Integer logic tests", integerLogicTests, (sizeof integerLogicTests / sizeof integerLogicTests[0]) },
+	{ "Move tests", moveTests, (sizeof moveTests / sizeof moveTests[0]) },
 	{ "Miscellaneous tests", miscellaneousTests, (sizeof miscellaneousTests / sizeof miscellaneousTests[0]) },
 };
 
