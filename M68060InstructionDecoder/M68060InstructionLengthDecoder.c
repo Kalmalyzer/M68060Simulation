@@ -165,6 +165,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xfec0, 0xe4c0, "ROXL/ROXR <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows ROXL/ROXR #imm/Dm,Dn
 	{ 0xf018, 0xe010, "ROXL/ROXR #imm/Dm,Dn", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_None, },
 
+	{ 0xffff, 0x4e77, "RTR", },
 	{ 0xffff, 0x4e75, "RTS", },
 
 	{ 0xf1f8, 0x8100, "SBCD Dx,Dy", },

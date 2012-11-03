@@ -265,6 +265,7 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 
 	{ "PEA $12(A3,D1.W)", { 0x4873, 0x1012, }, 2 },
 	
+	{ "RTR", { 0x4e77, }, 1 },
 	{ "RTS", { 0x4e75, }, 1 },
 
 	{ "ST D7", { 0x50c7, }, 1 },
