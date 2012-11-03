@@ -45,6 +45,14 @@ Program {
 }
 
 Program {
+	Name = "SoakTestInstructionLengthDecoder",
+	Sources = {
+		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/SoakTestInstructionLengthDecoder.c",
+	},
+}
+
+Program {
 	Name = "InstructionLengthDisassembler",
 	Sources = {
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
@@ -57,4 +65,5 @@ Default "TestOpWordDecoder"
 Default "TestPairability"
 Default "TestAguAlu"
 Default "TestInstructionLengthDecoder"
+Default "SoakTestInstructionLengthDecoder"
 Default "InstructionLengthDisassembler"
