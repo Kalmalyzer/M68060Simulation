@@ -46,7 +46,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf100, 0xd000, "ADD <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf100, 0xd100, "ADD Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xff00, 0x0600, "ADDI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
-	{ 0xff00, 0x6100, "BSR <relative address>", 0, SizeEncoding_RelativeBranchEncoding, EAEncoding_RelativeBranch, EAEncoding_None, }, // Shadows parts of Bcc opcode space
+	{ 0xff00, 0x6100, "BSR <relative address>", 0, SizeEncoding_RelativeBranchEncoding, EAEncoding_RelativeBranch, EAEncoding_None, }, // Shadows Bcc
 	{ 0xf000, 0x6000, "Bcc <relative address>", 0, SizeEncoding_RelativeBranchEncoding, EAEncoding_RelativeBranch, EAEncoding_None, },
 	{ 0xf1c0, 0x0140, "BCHG Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0x0840, "BCHG #imm,<ea>", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
@@ -68,9 +68,15 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf1c0, 0x4180, "CHK <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf1c0, 0x4100, "CHK <ea>,Dn", 0, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xff00, 0x4200, "CLR <ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
+	{ 0xf100, 0xb100, "EOR Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows CMP
 	{ 0xf000, 0xb000, "CMP <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xff00, 0x0c00, "CMPI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf138, 0xb108, "CMPM (Ax)+,(Ay)+", },
+	{ 0xf0f8, 0x50c8, "DBcc <relative address>", 1, SizeEncoding_Word, EAEncoding_None, EAEncoding_None, },
+	{ 0xf1c0, 0x81c0, "DIVS.W <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xffc0, 0x4c40, "DIVS/DIVU.L <ea>,Dn (can be 32bit or 64bit division)", 1, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xf1c0, 0x80c0, "DIVU.W <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xff00, 0x0a00, "EORI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0, 0, "Unknown instruction", },
 };
 

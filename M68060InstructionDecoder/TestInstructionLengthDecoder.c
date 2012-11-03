@@ -81,6 +81,8 @@ static const InstructionLengthDecoderTest relativeBranchTests[] =
 	{ "BSR.S *+$12", { 0x6112, }, 1 },
 	{ "BSR.W *+$1234", { 0x6100, 0x1234, }, 2 },
 	{ "BSR.L *+$12345678", { 0x61ff, 0x1234, 0x5678, }, 3 },
+	{ "DBRA *+$12", { 0x51c9, 0x1234, }, 2 },
+	{ "DBEQ *+$12", { 0x57ca, 0x1234, }, 2 },
 };
 
 static const InstructionLengthDecoderTest bitFlipInstructionTests[] =
@@ -116,6 +118,17 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "CMPI.L #$12345678,D1", { 0x0c81, 0x1234, 0x5678, }, 3 },
 	{ "CMPM.B (A5)+,(A4)+", { 0xb90d, }, 1 },
 	{ "CMPM.L (A3)+,(A2)+", { 0xb58b, }, 1, },
+
+	{ "DIVS.W #$1234,D1", { 0x83fc, 0x1234, }, 2 },
+	{ "DIVS.W $1234(A1),D1", { 0x83e9, 0x1234, }, 2 },
+	{ "DIVU.W $12(A1,D2.L),D3", { 0x86f1, 0x2812, }, 2 },
+	{ "DIVS.L $1234(A1),D0", { 0x4c69, 0x0800, 0x1234 }, 3 },
+	{ "DIVS.L $1234(A1),D0:D2", { 0x4c69, 0x2c00, 0x1234 }, 3 },
+	{ "DIVUL.L $1234(A1),D0:D2", { 0x4c69, 0x2000, 0x1234 }, 3 },
+
+	{ "EOR.L D1,(A3)", { 0xb393, }, 1 },
+	{ "EORI.L #$12345678,$1234(A3)", { 0x0aab, 0x1234, 0x5678, 0x1234, }, 4 },
+	
 };
 
 TestSuite testSuites[] =
