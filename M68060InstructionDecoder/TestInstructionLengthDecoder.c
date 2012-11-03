@@ -104,6 +104,19 @@ static const InstructionLengthDecoderTest bitFieldInstructionTests[] =
 	{ "BFTST $1234(A1,D1.l){D2:D3}", { 0xe8f1, 0x08a3, 0x1920, 0x1234, }, 4 },
 };
 
+static const InstructionLengthDecoderTest miscellaneousTests[] =
+{
+	{ "ABCD D2,D3", { 0xc702, }, 1 },
+	{ "ABCD -(A1),-(A3)", { 0xc709, }, 1 },
+	{ "BKPT #4", { 0x484c, }, 1 },
+	{ "CHK.W $1234(A1),D1", { 0x43a9, 0x1234, }, 2 },
+	{ "CHK.L #$12345678,D1", { 0x433c, 0x1234, 0x5678, }, 3 },
+	{ "CLR.W $1234(A1)", { 0x4269, 0x1234, }, 2 },
+	{ "CMP.L (A3),D1", { 0xb293, }, 1 },
+	{ "CMPI.L #$12345678,D1", { 0x0c81, 0x1234, 0x5678, }, 3 },
+	{ "CMPM.B (A5)+,(A4)+", { 0xb90d, }, 1 },
+	{ "CMPM.L (A3)+,(A2)+", { 0xb58b, }, 1, },
+};
 
 TestSuite testSuites[] =
 {
@@ -112,6 +125,7 @@ TestSuite testSuites[] =
 	{ "Relative branch tests", relativeBranchTests, (sizeof relativeBranchTests / sizeof relativeBranchTests[0]) },
 	{ "Bitflip instruction tests", bitFlipInstructionTests, (sizeof bitFlipInstructionTests / sizeof bitFlipInstructionTests[0]) },
 	{ "Bit field instruction tests", bitFieldInstructionTests, (sizeof bitFieldInstructionTests / sizeof bitFieldInstructionTests[0]) },
+	{ "Miscellaneous tests", miscellaneousTests, (sizeof miscellaneousTests / sizeof miscellaneousTests[0]) },
 };
 
 void runTestSuite(const InstructionLengthDecoderTest* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)

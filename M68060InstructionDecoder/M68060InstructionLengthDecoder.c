@@ -41,7 +41,7 @@ typedef struct
 
 static OpWordLengthInfo opWordLengthInformation[] =
 {
-	{ 0xf1f8, 0xc100, "ABCD Rx,Ry", },
+	{ 0xf1f8, 0xc100, "ABCD Dx,Dy", },
 	{ 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", },
 	{ 0xf100, 0xd000, "ADD <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf100, 0xd100, "ADD Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
@@ -52,6 +52,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xffc0, 0x0840, "BCHG #imm,<ea>", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf1c0, 0x0180, "BCLR Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0x0880, "BCLR #imm,<ea>", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
+	{ 0xfff8, 0x4848, "BKPT #imm", },
 	{ 0xf1c0, 0x01c0, "BSET Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0x08c0, "BSET #imm,<ea>", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf1c0, 0x0100, "BTST Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
@@ -64,6 +65,12 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xffc0, 0xefc0, "BFINS Dn,<ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0xeec0, "BFSET <ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0xe8c0, "BFTST <ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_DefaultEALocation, },
+	{ 0xf1c0, 0x4180, "CHK <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xf1c0, 0x4100, "CHK <ea>,Dn", 0, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xff00, 0x4200, "CLR <ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
+	{ 0xf000, 0xb000, "CMP <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xff00, 0x0c00, "CMPI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
+	{ 0xf138, 0xb108, "CMPM (Ax)+,(Ay)+", },
 	{ 0, 0, "Unknown instruction", },
 };
 

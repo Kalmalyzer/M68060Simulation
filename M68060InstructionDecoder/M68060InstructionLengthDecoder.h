@@ -13,7 +13,7 @@ typedef struct
 	uint totalWords;
 	
 	const char* mnemonic;
-	
+
 } InstructionLength;
 
 bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWords, uint numInstructionWordsAvailable, InstructionLength* instructionLength);
