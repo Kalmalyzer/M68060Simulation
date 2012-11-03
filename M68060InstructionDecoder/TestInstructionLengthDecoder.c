@@ -106,14 +106,13 @@ static const InstructionLengthDecoderTest bitFieldInstructionTests[] =
 	{ "BFTST $1234(A1,D1.l){D2:D3}", { 0xe8f1, 0x08a3, 0x1920, 0x1234, }, 4 },
 };
 
-static const InstructionLengthDecoderTest miscellaneousTests[] =
+static const InstructionLengthDecoderTest integerArithmeticTests[] =
 {
 	{ "ABCD D2,D3", { 0xc702, }, 1 },
 	{ "ABCD -(A1),-(A3)", { 0xc709, }, 1 },
-	{ "BKPT #4", { 0x484c, }, 1 },
-	{ "CHK.W $1234(A1),D1", { 0x43a9, 0x1234, }, 2 },
-	{ "CHK.L #$12345678,D1", { 0x433c, 0x1234, 0x5678, }, 3 },
-	{ "CLR.W $1234(A1)", { 0x4269, 0x1234, }, 2 },
+	{ "ADDQ.L #5,([A2])", { 0x5ab2, 0x0151, }, 2 },
+	{ "ADDX.W D2,D3", { 0xd742, }, 1 },
+	{ "ADDX.L -(A1),-(A3)", { 0xd789, }, 1 },
 	{ "CMP.L (A3),D1", { 0xb293, }, 1 },
 	{ "CMPI.L #$12345678,D1", { 0x0c81, 0x1234, 0x5678, }, 3 },
 	{ "CMPM.B (A5)+,(A4)+", { 0xb90d, }, 1 },
@@ -125,10 +124,36 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "DIVS.L $1234(A1),D0", { 0x4c69, 0x0800, 0x1234 }, 3 },
 	{ "DIVS.L $1234(A1),D0:D2", { 0x4c69, 0x2c00, 0x1234 }, 3 },
 	{ "DIVUL.L $1234(A1),D0:D2", { 0x4c69, 0x2000, 0x1234 }, 3 },
+};
+
+static const InstructionLengthDecoderTest shiftRotateTests[] =
+{
+	{ "ASL.W D0,D1", { 0xe161, }, 1 },
+	{ "ASL.L #3,D2", { 0xe782, }, 1 },
+	{ "ASR.B #1,D1", { 0xe201, }, 1 },
+	{ "ASR.W $1234(A5)", { 0xe0ed, 0x1234, }, 2 },
+};
+
+static const InstructionLengthDecoderTest integerLogicTests[] =
+{
+	{ "AND.W $1234(A1),D3", { 0xc669, 0x1234, }, 2 },
+	{ "AND.L D3,$1234(A1)", { 0xc7a9, 0x1234, }, 2 },
+	{ "ANDI.L #$12345678,($12345678,D2)", { 0x02b0, 0x1234, 0x5678, 0x21b0, 0x1234, 0x5678, }, 6 },
 
 	{ "EOR.L D1,(A3)", { 0xb393, }, 1 },
 	{ "EORI.L #$12345678,$1234(A3)", { 0x0aab, 0x1234, 0x5678, 0x1234, }, 4 },
-	
+};
+
+static const InstructionLengthDecoderTest miscellaneousTests[] =
+{
+	{ "BKPT #4", { 0x484c, }, 1 },
+	{ "CHK.W $1234(A1),D1", { 0x43a9, 0x1234, }, 2 },
+	{ "CHK.L #$12345678,D1", { 0x433c, 0x1234, 0x5678, }, 3 },
+	{ "CLR.W $1234(A1)", { 0x4269, 0x1234, }, 2 },
+
+	{ "EXG D2,D3", { 0xc543, }, 1 },
+	{ "EXG A4,A5", { 0xc94d, }, 1 },
+	{ "EXG D3,A7", { 0xc78f, }, 1 },
 };
 
 TestSuite testSuites[] =
@@ -138,6 +163,9 @@ TestSuite testSuites[] =
 	{ "Relative branch tests", relativeBranchTests, (sizeof relativeBranchTests / sizeof relativeBranchTests[0]) },
 	{ "Bitflip instruction tests", bitFlipInstructionTests, (sizeof bitFlipInstructionTests / sizeof bitFlipInstructionTests[0]) },
 	{ "Bit field instruction tests", bitFieldInstructionTests, (sizeof bitFieldInstructionTests / sizeof bitFieldInstructionTests[0]) },
+	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },
+	{ "Shift/rotate tests", shiftRotateTests, (sizeof shiftRotateTests / sizeof shiftRotateTests[0]) },
+	{ "Integer logic tests", integerLogicTests, (sizeof integerLogicTests / sizeof integerLogicTests[0]) },
 	{ "Miscellaneous tests", miscellaneousTests, (sizeof miscellaneousTests / sizeof miscellaneousTests[0]) },
 };
 

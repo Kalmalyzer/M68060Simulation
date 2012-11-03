@@ -46,6 +46,22 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf100, 0xd000, "ADD <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf100, 0xd100, "ADD Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xff00, 0x0600, "ADDI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
+	{ 0xf100, 0x5000, "ADDQ #imm,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
+	{ 0xf1f8, 0xd100, "ADDX Dx,Dy", },
+	{ 0xf1f8, 0xd108, "ADDX -(Ax),-(Ay)", },
+	{ 0xf1f8, 0xc140, "EXG Dn,Dn", }, // Shadows AND
+	{ 0xf1f8, 0xc148, "EXG Am,An", }, // Shadows AND
+	{ 0xf1f8, 0xc188, "EXG Dm,An", }, // Shadows AND
+	{ 0xf100, 0xc000, "AND <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xf100, 0xc100, "AND Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
+	{ 0xff00, 0x0200, "ANDI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
+
+	{ 0xffc0, 0xeac0, "BFCHG <ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows ASL/ASR #imm/Dm,Dn
+	{ 0xffc0, 0xeec0, "BFSET <ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows ASL/ASR #imm/Dm,Dn
+
+	{ 0xfec0, 0xe0c0, "ASL/ASR <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows ASL/ASR #imm/Dm,Dn
+	{ 0xf018, 0xe000, "ASL/ASR #imm/Dm,Dn", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_None, },
+	
 	{ 0xff00, 0x6100, "BSR <relative address>", 0, SizeEncoding_RelativeBranchEncoding, EAEncoding_RelativeBranch, EAEncoding_None, }, // Shadows Bcc
 	{ 0xf000, 0x6000, "Bcc <relative address>", 0, SizeEncoding_RelativeBranchEncoding, EAEncoding_RelativeBranch, EAEncoding_None, },
 	{ 0xf1c0, 0x0140, "BCHG Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
@@ -57,13 +73,11 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xffc0, 0x08c0, "BSET #imm,<ea>", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf1c0, 0x0100, "BTST Dn,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0x0800, "BTST #imm,<ea>", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
-	{ 0xffc0, 0xeac0, "BFCHG <ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0xecc0, "BFCLR <ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0xebc0, "BFEXTS <ea>{Do:Dw},Dn", 1, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xffc0, 0xe9c0, "BFEXTU <ea>{Do:Dw},Dn", 1, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xffc0, 0xedc0, "BFFFO <ea>{Do:Dw},Dn", 1, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xffc0, 0xefc0, "BFINS Dn,<ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
-	{ 0xffc0, 0xeec0, "BFSET <ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xffc0, 0xe8c0, "BFTST <ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xf1c0, 0x4180, "CHK <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf1c0, 0x4100, "CHK <ea>,Dn", 0, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
