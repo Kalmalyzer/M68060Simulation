@@ -78,13 +78,40 @@ static const InstructionLengthDecoderTest relativeBranchTests[] =
 	{ "BRA.S *+$12", { 0x6012, }, 1 },
 	{ "BNE.W *+$1234", { 0x6600, 0x1234, }, 2 },
 	{ "BEQ.L *+$12345678", { 0x67ff, 0x1234, 0x5678, }, 3 },
+	{ "BSR.S *+$12", { 0x6112, }, 1 },
+	{ "BSR.W *+$1234", { 0x6100, 0x1234, }, 2 },
+	{ "BSR.L *+$12345678", { 0x61ff, 0x1234, 0x5678, }, 3 },
 };
+
+static const InstructionLengthDecoderTest bitFlipInstructionTests[] =
+{
+	{ "BTST D1,$12345678.L", { 0x0339, 0x1234, 0x5678, }, 3 },
+	{ "BCLR #3,$12345678.L", { 0x08b9, 0x0003, 0x1234, 0x5678, }, 4 },
+	{ "BCHG D1,D3", { 0x0343, }, 1 },
+	{ "BSET #31,D2", { 0x08c2, 0x001f, }, 2 },
+};
+
+static const InstructionLengthDecoderTest bitFieldInstructionTests[] =
+{
+	{ "BFCHG $1234(A1,D1.l){D2:D3}", { 0xeaf1, 0x08a3, 0x1920, 0x1234, }, 4 },
+	{ "BFCHG D1{D2:D3}", { 0xeac1, 0x08a3, }, 2 },
+	{ "BFCLR $1234(A1,D1.l){D2:D3}", { 0xecf1, 0x08a3, 0x1920, 0x1234, }, 4 },
+	{ "BFEXTS ($12345678.L,A1,D1.l){D2:D3},D4", { 0xebf1, 0x48a3, 0x1930, 0x1234, 0x5678, }, 5 },
+	{ "BFEXTU ($1234.w,A1){D2:D3},D4", { 0xe9e9, 0x48a3, 0x1234, }, 3 },
+	{ "BFFFO (A1){D2:D3},D4", { 0xedd1, 0x48a3, }, 2 },
+	{ "BFINS D1,($1234.w,A1){D2:D3}", { 0xefe9, 0x18a3, 0x1234, }, 3 },
+	{ "BFSET D1{D2:D3}", { 0xeec1, 0x08a3, }, 2 },
+	{ "BFTST $1234(A1,D1.l){D2:D3}", { 0xe8f1, 0x08a3, 0x1920, 0x1234, }, 4 },
+};
+
 
 TestSuite testSuites[] =
 {
 	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
 	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
 	{ "Relative branch tests", relativeBranchTests, (sizeof relativeBranchTests / sizeof relativeBranchTests[0]) },
+	{ "Bitflip instruction tests", bitFlipInstructionTests, (sizeof bitFlipInstructionTests / sizeof bitFlipInstructionTests[0]) },
+	{ "Bit field instruction tests", bitFieldInstructionTests, (sizeof bitFieldInstructionTests / sizeof bitFieldInstructionTests[0]) },
 };
 
 void runTestSuite(const InstructionLengthDecoderTest* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)
