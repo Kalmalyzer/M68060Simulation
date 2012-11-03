@@ -43,6 +43,9 @@ typedef struct
 static OpWordLengthInfo opWordLengthInformation[] =
 {
 
+	{ 0xf0ff, 0x50fc, "TRAPcc", }, // Shadows Scc <ea>
+	{ 0xf0ff, 0x50fa, "TRAPcc.W #imm", 0, SizeEncoding_Word, EAEncoding_Immediate, EAEncoding_None, }, // Shadows Scc <ea>
+	{ 0xf0ff, 0x50fb, "TRAPcc.L #imm", 0, SizeEncoding_Long, EAEncoding_Immediate, EAEncoding_None, }, // Shadows Scc <ea>
 	{ 0xf0f8, 0x50c8, "DBcc <relative address>", 1, SizeEncoding_Word, EAEncoding_None, EAEncoding_None, }, // Shadows Scc <ea>
 	{ 0xf0c0, 0x50c0, "Scc <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows ADDQ/SUBQ
 
@@ -152,6 +155,8 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xffff, 0x003c, "ORI #imm,CCR", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_None, }, // Shadows ANDI #imm,<ea>
 	{ 0xff00, 0x0000, "ORI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 
+	{ 0xfff8, 0x4840, "SWAP Dn", }, // Shadows PEA
+
 	{ 0xffc0, 0x4840, "PEA <ea>", 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
 
 	{ 0xfec0, 0xe6c0, "ROL/ROR <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows ROL/ROR #imm/Dm,Dn
@@ -171,6 +176,13 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf100, 0x9100, "SUB Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
 	{ 0xff00, 0x0400, "SUBI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf100, 0x5100, "SUBQ #imm,<ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
+
+	{ 0xffc0, 0x4ac0, "TAS <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
+
+	{ 0xfff8, 0x4e40, "TRAP #imm", },
+	{ 0xffff, 0x4e76, "TRAPV", },
+
+	{ 0xff00, 0x4a00, "TST <ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
 
 	{ 0, 0, "Unknown instruction", },
 };

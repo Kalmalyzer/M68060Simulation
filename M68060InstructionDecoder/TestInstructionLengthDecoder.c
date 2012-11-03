@@ -163,6 +163,10 @@ static const InstructionLengthDecoderTest integerArithmeticTests[] =
 
 	{ "SUBX.W D1,D1", { 0x9341, }, 1 },
 	{ "SUBX.B -(A4),-(A3)", { 0x970c, }, 1 },
+
+	{ "TST.B D7", { 0x4a07, }, 1 },
+	{ "TST.L $1234(A4)", { 0x4aac, 0x1234, }, 2 },
+	{ "TST.W (A0)+", { 0x4a58, }, 1 },
 };
 
 static const InstructionLengthDecoderTest shiftRotateTests[] =
@@ -266,7 +270,17 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "ST D7", { 0x50c7, }, 1 },
 	{ "SNE (A2)", { 0x56d2, }, 1 },
 	{ "SEQ $1234(A3)", { 0x57eb, 0x1234, }, 2 },
-	
+
+	{ "SWAP D3", { 0x4843, }, 1 },
+
+	{ "TAS D2", { 0x4ac2, }, 1 },
+	{ "TAS $12(A5,D3.L)", { 0x4af5, 0x3812, }, 2 },
+
+	{ "TRAP #3", { 0x4e43, }, 1 },
+	{ "TRAPNE", { 0x56fc, }, 1 },
+	{ "TRAPGE.W #$1234", { 0x5cfa, 0x1234, }, 2 },
+	{ "TRAPLT.L #$12345678", { 0x5dfb, 0x1234, 0x5678, }, 3 },
+	{ "TRAPV", { 0x4e76, }, 1 },
 };
 
 TestSuite testSuites[] =
