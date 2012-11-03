@@ -136,6 +136,10 @@ static const InstructionLengthDecoderTest integerArithmeticTests[] =
 	{ "MULU.W $12(A1,D2.L),D3", { 0xc6f1, 0x2812, }, 2 },
 	{ "MULS.L $1234(A1),D0", { 0x4c29, 0x0800, 0x1234 }, 3 },
 	{ "MULS.L $1234(A1),D0:D2", { 0x4c29, 0x2c00, 0x1234 }, 3 },
+
+	{ "NBCD (A3)", { 0x4813, }, 1 },
+	{ "NEG.W D7", { 0x4447, }, 1 },
+	{ "NEGX.L D5", { 0x4085, }, 1 },
 };
 
 static const InstructionLengthDecoderTest shiftRotateTests[] =
@@ -156,8 +160,19 @@ static const InstructionLengthDecoderTest integerLogicTests[] =
 	{ "AND.L D3,$1234(A1)", { 0xc7a9, 0x1234, }, 2 },
 	{ "ANDI.L #$12345678,($12345678,D2)", { 0x02b0, 0x1234, 0x5678, 0x21b0, 0x1234, 0x5678, }, 6 },
 
+	{ "ANDI #$12,CCR", { 0x023c, 0x0012, }, 2 },
+
 	{ "EOR.L D1,(A3)", { 0xb393, }, 1 },
 	{ "EORI.L #$12345678,$1234(A3)", { 0x0aab, 0x1234, 0x5678, 0x1234, }, 4 },
+
+	{ "NOT.W -(A5)", { 0x4665, }, 1 },
+
+	{ "OR.L $1234(A3),D2", { 0x84ab, 0x1234, }, 2 },
+	{ "OR.B d2,([A4])", { 0x8534, 0x0151, }, 2 },
+	{ "ORI.W #$1234,d5", { 0x0045, 0x1234, }, 2 },
+
+	{ "ORI #$12,CCR", { 0x003c, 0x0012, }, 2 },
+
 };
 
 static const InstructionLengthDecoderTest moveTests[] =
@@ -201,8 +216,6 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "CHK.L #$12345678,D1", { 0x433c, 0x1234, 0x5678, }, 3 },
 	{ "CLR.W $1234(A1)", { 0x4269, 0x1234, }, 2 },
 
-	{ "ANDI #$12,CCR", { 0x023c, 0x0012, }, 2 },
-	
 	{ "EXT.W D2", { 0x4882, }, 1 },
 	{ "EXT.L D3", { 0x48c3, }, 1 },
 	{ "EXTB.L D4", { 0x49c4, }, 1 },
@@ -212,6 +225,9 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	
 	{ "LINK.W A3,#$1234", { 0x4e53, 0x1234, }, 2 },
 	{ "LINK.L A3,#$12345678", { 0x480c, 0x1234, 0x5678, }, 3 },
+
+	{ "NOP", { 0x4e71, }, 1 },
+	
 };
 
 TestSuite testSuites[] =

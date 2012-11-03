@@ -130,6 +130,20 @@ static OpWordLengthInfo opWordLengthInformation[] =
 
 	{ 0xffc0, 0x4c00, "MULS/MULU.L <ea>,Dm:Dn (can be 32bit or 64bit multiply)", 1, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
 
+	{ 0xffc0, 0x4800, "NBCD <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
+	{ 0xff00, 0x4400, "NEG <ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
+	{ 0xff00, 0x4000, "NEGX <ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
+
+	{ 0xffff, 0x4e71, "NOP", },
+
+	{ 0xff00, 0x4600, "NOT <ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
+
+	{ 0xf100, 0x8000, "OR <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xf100, 0x8100, "OR Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
+
+	{ 0xffff, 0x003c, "ORI #imm,CCR", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_None, }, // Shadows ANDI #imm,<ea>
+	{ 0xff00, 0x0000, "ORI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
+
 	{ 0, 0, "Unknown instruction", },
 };
 
