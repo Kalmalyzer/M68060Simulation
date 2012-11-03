@@ -93,6 +93,13 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xffc0, 0x4c40, "DIVS/DIVU.L <ea>,Dn (can be 32bit or 64bit division)", 1, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf1c0, 0x80c0, "DIVU.W <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xff00, 0x0a00, "EORI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
+	{ 0xfff8, 0x4880, "EXT.W Dn", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_None, },
+	{ 0xfff8, 0x48c0, "EXT.L Dn", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_None, },
+	{ 0xfff8, 0x49c0, "EXTB.L Dn", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_None, },
+	{ 0xffff, 0x4afc, "ILLEGAL", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_None, },
+	{ 0xffc0, 0x4ec0, "JMP <ea>", 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xffc0, 0x4e80, "JSR <ea>", 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
+	{ 0xf1c0, 0x41c0, "LEA <ea>,An", 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0, 0, "Unknown instruction", },
 };
 

@@ -155,6 +155,16 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "EXG A4,A5", { 0xc94d, }, 1 },
 	{ "EXG D3,A7", { 0xc78f, }, 1 },
 	{ "ANDI #$12,CCR", { 0x023c, 0x0012, }, 2 },
+	
+	{ "EXT.W D2", { 0x4882, }, 1 },
+	{ "EXT.L D3", { 0x48c3, }, 1 },
+	{ "EXTB.L D4", { 0x49c4, }, 1 },
+	{ "ILLEGAL", { 0x4afc, }, 1 },
+	
+	{ "JMP $1234(A3)", { 0x4eeb, 0x1234, }, 2 },
+	{ "JSR ([$12345678.L,PC])", { 0x4ebb, 0x0171, 0x1234, 0x5678, }, 4 },
+	
+	{ "LEA ([A3,D2.L*4],$1234.W),A2", { 0x45f3, 0x2d12, 0x1234, }, 3 },
 };
 
 TestSuite testSuites[] =
