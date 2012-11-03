@@ -36,8 +36,16 @@ Program {
 	},
 }
 
+Program {
+	Name = "TestInstructionLengthDecoder",
+	Sources = {
+		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/TestInstructionLengthDecoder.c",
+	},
+}
 Default "TestCache"
 Default "TestOpWordDecoder"
 Default "TestPairability"
 Default "TestAguAlu"
+Default "TestInstructionLengthDecoder"
 
