@@ -320,7 +320,8 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 		return true;
 
 	instructionLength->numSpecialOperandSpecifierWords = opWordLengthInfo->numSpecialOperandSpecifierWords;
-
+	instructionLength->mnemonic = opWordLengthInfo->mnemonic;
+	
 	operationSize = decodeOperationSize(opWord, opWordLengthInfo->sizeEncoding);
 	
 	operandOffset = 1 + instructionLength->numSpecialOperandSpecifierWords;

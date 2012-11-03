@@ -132,7 +132,7 @@ void runTestSuite(const InstructionLengthDecoderTest* tests, uint numTests, bool
 			success = false;
 		
 		if (success && printSuccess)
-			printf("success: Decoding %s yields %u words\n", test->instruction, test->numInstructionWords);
+			printf("success: Decoding %s yields %u words (%s)\n", test->instruction, test->numInstructionWords, instructionLength.mnemonic);
 		if (!success && printFailure)
 			printf("failure: Decoding %s yields %u words but should be %u words\n", test->instruction, instructionLength.totalWords, test->numInstructionWords);
 
@@ -148,7 +148,7 @@ void runTestSuite(const InstructionLengthDecoderTest* tests, uint numTests, bool
 	
 int main(void)
 {
-	bool printSuccess = false;
+	bool printSuccess = true;
 	bool printFailure = true;
 	
 	uint numSuccessfulTests = 0;
