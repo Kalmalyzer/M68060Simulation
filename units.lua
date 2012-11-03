@@ -43,9 +43,18 @@ Program {
 		"M68060InstructionDecoder/TestInstructionLengthDecoder.c",
 	},
 }
+
+Program {
+	Name = "InstructionLengthDisassembler",
+	Sources = {
+		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/InstructionLengthDisassembler.c",
+	},
+}
+
 Default "TestCache"
 Default "TestOpWordDecoder"
 Default "TestPairability"
 Default "TestAguAlu"
 Default "TestInstructionLengthDecoder"
-
+Default "InstructionLengthDisassembler"
