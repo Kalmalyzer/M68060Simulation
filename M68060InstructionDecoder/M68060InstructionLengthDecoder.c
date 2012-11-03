@@ -460,7 +460,10 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 	}
 
 	if (opWordLengthInfo->mask == 0 && opWordLengthInfo->match == 0)
+	{
+		instructionLength->totalWords = 1;
 		return true;
+	}
 
 	instructionLength->numSpecialOperandSpecifierWords = opWordLengthInfo->numSpecialOperandSpecifierWords;
 	instructionLength->mnemonic = opWordLengthInfo->mnemonic;
