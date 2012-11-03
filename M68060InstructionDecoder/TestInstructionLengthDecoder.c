@@ -154,6 +154,7 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "EXG D2,D3", { 0xc543, }, 1 },
 	{ "EXG A4,A5", { 0xc94d, }, 1 },
 	{ "EXG D3,A7", { 0xc78f, }, 1 },
+	{ "ANDI #$12,CCR", { 0x023c, 0x0012, }, 2 },
 };
 
 TestSuite testSuites[] =
@@ -189,7 +190,7 @@ void runTestSuite(const InstructionLengthDecoderTest* tests, uint numTests, bool
 		if (success && printSuccess)
 			printf("success: Decoding %s yields %u words (%s)\n", test->instruction, test->numInstructionWords, instructionLength.mnemonic);
 		if (!success && printFailure)
-			printf("failure: Decoding %s yields %u words but should be %u words\n", test->instruction, instructionLength.totalWords, test->numInstructionWords);
+			printf("failure: Decoding %s yields %u words but should be %u words (%s)\n", test->instruction, instructionLength.totalWords, test->numInstructionWords, instructionLength.mnemonic ? instructionLength.mnemonic : "no mnemonic given");
 
 		if (success)
 			numSuccessfulTests++;

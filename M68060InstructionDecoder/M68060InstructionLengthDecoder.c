@@ -54,6 +54,8 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf1f8, 0xc188, "EXG Dm,An", }, // Shadows AND
 	{ 0xf100, 0xc000, "AND <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf100, 0xc100, "AND Dn,<ea>", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
+
+	{ 0xffff, 0x023c, "ANDI #imm,CCR", 0, SizeEncoding_Byte, EAEncoding_Immediate, EAEncoding_None, }, // Shadows ANDI #imm,<ea>
 	{ 0xff00, 0x0200, "ANDI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 
 	{ 0xffc0, 0xeac0, "BFCHG <ea>{Do:Dw}", 1, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows ASL/ASR #imm/Dm,Dn
