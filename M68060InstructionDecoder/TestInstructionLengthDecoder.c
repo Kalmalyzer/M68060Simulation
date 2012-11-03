@@ -85,7 +85,7 @@ static const InstructionLengthDecoderTest relativeBranchTests[] =
 	{ "DBEQ *+$12", { 0x57ca, 0x1234, }, 2 },
 };
 
-static const InstructionLengthDecoderTest bitFlipInstructionTests[] =
+static const InstructionLengthDecoderTest singleBitInstructionTests[] =
 {
 	{ "BTST D1,$12345678.L", { 0x0339, 0x1234, 0x5678, }, 3 },
 	{ "BCLR #3,$12345678.L", { 0x08b9, 0x0003, 0x1234, 0x5678, }, 4 },
@@ -161,7 +161,7 @@ TestSuite testSuites[] =
 	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
 	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
 	{ "Relative branch tests", relativeBranchTests, (sizeof relativeBranchTests / sizeof relativeBranchTests[0]) },
-	{ "Bitflip instruction tests", bitFlipInstructionTests, (sizeof bitFlipInstructionTests / sizeof bitFlipInstructionTests[0]) },
+	{ "Single-bit instruction tests", singleBitInstructionTests, (sizeof singleBitInstructionTests / sizeof singleBitInstructionTests[0]) },
 	{ "Bit field instruction tests", bitFieldInstructionTests, (sizeof bitFieldInstructionTests / sizeof bitFieldInstructionTests[0]) },
 	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },
 	{ "Shift/rotate tests", shiftRotateTests, (sizeof shiftRotateTests / sizeof shiftRotateTests[0]) },
