@@ -184,6 +184,8 @@ static OpWordLengthInfo opWordLengthInformation[] =
 
 	{ 0xff00, 0x4a00, "TST <ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAEncoding_DefaultEALocation, },
 
+	{ 0xfff8, 0x4e58, "UNLK An", },
+
 	{ 0, 0, "Unknown instruction", },
 };
 

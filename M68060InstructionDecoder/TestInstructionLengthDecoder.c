@@ -281,6 +281,8 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 	{ "TRAPGE.W #$1234", { 0x5cfa, 0x1234, }, 2 },
 	{ "TRAPLT.L #$12345678", { 0x5dfb, 0x1234, 0x5678, }, 3 },
 	{ "TRAPV", { 0x4e76, }, 1 },
+	
+	{ "UNLK A3", { 0x4e5b, }, 1 },
 };
 
 TestSuite testSuites[] =
