@@ -80,7 +80,7 @@ uint16_t readBigEndianUInt16(uint16_t* data)
 		uint16_t data16;
 		uint8_t data8[2];
 	} conversion;
-	conversion.data16 = data;
+	conversion.data16 = *data;
 	return ((conversion.data8[0] << 8) & 0xff00) | (conversion.data8[1] & 0x00ff);
 }
 
@@ -95,7 +95,7 @@ uint32_t readBigEndianUInt32(uint32_t* data)
 		uint32_t data32;
 		uint8_t data8[4];
 	} conversion;
-	conversion.data32 = data;
+	conversion.data32 = *data;
 	return ((conversion.data8[0] << 24) & 0xff000000)
 		| ((conversion.data8[1] << 16) & 0x00ff0000)
 		| ((conversion.data8[2] << 8) & 0x0000ff00)
