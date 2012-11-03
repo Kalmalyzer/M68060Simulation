@@ -112,10 +112,23 @@ static const InstructionLengthDecoderTest bitFieldInstructionTests[] =
 	{ "BFTST $1234(A1,D1.l){D2:D3}", { 0xe8f1, 0x08a3, 0x1920, 0x1234, }, 4 },
 };
 
-static const InstructionLengthDecoderTest integerArithmeticTests[] =
+static const InstructionLengthDecoderTest bcdArithmeticTests[] =
 {
 	{ "ABCD D2,D3", { 0xc702, }, 1 },
 	{ "ABCD -(A1),-(A3)", { 0xc709, }, 1 },
+
+	{ "SBCD D2,D3", { 0x8702, }, 1 },
+	{ "SBCD -(A1),-(A3)", { 0x8709, }, 1 },
+
+	{ "PACK D1,D2,#$1234", { 0x8541, 0x1234, }, 2 },
+	{ "PACK -(A2),-(A1),#$1234", { 0x834a, 0x1234, }, 2 },
+
+	{ "UNPK D2,D3,#$1234", { 0x8782, 0x1234, }, 2 },
+	{ "UNPK -(A7),-(A6),#$1234", { 0x8d8f, 0x1234, }, 2 },
+};
+
+static const InstructionLengthDecoderTest integerArithmeticTests[] =
+{
 	{ "ADDQ.L #5,([A2])", { 0x5ab2, 0x0151, }, 2 },
 	{ "ADDX.W D2,D3", { 0xd742, }, 1 },
 	{ "ADDX.L -(A1),-(A3)", { 0xd789, }, 1 },
@@ -140,6 +153,16 @@ static const InstructionLengthDecoderTest integerArithmeticTests[] =
 	{ "NBCD (A3)", { 0x4813, }, 1 },
 	{ "NEG.W D7", { 0x4447, }, 1 },
 	{ "NEGX.L D5", { 0x4085, }, 1 },
+
+	{ "SUB.B D1,D2", { 0x9401, }, 1 },
+	{ "SUBA.W D4,A5", { 0x9ac4, }, 1 },
+	{ "SUB.L D2,-(A6)", { 0x95a6, }, 1 },
+	{ "SUBI.W #$1234,D5", { 0x0445, 0x1234, }, 2 },
+	{ "SUBQ.L #4,D0", { 0x5980, }, 1 },
+	{ "SUBQ.B #3,([A5])", { 0x5735, 0x0151, }, 2 },
+
+	{ "SUBX.W D1,D1", { 0x9341, }, 1 },
+	{ "SUBX.B -(A4),-(A3)", { 0x970c, }, 1 },
 };
 
 static const InstructionLengthDecoderTest shiftRotateTests[] =
@@ -236,30 +259,13 @@ static const InstructionLengthDecoderTest miscellaneousTests[] =
 
 	{ "NOP", { 0x4e71, }, 1 },
 
-	{ "PACK D1,D2,#$1234", { 0x8541, 0x1234, }, 2 },
-	{ "PACK -(A2),-(A1),#$1234", { 0x834a, 0x1234, }, 2 },
-	{ "UNPK D2,D3,#$1234", { 0x8782, 0x1234, }, 2 },
-	{ "UNPK -(A7),-(A6),#$1234", { 0x8d8f, 0x1234, }, 2 },
-
 	{ "PEA $12(A3,D1.W)", { 0x4873, 0x1012, }, 2 },
 	
 	{ "RTS", { 0x4e75, }, 1 },
 
-	{ "SBCD D2,D3", { 0x8702, }, 1 },
-	{ "SBCD -(A1),-(A3)", { 0x8709, }, 1 },
-
 	{ "ST D7", { 0x50c7, }, 1 },
 	{ "SNE (A2)", { 0x56d2, }, 1 },
 	{ "SEQ $1234(A3)", { 0x57eb, 0x1234, }, 2 },
-	{ "SUB.B D1,D2", { 0x9401, }, 1 },
-	{ "SUBA.W D4,A5", { 0x9ac4, }, 1 },
-	{ "SUB.L D2,-(A6)", { 0x95a6, }, 1 },
-	{ "SUBI.W #$1234,D5", { 0x0445, 0x1234, }, 2 },
-	{ "SUBQ.L #4,D0", { 0x5980, }, 1 },
-	{ "SUBQ.B #3,([A5])", { 0x5735, 0x0151, }, 2 },
-
-	{ "SUBX.W D1,D1", { 0x9341, }, 1 },
-	{ "SUBX.B -(A4),-(A3)", { 0x970c, }, 1 },
 	
 };
 
@@ -271,6 +277,7 @@ TestSuite testSuites[] =
 	{ "Absolute jump tests", absoluteJumpTests, (sizeof absoluteJumpTests / sizeof absoluteJumpTests[0]) },
 	{ "Single-bit instruction tests", singleBitInstructionTests, (sizeof singleBitInstructionTests / sizeof singleBitInstructionTests[0]) },
 	{ "Bit field instruction tests", bitFieldInstructionTests, (sizeof bitFieldInstructionTests / sizeof bitFieldInstructionTests[0]) },
+	{ "BCD arithmetic tests", bcdArithmeticTests, (sizeof bcdArithmeticTests / sizeof bcdArithmeticTests[0]) },
 	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },
 	{ "Shift/rotate tests", shiftRotateTests, (sizeof shiftRotateTests / sizeof shiftRotateTests[0]) },
 	{ "Integer logic tests", integerLogicTests, (sizeof integerLogicTests / sizeof integerLogicTests[0]) },

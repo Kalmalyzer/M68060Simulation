@@ -42,6 +42,10 @@ typedef struct
 
 static OpWordLengthInfo opWordLengthInformation[] =
 {
+
+	{ 0xf0f8, 0x50c8, "DBcc <relative address>", 1, SizeEncoding_Word, EAEncoding_None, EAEncoding_None, }, // Shadows Scc <ea>
+	{ 0xf0c0, 0x50c0, "Scc <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, }, // Shadows ADDQ/SUBQ
+
 	{ 0xf1f8, 0xc100, "ABCD Dx,Dy", },
 	{ 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", },
 	{ 0xf138, 0xd100, "ADDX Dx,Dy", }, // Shadows ADD Dn,<ea>
@@ -95,7 +99,6 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf000, 0xb000, "CMP <ea>,Dn", 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xff00, 0x0c00, "CMPI #imm,<ea>", 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAEncoding_DefaultEALocation, },
 	{ 0xf138, 0xb108, "CMPM (Ax)+,(Ay)+", },
-	{ 0xf0f8, 0x50c8, "DBcc <relative address>", 1, SizeEncoding_Word, EAEncoding_None, EAEncoding_None, },
 	{ 0xf1c0, 0x81c0, "DIVS.W <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xffc0, 0x4c40, "DIVS/DIVU.L <ea>,Dr:Dq (can be 32bit or 64bit division)", 1, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAEncoding_None, },
 	{ 0xf1c0, 0x80c0, "DIVU.W <ea>,Dn", 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAEncoding_None, },
@@ -161,8 +164,6 @@ static OpWordLengthInfo opWordLengthInformation[] =
 
 	{ 0xf1f8, 0x8100, "SBCD Dx,Dy", },
 	{ 0xf1f8, 0x8108, "SBCD -(Ax),-(Ay)", },
-
-	{ 0xf0c0, 0x50c0, "Scc <ea>", 0, SizeEncoding_None, EAEncoding_None, EAEncoding_DefaultEALocation, },
 
 	{ 0xf138, 0x9100, "SUBX Dx,Dy", }, // Shadows SUB Dn,<e>
 	{ 0xf138, 0x9108, "SUBX -(Ax),-(Ay)", }, // Shadows SUB Dn,<e>
