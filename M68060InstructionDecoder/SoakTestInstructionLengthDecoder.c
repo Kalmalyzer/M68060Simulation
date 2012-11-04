@@ -6,7 +6,7 @@
 	
 int main(void)
 {
-	const char* previousMnemonic = 0;
+	const char* previousDescription = 0;
 	uint opWord;
 
 	printf("Attempting to decode lengths for all opwords...\n");
@@ -26,10 +26,10 @@ int main(void)
 			return -1;
 		}
 		
-		if (previousMnemonic != instructionLength.mnemonic)
+		if (previousDescription != instructionLength.description)
 		{
-			printf("%04x: %s\n", opWord, instructionLength.mnemonic);
-			previousMnemonic = instructionLength.mnemonic;
+			printf("%04x: %s\n", opWord, instructionLength.description);
+			previousDescription = instructionLength.description;
 		}
 	}
 

@@ -20,7 +20,7 @@ typedef struct
 
 	uint totalWords; // Total number of words in instruction, including the OpWord
 	
-	const char* mnemonic; // Approximate instruction description, mainly for debugging purposes. Example: "CMP Dn,<ea>"
+	const char* description; // Approximate instruction description, mainly for debugging purposes. Example: "CMP Dn,<ea>"
 
 } InstructionLength;
 

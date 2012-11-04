@@ -2,7 +2,7 @@
 	This program is intended as a test of the instruction length decoder.
 	It loads in an AmigaOS executable from disk, and then plows through it, word by word:
 	Each iteration it will attempt to decode the length of the next instruction based on the instruction words seen so far.
-	If length decoding succeeds, the instruction words used will be printed, along with the total instruction length and mnemonic.
+	If length decoding succeeds, the instruction words used will be printed, along with the total instruction length and description.
 	 Then the entire instruction is skipped.
 	If length decoding doesn't succeed, the program will try again with one more instruction word.
 	If length decoding doesn't succeed with 16 known instruction words, there's a fatal bug in the decoder and the program will thus give up.
@@ -141,7 +141,7 @@ int main(int argc, char** argv)
 	currentInstruction = start;
 	instructionBufferUsage = 0;
 
-	printf("Opcodes                       NumWords  Mnemonic\n");
+	printf("Opcodes                       NumWords  Description\n");
 
 	while (currentInstruction + instructionBufferUsage + 1 < end)
 	{
@@ -168,7 +168,7 @@ int main(int argc, char** argv)
 					printf(".... ");
 				else
 					printf("     ");
-			printf("[%d]       %s\n", instructionLength.totalWords, instructionLength.mnemonic);
+			printf("[%d]       %s\n", instructionLength.totalWords, instructionLength.description);
 			
 			currentInstruction += instructionLength.totalWords;	// Skip until beginning of next instruction
 			instructionBufferUsage = 0; // Empty instruction buffer

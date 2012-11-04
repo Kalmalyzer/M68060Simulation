@@ -61,7 +61,7 @@ typedef struct
 	uint16_t mask;
 	uint16_t match;
 
-	const char* mnemonic;
+	const char* description;
 	
 	OpWordClass class;
 	
@@ -536,7 +536,7 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 	opWordClassInfo = &opWordClassInformation[opWordLengthInfo->class];
 	
 	instructionLength->numSpecialOperandSpecifierWords = opWordClassInfo->numSpecialOperandSpecifierWords;
-	instructionLength->mnemonic = opWordLengthInfo->mnemonic;
+	instructionLength->description = opWordLengthInfo->description;
 
 	operationSize = decodeOperationSize(opWord, opWordClassInfo->sizeEncoding);
 	
