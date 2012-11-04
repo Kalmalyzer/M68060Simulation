@@ -120,7 +120,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf100, 0xd100, "ADD Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea, },
 	{ 0xff00, 0x0600, "ADDI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea, },
 	{ 0xf100, 0x5000, "ADDQ #imm,<ea>", OpWordClass_DestEa, },
-	{ 0xf1f8, 0xc140, "EXG Dn,Dn", OpWordClass_NoExtraWords, }, // Shadows AND
+	{ 0xf1f8, 0xc140, "EXG Dm,Dn", OpWordClass_NoExtraWords, }, // Shadows AND
 	{ 0xf1f8, 0xc148, "EXG Am,An", OpWordClass_NoExtraWords, }, // Shadows AND
 	{ 0xf1f8, 0xc188, "EXG Dm,An", OpWordClass_NoExtraWords, }, // Shadows AND
 	{ 0xf1c0, 0xc1c0, "MULS.W <ea>,Dn", OpWordClass_Word_SrcEa, }, // Shadows AND
