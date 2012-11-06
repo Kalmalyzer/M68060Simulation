@@ -30,8 +30,8 @@ static const InstructionLengthDecoderTest ea6BitTests[] =
 	{ "ADD.B #$12,D1", { 0xd23c, 0x0012, }, 2, "ADD <ea>,Dn" },
 	{ "ADD.W #$1234,D1", { 0xd27c, 0x1234, }, 2, "ADD <ea>,Dn" },
 	{ "ADD.L #$12345678,D1", { 0xd2bc, 0x1234, 0x5678, }, 3, "ADD <ea>,Dn" },
-	{ "ADDA.W #$1234,A1", { 0xd3e9, 0x1234, }, 2, "ADD <ea>,Dn" },
-	{ "ADDA.L #$12345678,A1", { 0xd3fc, 0x1234, 0x5678, }, 3, "ADD <ea>,Dn" },
+	{ "ADDA.W #$1234,A1", { 0xd2fc, 0x1234, }, 2, "ADDA.W <ea>,An" },
+	{ "ADDA.L #$12345678,A1", { 0xd3fc, 0x1234, 0x5678, }, 3, "ADDA.L <ea>,An" },
 	{ "ADD.B $1234.W,D1", { 0xd238, 0x1234, }, 2, "ADD <ea>,Dn" },
 	{ "ADD.W $1234.W,D1", { 0xd278, 0x1234, }, 2, "ADD <ea>,Dn" },
 	{ "ADD.L $1234.W,D1", { 0xd2b8, 0x1234, }, 2, "ADD <ea>,Dn" },
@@ -130,10 +130,15 @@ static const InstructionLengthDecoderTest bcdArithmeticTests[] =
 
 static const InstructionLengthDecoderTest integerArithmeticTests[] =
 {
+	{ "ADD.B D1,D3", { 0xd601, }, 1, "ADD <ea>,Dn" },
+	{ "ADD.L D1,D3", { 0xd681, }, 1, "ADD <ea>,Dn" },
+	{ "ADDA.W D4,A5", { 0xdac4, }, 1, "ADDA.W <ea>,An" },
+	{ "ADDA.L (A2),A5", { 0xdbd2, }, 1, "ADDA.L <ea>,An" },
 	{ "ADDQ.L #5,([A2])", { 0x5ab2, 0x0151, }, 2, "ADDQ #imm,<ea>" },
 	{ "ADDX.W D2,D3", { 0xd742, }, 1, "ADDX Dx,Dy" },
 	{ "ADDX.L -(A1),-(A3)", { 0xd789, }, 1, "ADDX -(Ax),-(Ay)" },
-	{ "CMP.L (A3),D1", { 0xb293, }, 1, "CMP <ea>,Dn" },
+	{ "CMP.L (A3),D1", { 0xb293, }, 1, "CMP <ea>,Rn" },
+	{ "CMPA.L D1,A1", { 0xb3c1, }, 1, "CMP <ea>,Rn" },
 	{ "CMPI.L #$12345678,D1", { 0x0c81, 0x1234, 0x5678, }, 3, "CMPI #imm,<ea>" },
 	{ "CMPM.B (A5)+,(A4)+", { 0xb90d, }, 1, "CMPM (Ax)+,(Ay)+" },
 	{ "CMPM.L (A3)+,(A2)+", { 0xb58b, }, 1, "CMPM (Ax)+,(Ay)+" },
@@ -156,7 +161,9 @@ static const InstructionLengthDecoderTest integerArithmeticTests[] =
 	{ "NEGX.L D5", { 0x4085, }, 1, "NEGX <ea>" },
 
 	{ "SUB.B D1,D2", { 0x9401, }, 1, "SUB <ea>,Dn" },
-	{ "SUBA.W D4,A5", { 0x9ac4, }, 1, "SUB <ea>,Dn" },
+	{ "SUBA.W D4,A5", { 0x9ac4, }, 1, "SUBA.W <ea>,An" },
+	{ "SUBA.W (A2),A5", { 0x9ad2, }, 1, "SUBA.W <ea>,An" },
+	{ "SUBA.L (A2),A5", { 0x9bd2, }, 1, "SUBA.L <ea>,An" },
 	{ "SUB.L D2,-(A6)", { 0x95a6, }, 1, "SUB Dn,<ea>" },
 	{ "SUBI.W #$1234,D5", { 0x0445, 0x1234, }, 2, "SUBI #imm,<ea>" },
 	{ "SUBQ.L #4,D0", { 0x5980, }, 1, "SUBQ #imm,<ea>" },
@@ -224,7 +231,7 @@ static const InstructionLengthDecoderTest moveTests[] =
 	{ "MOVE.L #$12345678,([$12345678.L,A1])", { 0x23bc, 0x1234, 0x5678, 0x0171, 0x1234, 0x5678, }, 6, "MOVE.L <ea>,<ea>" },
 	{ "MOVE.L ([$12345678.L,A1]),([$12345678.L,A2])", { 0x25b1, 0x0171, 0x1234, 0x5678, 0x0171, 0x1234, 0x5678, }, 7, "MOVE.L <ea>,<ea>" },
 	{ "MOVE.L ([$12345678.L,PC]),([D0],$12345678.L)", { 0x21bb, 0x0171, 0x1234, 0x5678, 0x0193, 0x1234, 0x5678, }, 7, "MOVE.L <ea>,<ea>" },
-	{ "MOVE.W D2,A2", { 0x3442, }, 1, "MOVE.W <ea>,<ea>" },
+	{ "MOVEA.W D2,A2", { 0x3442, }, 1, "MOVE.W <ea>,<ea>" },
 	{ "MOVE.L A2,D3", { 0x260a, }, 1, "MOVE.L <ea>,<ea>" },
 
 	{ "MOVE CCR,$1234(A3)", { 0x42eb, 0x1234, }, 2, "MOVE CCR,<ea>" },
