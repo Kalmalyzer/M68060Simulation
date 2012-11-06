@@ -235,6 +235,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xfec0, 0xe4c0, "ROXL/ROXR <ea>", OpWordClass_DestEa, }, // Shadows ROXL/ROXR #imm/Dm,Dn
 	{ 0xf018, 0xe010, "ROXL/ROXR #imm/Dm,Dn", OpWordClass_EncodedSize, },
 
+	{ 0xffff, 0x4e74, "RTD #imm", OpWordClass_ImmediateWord, },
 	{ 0xffff, 0x4e77, "RTR", OpWordClass_NoExtraWords, },
 	{ 0xffff, 0x4e75, "RTS", OpWordClass_NoExtraWords, },
 
