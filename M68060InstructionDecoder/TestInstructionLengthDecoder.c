@@ -245,8 +245,8 @@ static const InstructionLengthDecoderTest moveTests[] =
 	{ "MOVE16 $12345678.L,(A1)", { 0xf619, 0x1234, 0x5678, }, 3, "MOVE16 (An <-> xxx.L)" },
 	{ "MOVE16 (A2)+,$12345678.L", { 0xf602, 0x1234, 0x5678, }, 3, "MOVE16 (An <-> xxx.L)" },
 	
-	{ "MOVEM.L D2-D7,-(A7)", { 0x48e7, 0x3f00, }, 2, "MOVEM <ea> <-> reglist" },
-	{ "MOVEM.W (A3),D0/D2", { 0x4c93, 0x0005, }, 2, "MOVEM <ea> <-> reglist" },
+	{ "MOVEM.L D2-D7,-(A7)", { 0x48e7, 0x3f00, }, 2, "MOVEM reglist,<ea>" },
+	{ "MOVEM.W (A3),D0/D2", { 0x4c93, 0x0005, }, 2, "MOVEM <ea>,reglist" },
 
 	{ "MOVEP.W D2,$1234(A1)", { 0x0589, 0x1234, }, 2, "MOVEP Dx <-> d16(An)" },
 	{ "MOVEP.L $1234(A2),D3", { 0x074a, 0x1234, }, 2, "MOVEP Dx <-> d16(An)" },
