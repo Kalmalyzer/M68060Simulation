@@ -323,46 +323,57 @@ uint decodeBriefOrFullExtensionWordLength(uint16_t firstExtensionWord)
 	return numExtensionWords;
 }
 
-EAMode decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lower3Bits eaLower3Bits)
+bool decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lower3Bits eaLower3Bits, EAMode* eaMode)
 {
 	switch (eaUpper3Bits)
 	{
 		case EA6BitMode_Upper3Bits_Dn:
-			return EAMode_Dn;
+			*eaMode = EAMode_Dn;
+			return true;
 		case EA6BitMode_Upper3Bits_An:
-			return EAMode_An;
+			*eaMode = EAMode_An;
+			return true;
 		case EA6BitMode_Upper3Bits_Mem_An:
-			return EAMode_Mem_An;
+			*eaMode = EAMode_Mem_An;
+			return true;
 		case EA6BitMode_Upper3Bits_Mem_An_PostIncrement:
-			return EAMode_Mem_An_PostIncrement;
+			*eaMode = EAMode_Mem_An_PostIncrement;
+			return true;
 		case EA6BitMode_Upper3Bits_Mem_PreDecrement_An:
-			return EAMode_Mem_PreDecrement_An;
+			*eaMode = EAMode_Mem_PreDecrement_An;
+			return true;
 		case EA6BitMode_Upper3Bits_Mem_D16_An:
-			return EAMode_Mem_D16_An;
+			*eaMode = EAMode_Mem_D16_An;
+			return true;
 		case EA6BitMode_Upper3Bits_Mem_BriefOrFullExtensionWord_An:
-			return EAMode_Mem_BriefOrFullExtensionWord_An;
+			*eaMode = EAMode_Mem_BriefOrFullExtensionWord_An;
+			return true;
 		case EA6BitMode_Upper3Bits_CheckLower3Bits:
 			switch (eaLower3Bits)
 			{
 				case EA6BitMode_Lower3Bits_Mem_Absolute_Word:
-					return EAMode_Mem_Absolute_Word;
+					*eaMode = EAMode_Mem_Absolute_Word;
+					return true;
 				case EA6BitMode_Lower3Bits_Mem_Absolute_Long:
-					return EAMode_Mem_Absolute_Long;
+					*eaMode = EAMode_Mem_Absolute_Long;
+					return true;
 				case EA6BitMode_Lower3Bits_Mem_D16_PC:
-					return EAMode_Mem_D16_PC;
+					*eaMode = EAMode_Mem_D16_PC;
+					return true;
 				case EA6BitMode_Lower3Bits_Mem_BriefOrFullExtensionWord_PC:
-					return EAMode_Mem_BriefOrFullExtensionWord_PC;
+					*eaMode = EAMode_Mem_BriefOrFullExtensionWord_PC;
+					return true;
 				case EA6BitMode_Lower3Bits_Immediate:
-					return EAMode_Immediate;
+					*eaMode = EAMode_Immediate;
+					return true;
 				default:
-					M68060_ERROR("Invalid 6-bit EA");
+					return false;
 			}
 			break;
 		default:
 			M68060_ERROR("Invalid 6-bit EA");
+			return false;
 	}
-	
-	return EAMode_None;
 }
 
 bool decodeOperandLength(EAMode eaMode, bool firstExtensionWordAvailable, uint16_t firstExtensionWord, OperationSize operationSize, uint* numExtensionWords)
@@ -436,35 +447,39 @@ bool decodeOperandLength(EAMode eaMode, bool firstExtensionWordAvailable, uint16
 	return true;
 }
 
-EAMode decodeOperand(uint16_t opWord, EAEncoding eaEncoding)
+bool decodeOperand(uint16_t opWord, EAEncoding eaEncoding, EAMode* eaMode)
 {
 	switch (eaEncoding)
 	{
 		case EAEncoding_None:
-			return EAMode_None;
+			*eaMode = EAMode_None;
+			return true;
 		case EAEncoding_DefaultEALocation:
 		{
 			uint ea6BitMode = opWord & 0x3f;
 			EA6BitMode_Upper3Bits eaUpper3Bits = (ea6BitMode >> 3) & 7;
 			EA6BitMode_Lower3Bits eaLower3Bits = ea6BitMode & 7;
-			return decodeEA6BitMode(eaUpper3Bits, eaLower3Bits);
+			return decodeEA6BitMode(eaUpper3Bits, eaLower3Bits, eaMode);
 		}
 		case EAEncoding_MoveDestinationEALocation:
 		{
 			uint ea6BitMode = (opWord >> 6) & 0x3f;
 			EA6BitMode_Upper3Bits eaUpper3Bits = ea6BitMode & 7;
 			EA6BitMode_Lower3Bits eaLower3Bits = (ea6BitMode >> 3) & 7;
-			return decodeEA6BitMode(eaUpper3Bits, eaLower3Bits);
+			return decodeEA6BitMode(eaUpper3Bits, eaLower3Bits, eaMode);
 		}
 		case EAEncoding_Immediate:
-			return EAMode_Immediate;
+			*eaMode = EAMode_Immediate;
+			return true;
 		case EAEncoding_D16:
-			return EAMode_Mem_D16_An;
+			*eaMode = EAMode_Mem_D16_An;
+			return true;
 		case EAEncoding_RelativeBranch:
-			return EAMode_RelativeBranch;
+			*eaMode = EAMode_RelativeBranch;
+			return true;
 		default:
 			M68060_ERROR("Unsupported EAEncoding");
-			return EAMode_None;
+			return false;
 	}
 }
 
@@ -593,11 +608,12 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 		operandOffset = 1 + instructionLength.numSpecialOperandSpecifierWords;
 
 		{
-			EAMode eaMode = decodeOperand(opWord, opWordClassInfo->sourceEAEncoding);
+			EAMode eaMode;
+			bool validEaMode = decodeOperand(opWord, opWordClassInfo->sourceEAEncoding, &eaMode);
 			bool firstExtensionWordAvailable = (operandOffset < numInstructionWordsAvailable);
 			uint16_t firstExtensionWord = (firstExtensionWordAvailable ? instructionWords[operandOffset] : 0);
 
-			if (isValidEAMode(eaMode, opWordClassInfo->sourceEAModeMask))
+			if (validEaMode && isValidEAMode(eaMode, opWordClassInfo->sourceEAModeMask))
 			{
 				if (!decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, operationSize, &instructionLength.numSourceEAExtensionWords))
 					return false;
@@ -612,11 +628,12 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 			operandOffset += instructionLength.numSourceEAExtensionWords;
 
 			{
-				EAMode eaMode = decodeOperand(opWord, opWordClassInfo->destinationEAEncoding);
+				EAMode eaMode;
+				bool validEaMode = decodeOperand(opWord, opWordClassInfo->destinationEAEncoding, &eaMode);
 				bool firstExtensionWordAvailable = (operandOffset < numInstructionWordsAvailable);
 				uint16_t firstExtensionWord = (firstExtensionWordAvailable ? instructionWords[operandOffset] : 0);
 
-				if (isValidEAMode(eaMode, opWordClassInfo->destinationEAModeMask))
+				if (validEaMode && isValidEAMode(eaMode, opWordClassInfo->destinationEAModeMask))
 				{
 					if (!decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, operationSize, &instructionLength.numDestinationEAExtensionWords))
 						return false;
