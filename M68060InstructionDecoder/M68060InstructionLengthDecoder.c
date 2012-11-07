@@ -483,88 +483,88 @@ bool decodeOperand(uint16_t opWord, EAEncoding eaEncoding, EAMode* eaMode)
 	}
 }
 
-OperationSize decodeOperationSize(uint16_t opWord, SizeEncoding sizeEncoding)
+bool decodeOperationSize(uint16_t opWord, SizeEncoding sizeEncoding, OperationSize* operationSize)
 {
 	switch (sizeEncoding)
 	{
 		case SizeEncoding_None:
-			return OperationSize_Reserved;
+			*operationSize = OperationSize_Reserved;
+			return true;
 		case SizeEncoding_Byte:
-			return OperationSize_Byte;
+			*operationSize = OperationSize_Byte;
+			return true;
 		case SizeEncoding_Word:
-			return OperationSize_Word;
+			*operationSize = OperationSize_Word;
+			return true;
 		case SizeEncoding_Long:
-			return OperationSize_Long;
+			*operationSize = OperationSize_Long;
+			return true;
 		case SizeEncoding_DefaultOpModeEncoding:
 			{
 				OpMode opMode = (opWord & OpWord_OpMode_Mask) >> OpWord_OpMode_Shift;
-				OperationSize operationSize;
 				switch (opMode)
 				{
 					case OpMode_MemoryToDataRegister_Byte:
-						operationSize = OperationSize_Byte;
-						break;
+						*operationSize = OperationSize_Byte;
+						return true;
 					case OpMode_MemoryToDataRegister_Word:
-						operationSize = OperationSize_Word;
-						break;
+						*operationSize = OperationSize_Word;
+						return true;
 					case OpMode_MemoryToDataRegister_Long:
-						operationSize = OperationSize_Long;
-						break;
+						*operationSize = OperationSize_Long;
+						return true;
 					case OpMode_MemoryToAddressRegister_Word:
-						operationSize = OperationSize_Word;
-						break;
+						*operationSize = OperationSize_Word;
+						return true;
 					case OpMode_DataRegisterToMemory_Byte:
-						operationSize = OperationSize_Byte;
-						break;
+						*operationSize = OperationSize_Byte;
+						return true;
 					case OpMode_DataRegisterToMemory_Word:
-						operationSize = OperationSize_Word;
-						break;
+						*operationSize = OperationSize_Word;
+						return true;
 					case OpMode_DataRegisterToMemory_Long:
-						operationSize = OperationSize_Long;
-						break;
+						*operationSize = OperationSize_Long;
+						return true;
 					case OpMode_MemoryToAddressRegister_Long:
-						operationSize = OperationSize_Long;
-						break;
+						*operationSize = OperationSize_Long;
+						return true;
 					default:
 						M68060_ERROR("Unsupported OpMode");
+						return false;
 				}
-				return operationSize;
 			}
 		case SizeEncoding_DefaultOpSizeEncoding:
 			{
 				OpSize opSize = (opWord & OpWord_OpSize_Mask) >> OpWord_OpSize_Shift;
-				OperationSize operationSize;
 				switch (opSize)
 				{
 					case OpSize_Byte:
-						operationSize = OperationSize_Byte;
-						break;
+						*operationSize = OperationSize_Byte;
+						return true;
 					case OpSize_Word:
-						operationSize = OperationSize_Word;
-						break;
+						*operationSize = OperationSize_Word;
+						return true;
 					case OpSize_Long:
-						operationSize = OperationSize_Long;
-						break;
+						*operationSize = OperationSize_Long;
+						return true;
 					default:
-						M68060_ERROR("Unsupported OpSize");
+						return false;
 				}
-				return operationSize;
 			}
 		case SizeEncoding_RelativeBranchEncoding:
 			{
 				uint displacement8Bit = (opWord & 0xff);
-				OperationSize operationSize;
 				if (displacement8Bit == 0x00)
-					operationSize = OperationSize_Word;
+					*operationSize = OperationSize_Word;
 				else if (displacement8Bit == 0xff)
-					operationSize = OperationSize_Long;
+					*operationSize = OperationSize_Long;
 				else
-					operationSize = OperationSize_Byte;
-				return operationSize;
+					*operationSize = OperationSize_Byte;
+				return true;
 			}
 		default:
 			M68060_ERROR("Unsupported SizeEncoding");
-			return OperationSize_Reserved;
+			return false;
 	}
 }
 
@@ -578,7 +578,6 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 	const OpWordLengthInfo* opWordLengthInfo = opWordLengthInformation;
 	const OpWordClassInfo* opWordClassInfo;
 	uint16_t opWord;
-	OperationSize operationSize;
 	uint operandOffset;
 	InstructionLength instructionLength = { 0 };
 	bool validInstruction = true;
@@ -598,15 +597,21 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 	}
 	else
 	{
+		bool validOperationSize;
+		OperationSize operationSize;
 		opWordClassInfo = &opWordClassInformation[opWordLengthInfo->class];
 		
 		instructionLength.numSpecialOperandSpecifierWords = opWordClassInfo->numSpecialOperandSpecifierWords;
 		instructionLength.description = opWordLengthInfo->description;
 
-		operationSize = decodeOperationSize(opWord, opWordClassInfo->sizeEncoding);
+		validOperationSize = decodeOperationSize(opWord, opWordClassInfo->sizeEncoding, &operationSize);
+
+		if (!validOperationSize)
+			validInstruction = false;
 		
 		operandOffset = 1 + instructionLength.numSpecialOperandSpecifierWords;
 
+		if (validInstruction)
 		{
 			EAMode eaMode;
 			bool validEaMode = decodeOperand(opWord, opWordClassInfo->sourceEAEncoding, &eaMode);
