@@ -116,7 +116,7 @@ enum { EAModeMask_Alterable = EAModeMask_Rn | EAModeMask_MemoryReference_Rn | EA
 enum { EAModeMask_Data = EAModeMask_Dn | EAModeMask_MemoryReference_Rn | EAModeMask_MemoryReference_Absolute | EAModeMask_Immediate | EAModeMask_MemoryReference_PC };
 enum { EAModeMask_Control = EAModeMask_MemoryReference_StaticRn | EAModeMask_MemoryReference_Absolute | EAModeMask_MemoryReference_PC };
 enum { EAModeMask_ControlAlterable = EAModeMask_MemoryReference_StaticRn | EAModeMask_MemoryReference_Absolute };
-enum { EAModeMask_DnOrControl = EAModeMask_Data | EAModeMask_Control };
+enum { EAModeMask_DnOrControl = EAModeMask_Dn | EAModeMask_Control };
 
 #endif
 	

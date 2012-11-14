@@ -38,7 +38,7 @@ typedef enum
 	OpWordClass_LongMulDiv,
 	OpWordClass_Bitfield_ReadEa,
 	OpWordClass_Control,
-	OpWordClass_SrcEa,
+	OpWordClass_Byte_SrcEa,
 	OpWordClass_Word_SrcEa,
 	OpWordClass_BitImmInstruction_Read,
 	OpWordClass_BitImmInstruction_ReadWrite,
@@ -48,7 +48,7 @@ typedef enum
 	OpWordClass_EncodedSize_DestEa_Read,
 	OpWordClass_EncodedSize_DestEa_ReadWrite,
 	OpWordClass_DestEa_Alterable,
-	OpWordClass_DestEa_Data,
+	OpWordClass_Byte_DestEa_Data,
 	OpWordClass_DestEa_DataAlterable,
 	OpWordClass_DestEa_MemoryAlterable,
 	OpWordClass_EncodedSize,
@@ -97,7 +97,7 @@ static OpWordClassInfo opWordClassInformation[] =
 	{ 1, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAModeMask_Data, EAEncoding_None, EAModeMask_None, }, // OpWordClass_LongMulDiv,
 	{ 1, SizeEncoding_None, EAEncoding_DefaultEALocation, EAModeMask_DnOrControl, EAEncoding_None, EAModeMask_None, }, // OpWordClass_Bitfield_ReadEa,
 	{ 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAModeMask_Control, EAEncoding_None, EAModeMask_None, }, // OpWordClass_Control,
-	{ 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAModeMask_Data, EAEncoding_None, EAModeMask_None, }, // OpWordClass_SrcEa,
+	{ 0, SizeEncoding_Byte, EAEncoding_DefaultEALocation, EAModeMask_Data, EAEncoding_None, EAModeMask_None, }, // OpWordClass_Byte_SrcEa,
 	{ 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAModeMask_Data, EAEncoding_None, EAModeMask_None, }, // OpWordClass_Word_SrcEa,
 	{ 0, SizeEncoding_Byte, EAEncoding_Immediate, EAModeMask_All, EAEncoding_DefaultEALocation, EAModeMask_Data, }, // OpWordClass_BitImmInstruction_Read,
 	{ 0, SizeEncoding_Byte, EAEncoding_Immediate, EAModeMask_All, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_BitImmInstruction_ReadWrite,
@@ -107,7 +107,7 @@ static OpWordClassInfo opWordClassInformation[] =
 	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_All, }, // OpWordClass_EncodedSize_DestEa_Read,
 	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_EncodedSize_DestEa_ReadWrite,
 	{ 0, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_Alterable, }, // OpWordClass_DestEa_Alterable,
-	{ 0, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_Data, }, // OpWordClass_DestEa_Data,
+	{ 0, SizeEncoding_Byte, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_Data, }, // OpWordClass_Byte_DestEa_Data,
 	{ 0, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_DestEa_DataAlterable,
 	{ 0, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_MemoryAlterable, }, // OpWordClass_DestEa_MemoryAlterable,
 	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_None, EAModeMask_None, }, // OpWordClass_EncodedSize,
@@ -169,7 +169,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xfff8, 0x4848, "BKPT #imm", OpWordClass_NoExtraWords, }, // Shadows PEA
 	{ 0xf1c0, 0x01c0, "BSET Dn,<ea>", OpWordClass_DestEa_DataAlterable, },
 	{ 0xffc0, 0x08c0, "BSET #imm,<ea>", OpWordClass_BitImmInstruction_ReadWrite, },
-	{ 0xf1c0, 0x0100, "BTST Dn,<ea>", OpWordClass_DestEa_Data, },
+	{ 0xf1c0, 0x0100, "BTST Dn,<ea>", OpWordClass_Byte_DestEa_Data, },
 	{ 0xffc0, 0x0800, "BTST #imm,<ea>", OpWordClass_BitImmInstruction_Read, },
 	{ 0xffc0, 0xecc0, "BFCLR <ea>{Do:Dw}", OpWordClass_Bitfield_ReadWriteEa, },
 	{ 0xffc0, 0xebc0, "BFEXTS <ea>{Do:Dw},Dn", OpWordClass_Bitfield_ReadEa, },
@@ -210,7 +210,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf000, 0x2000, "MOVE.L <ea>,<ea>", OpWordClass_Move_L, }, /* Combined MOVE.L & MOVEA.L */
 	{ 0xf000, 0x3000, "MOVE.W <ea>,<ea>", OpWordClass_Move_W, }, /* Combined MOVE.W & MOVEA.W */
 
-	{ 0xffc0, 0x44c0, "MOVE <ea>,CCR", OpWordClass_SrcEa, },
+	{ 0xffc0, 0x44c0, "MOVE <ea>,CCR", OpWordClass_Byte_SrcEa, },
 
 	{ 0xffc0, 0x40c0, "MOVE SR,<ea>", OpWordClass_DestEa_DataAlterable, },
 
