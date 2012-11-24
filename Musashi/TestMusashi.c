@@ -53,16 +53,16 @@ void m68k_write_memory_8(unsigned int address, unsigned int value)
 
 void m68k_write_memory_16(unsigned int address, unsigned int value)
 {
-	mem[address + 0] = value & 0xff;
-	mem[address + 1] = (value >> 8) & 0xff;
+	mem[address + 0] = (value >> 8) & 0xff;
+	mem[address + 1] = value & 0xff;
 }
 
 void m68k_write_memory_32(unsigned int address, unsigned int value)
 {
-	mem[address + 0] = value & 0xff;
-	mem[address + 1] = (value >> 8) & 0xff;
-	mem[address + 2] = (value >> 16) & 0xff;
-	mem[address + 3] = (value >> 24) & 0xff;
+	mem[address + 0] = (value >> 24) & 0xff;
+	mem[address + 1] = (value >> 16) & 0xff;
+	mem[address + 2] = (value >> 8) & 0xff;
+	mem[address + 3] = value & 0xff;
 }
 
 extern void m68k_enter_subroutine(unsigned int pc, unsigned int targetPc)
