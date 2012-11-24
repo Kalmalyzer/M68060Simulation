@@ -192,6 +192,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0xf1c0, 0x81c0, "DIVS.W <ea>,Dn", OpWordClass_Word_SrcEa, },
 	{ 0xffc0, 0x4c40, "DIVS/DIVU.L <ea>,Dr:Dq (can be 32bit or 64bit division)", OpWordClass_LongMulDiv, },
 	{ 0xf1c0, 0x80c0, "DIVU.W <ea>,Dn", OpWordClass_Word_SrcEa, },
+	{ 0xffff, 0x0a3c, "EORI #imm,CCR", OpWordClass_ImmediateByte, }, // Shadows EORI #imm,<ea>
 	{ 0xff00, 0x0a00, "EORI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea, },
 	{ 0xfff8, 0x4880, "EXT.W Dn", OpWordClass_NoExtraWords, },
 	{ 0xfff8, 0x48c0, "EXT.L Dn", OpWordClass_NoExtraWords, },
