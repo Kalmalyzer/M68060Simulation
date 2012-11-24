@@ -208,6 +208,8 @@ static const InstructionLengthDecoderTest integerLogicTests[] =
 	{ "EOR.L D1,(A3)", { 0xb393, }, 1, "EOR.L Dn,<ea>" },
 	{ "EORI.L #$12345678,$1234(A3)", { 0x0aab, 0x1234, 0x5678, 0x1234, }, 4, "EORI #imm,<ea>" },
 
+	{ "EORI #$12,CCR", { 0x0a3c, 0x0012, }, 2, "EORI #imm,CCR" },
+
 	{ "NOT.W -(A5)", { 0x4665, }, 1, "NOT <ea>" },
 
 	{ "OR.L $1234(A3),D2", { 0x84ab, 0x1234, }, 2, "OR <ea>,Dn" },
