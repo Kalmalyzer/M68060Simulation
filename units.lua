@@ -124,6 +124,17 @@ Program {
 }
 
 Program {
+	Name = "SoakTestInstructionLengthDecoderAgainstMusashi",
+	Sources = {
+		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/SoakTestInstructionLengthDecoderAgainstMusashi.c",
+		"Musashi/StandardMusashiCallbacks.c",
+	},
+	
+	Depends = { "Musashi", },
+}
+
+Program {
 	Name = "InstructionLengthDisassembler",
 	Sources = {
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
@@ -137,6 +148,7 @@ Default "TestPairability"
 Default "TestAguAlu"
 Default "TestInstructionLengthDecoder"
 Default "SoakTestInstructionLengthDecoder"
+Default "SoakTestInstructionLengthDecoderAgainstMusashi"
 Default "InstructionLengthDisassembler"
 
 Default "Musashi"
