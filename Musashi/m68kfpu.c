@@ -1425,7 +1425,7 @@ static void m68040_do_fsave(m68ki_cpu_core *m68k, uint32_t addr, int reg, int in
 
 static void m68040_do_frestore(m68ki_cpu_core *m68k, uint32_t addr, int reg)
 {
-	bool m40 = 1; //m68k->cpu_type & CPU_TYPE_040;
+	int m40 = 1; //m68k->cpu_type & CPU_TYPE_040;
 	uint32_t temp = m68ki_read_32(addr);
 
 	// check for NULL frame

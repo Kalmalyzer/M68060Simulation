@@ -21,16 +21,6 @@ typedef signed int int32_t;
 typedef unsigned __int64 uint64_t;
 typedef signed __int64 int64_t;
 
-typedef unsigned char bool;
-
-#ifndef true
-#define true	1
-#endif
-
-#ifndef false
-#define false	0
-#endif
-
 #pragma warning(disable: 4100 4127 4201 4706)
 #endif
 
