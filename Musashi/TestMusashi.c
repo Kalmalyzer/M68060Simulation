@@ -1,6 +1,6 @@
 
-#include "../68k_emu_core/m68kcpu.h"
-#include "../68k_emu_core/m68k_log.h"
+#include "m68kcpu.h"
+#include "m68k_log.h"
 
 #include <stdarg.h>
 #include <stdlib.h>
