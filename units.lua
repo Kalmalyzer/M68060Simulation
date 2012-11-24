@@ -6,8 +6,8 @@ require "tundra.syntax.glob"
 DefRule {
 	Name = "m68kmake",
 	Pass = "CodeGeneration",
-	Command = "$(M68KMAKE) $(<) 68k_emu_core/m68k_in.c",
-	ImplicitInputs = { "$(M68KMAKE)", "68k_emu_core/m68k_in.c" },
+	Command = "$(M68KMAKE) $(<) Musashi/m68k_in.c",
+	ImplicitInputs = { "$(M68KMAKE)", "Musashi/m68k_in.c" },
 
 	Blueprint = {
 		TargetDir = { Required = true, Type = "string", Help = "Input filename", },
@@ -31,12 +31,11 @@ Program {
 	Name = "m68kmake",
 	Pass = "CompileGenerator",
 	Target = "$(M68KMAKE)",
-	Sources = { "68k_emu_core/m68kmake.c" },
+	Sources = { "Musashi/m68kmake.c" },
 }
 
 StaticLibrary {
 	Name = "Musashi",
-	Pass = "CodeGeneration", 
 	Env = {
 		CPPPATH = { "Musashi",
 					"$(OBJECTDIR)/_generated",
