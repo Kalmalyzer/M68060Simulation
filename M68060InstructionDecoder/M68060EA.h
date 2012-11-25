@@ -69,6 +69,26 @@ enum { FullExtensionWord_IIS_Shift = 0 };
 enum { FullExtensionWord_IIS_Bits = 3 };
 enum { FullExtensionWord_IIS_Mask = ((1 << FullExtensionWord_IIS_Bits) - 1) << FullExtensionWord_IIS_Shift };
 
+enum { FullExtensionWord_IS_IIS_Mask = FullExtensionWord_IndexSuppress_Mask | FullExtensionWord_IIS_Mask };
+
+typedef enum
+{
+	IS_IIS_PreIndexed_NoMemoryIndirect = 0,
+	IS_IIS_PreIndexed_Indirect_NullOuterDisplacement = 1,
+	IS_IIS_PreIndexed_Indirect_WordOuterDisplacement = 2,
+	IS_IIS_PreIndexed_Indirect_LongOuterDisplacement = 3,
+	// Reserved = 4
+	IS_IIS_PostIndexed_Indirect_NullOuterDisplacement = 5,
+	IS_IIS_PostIndexed_Indirect_WordOuterDisplacement = 6,
+	IS_IIS_PostIndexed_Indirect_LongOuterDisplacement = 7,
+	IS_IIS_NonIndexed_NoMemoryIndirect = FullExtensionWord_IndexSuppress_Mask | 0,
+	IS_IIS_NonIndexed_Indirect_NullOuterDisplacement = FullExtensionWord_IndexSuppress_Mask | 1,
+	IS_IIS_NonIndexed_Indirect_WordOuterDisplacement = FullExtensionWord_IndexSuppress_Mask | 2,
+	IS_IIS_NonIndexed_Indirect_LongOuterDisplacement = FullExtensionWord_IndexSuppress_Mask | 3,
+	// Reserved = FullExtensionWord_IndexSuppress_Mask | 4..7
+
+} IS_IIS;
+
 typedef enum
 {
 	DisplacementSize_Reserved,

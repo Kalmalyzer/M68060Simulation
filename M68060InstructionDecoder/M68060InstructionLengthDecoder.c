@@ -4,6 +4,11 @@
 #include "M68060EA.h"
 #include "M68060OpWord.h"
 
+//Define this if you want decoding of some illegal EAs to not outright reject the instruction.
+// but to ignore any base/outer displacements instead; this is what Musashi seems to do.
+//#define MUSASHI_COMPATIBILITY_MODE
+
+
 typedef enum
 {
 	EAEncoding_None,
@@ -285,14 +290,14 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0, 0, "Unknown instruction", },
 };
 
-uint decodeBriefOrFullExtensionWordLength(uint16_t firstExtensionWord)
+bool decodeBriefOrFullExtensionWordLength(uint16_t firstExtensionWord, uint* numExtensionWords_)
 {
 	uint numExtensionWords = 1;
 		
 	if (firstExtensionWord & ExtensionWord_FullWord_Mask)
 	{
 		DisplacementSize baseDisplacementSize = (firstExtensionWord & FullExtensionWord_BaseDisplacementSize_Mask) >> FullExtensionWord_BaseDisplacementSize_Shift;
-		DisplacementSize outerDisplacementSize = (firstExtensionWord & FullExtensionWord_OuterDisplacementSize_Mask) >> FullExtensionWord_OuterDisplacementSize_Shift;
+		IS_IIS is_iis = (firstExtensionWord & FullExtensionWord_IS_IIS_Mask);
 
 		switch (baseDisplacementSize)
 		{
@@ -304,27 +309,46 @@ uint decodeBriefOrFullExtensionWordLength(uint16_t firstExtensionWord)
 			case DisplacementSize_Long:
 				numExtensionWords += 2;
 				break;
+			case DisplacementSize_Reserved:
+#ifdef MUSASHI_COMPATIBLITY_MODE
+				break;
+#else
+				return false;
+#endif
 			default:
-				M68060_ERROR("Unsuppored base displacement size");
+				M68060_ERROR("Unsupported BaseDisplacementSize");
 		}
 
-		// TODO: some outer displacement sizes are unsupported, depending on IndexSuppress bit; these should throw errors
-		switch (outerDisplacementSize)
+		switch (is_iis)
 		{
-			case DisplacementSize_Null:
+			case IS_IIS_PreIndexed_NoMemoryIndirect:
+			case IS_IIS_NonIndexed_NoMemoryIndirect:
+			case IS_IIS_PreIndexed_Indirect_NullOuterDisplacement:
+			case IS_IIS_PostIndexed_Indirect_NullOuterDisplacement:
+			case IS_IIS_NonIndexed_Indirect_NullOuterDisplacement:
 				break;
-			case DisplacementSize_Word:
+			case IS_IIS_PreIndexed_Indirect_WordOuterDisplacement:
+			case IS_IIS_PostIndexed_Indirect_WordOuterDisplacement:
+			case IS_IIS_NonIndexed_Indirect_WordOuterDisplacement:
 				numExtensionWords++;
 				break;
-			case DisplacementSize_Long:
+			case IS_IIS_PreIndexed_Indirect_LongOuterDisplacement:
+			case IS_IIS_PostIndexed_Indirect_LongOuterDisplacement:
+			case IS_IIS_NonIndexed_Indirect_LongOuterDisplacement:
 				numExtensionWords += 2;
 				break;
 			default:
+#ifdef MUSASHI_COMPATIBLITY_MODE
 				break;
+#else
+				return false;
+#endif
 		}
 	}
 	
-	return numExtensionWords;
+	*numExtensionWords_ = numExtensionWords;
+
+	return true;
 }
 
 bool decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lower3Bits eaLower3Bits, EAMode* eaMode)
@@ -380,7 +404,15 @@ bool decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lower3Bits 
 	}
 }
 
-bool decodeOperandLength(EAMode eaMode, bool firstExtensionWordAvailable, uint16_t firstExtensionWord, OperationSize operationSize, uint* numExtensionWords)
+typedef enum
+{
+	DecodeOperandLengthResult_InsufficientData,
+	DecodeOperandLengthResult_InvalidInstruction,
+	DecodeOperandLengthResult_ValidInstruction,
+
+} DecodeOperandLengthResult;
+
+DecodeOperandLengthResult decodeOperandLength(EAMode eaMode, bool firstExtensionWordAvailable, uint16_t firstExtensionWord, OperationSize operationSize, uint* numExtensionWords)
 {
 	switch (eaMode)
 	{
@@ -397,8 +429,9 @@ bool decodeOperandLength(EAMode eaMode, bool firstExtensionWordAvailable, uint16
 			break;
 		case EAMode_Mem_BriefOrFullExtensionWord_An:
 			if (!firstExtensionWordAvailable)
-				return false;
-			*numExtensionWords = decodeBriefOrFullExtensionWordLength(firstExtensionWord);
+				return DecodeOperandLengthResult_InsufficientData;
+			if (!decodeBriefOrFullExtensionWordLength(firstExtensionWord, numExtensionWords))
+				return DecodeOperandLengthResult_InvalidInstruction;
 			break;
 		case EAMode_Mem_Absolute_Word:
 			*numExtensionWords = 1;
@@ -411,8 +444,9 @@ bool decodeOperandLength(EAMode eaMode, bool firstExtensionWordAvailable, uint16
 			break;
 		case EAMode_Mem_BriefOrFullExtensionWord_PC:
 			if (!firstExtensionWordAvailable)
-				return false;
-			*numExtensionWords = decodeBriefOrFullExtensionWordLength(firstExtensionWord);
+				return DecodeOperandLengthResult_InsufficientData;
+			if (!decodeBriefOrFullExtensionWordLength(firstExtensionWord, numExtensionWords))
+				return DecodeOperandLengthResult_InvalidInstruction;
 			break;
 		case EAMode_Immediate:
 			switch (operationSize)
@@ -448,7 +482,7 @@ bool decodeOperandLength(EAMode eaMode, bool firstExtensionWordAvailable, uint16
 			M68060_ERROR("Invalid EAMode");
 	}
 	
-	return true;
+	return DecodeOperandLengthResult_ValidInstruction;
 }
 
 bool decodeOperand(uint16_t opWord, EAEncoding eaEncoding, EAMode* eaMode)
@@ -624,8 +658,12 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 
 			if (validEaMode && isValidEAMode(eaMode, opWordClassInfo->sourceEAModeMask))
 			{
-				if (!decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, operationSize, &instructionLength.numSourceEAExtensionWords))
+				DecodeOperandLengthResult decodeOperandLengthResult = decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, operationSize, &instructionLength.numSourceEAExtensionWords);
+
+				if (decodeOperandLengthResult == DecodeOperandLengthResult_InsufficientData)
 					return false;
+				else if (decodeOperandLengthResult == DecodeOperandLengthResult_InvalidInstruction)
+					validInstruction = false;
 			}
 			else
 				validInstruction = false;
@@ -644,8 +682,12 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 
 				if (validEaMode && isValidEAMode(eaMode, opWordClassInfo->destinationEAModeMask))
 				{
-					if (!decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, operationSize, &instructionLength.numDestinationEAExtensionWords))
+					DecodeOperandLengthResult decodeOperandLengthResult = decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, operationSize, &instructionLength.numDestinationEAExtensionWords);
+
+					if (decodeOperandLengthResult == DecodeOperandLengthResult_InsufficientData)
 						return false;
+					else if (decodeOperandLengthResult == DecodeOperandLengthResult_InvalidInstruction)
+						validInstruction = false;
 				}
 				else
 					validInstruction = false;
