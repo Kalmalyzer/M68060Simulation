@@ -116,7 +116,10 @@ bool soakTestExtensionWordDecoding(void)
 	{
 		InstructionLength instructionLength;
 		bool success;
-		uint16_t instructionBuffer[16] = { 0xd691 };
+		uint16_t instructionBuffer[16] = { 0xd6b1 };
+		uint musashiInstructionLength;
+		char musashiDisassembledInstruction[256];
+
 		instructionBuffer[1] = extensionWord;
 
 		success = decodeInstructionLengthFromInstructionWords(instructionBuffer, sizeof instructionBuffer / sizeof instructionBuffer[0], &instructionLength);
@@ -127,6 +130,19 @@ bool soakTestExtensionWordDecoding(void)
 			return false;
 		}
 
+		writeInstructionBufferToMusashiMemory(instructionBuffer, sizeof instructionBuffer / sizeof instructionBuffer[0]);
+		musashiInstructionLength = m68k_disassemble(musashiDisassembledInstruction, 0, M68K_CPU_TYPE_68040);
+
+		if (diffAgainstMusashi(instructionLength.totalWords, musashiInstructionLength, instructionBuffer[0]))
+		{
+			printf("Error: instruction length decoding mismatch for opWords %04x %04x -\n", instructionBuffer[0], instructionBuffer[1]);
+			printf("M68060InstructionLengthDecoder claims instruction %s, %d bytes\n", instructionLength.description, instructionLength.totalWords * 2);
+			printf("Musashi disassembler claims instruction %s, %d bytes\n",musashiDisassembledInstruction, musashiInstructionLength);
+			return false;
+		}
+
+		printf("%s %04x: %d\n", musashiDisassembledInstruction, instructionBuffer[1], instructionLength.totalWords);
+		
 		if (previousDescription != instructionLength.description)
 		{
 			printf("%04x %04x: %s\n", instructionBuffer[0], instructionBuffer[1], instructionLength.description);

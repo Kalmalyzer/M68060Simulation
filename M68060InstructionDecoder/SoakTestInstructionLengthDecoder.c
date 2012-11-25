@@ -47,7 +47,7 @@ bool soakTestExtensionWordDecoding(void)
 	{
 		InstructionLength instructionLength;
 		bool success;
-		uint16_t instructionBuffer[16] = { 0xd691 };
+		uint16_t instructionBuffer[16] = { 0xd6b1 };
 		instructionBuffer[1] = extensionWord;
 
 		success = decodeInstructionLengthFromInstructionWords(instructionBuffer, sizeof instructionBuffer / sizeof instructionBuffer[0], &instructionLength);
