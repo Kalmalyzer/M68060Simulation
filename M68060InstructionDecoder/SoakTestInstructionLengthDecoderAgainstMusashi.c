@@ -13,25 +13,25 @@ typedef struct
 
 IgnoreOp ignoreOps[] =
 {
-	{ 0xffff, 0x007c, }, // ORI #imm,SR
-	{ 0xffc0, 0x00c0, }, // CMP2.B <ea>,D0
-	{ 0xffff, 0x027c, }, // ANDI #imm,SR
-	{ 0xffc0, 0x02c0, }, // CMP2.W <ea>,D0
-	{ 0xffc0, 0x04c0, }, // CMP2.L <ea>,D0
-	{ 0xffff, 0x083c, }, // BTST #imm,#imm
-	{ 0xffff, 0x0a7c, }, // EORI #imm,SR
-	{ 0xffc0, 0x0ac0, }, // CAS.B D0,D0,<ea>
-	{ 0xffc0, 0x0cc0, }, // CAS.W D0,D0,<ea>
-	{ 0xffc0, 0x0e00, }, // MOVES.B <ea>,Dn
-	{ 0xffc0, 0x0e40, }, // MOVES.W <ea>,Dn
-	{ 0xffc0, 0x0e80, }, // MOVES.L <ea>,Dn
-	{ 0xffc0, 0x0ec0, }, // CAS.L D0,D0,<ea>
-	{ 0xffc0, 0x46c0, }, // MOVE <ea>,SR
-	{ 0xffff, 0x4e72, }, // STOP #imm
-	{ 0xffff, 0x4e7a, }, // MOVEC Rn,reg
-	{ 0xffff, 0x4e7b, }, // MOVEC reg,Rn
-	{ 0xffff, 0x61ff, }, // BSR.L <relative displacement>		<- Musashi doesn't recognize this particular form of BSR
-	{ 0xf000, 0xf000, }, // Most line-F instructions are not yet handled
+	{ 0xffff, 0x007c, }, // ORI #imm,SR						- not implemented by us yet
+	{ 0xffc0, 0x00c0, }, // CMP2.B <ea>,D0					- not implemented by us yet
+	{ 0xffff, 0x027c, }, // ANDI #imm,SR					- not implemented by us yet
+	{ 0xffc0, 0x02c0, }, // CMP2.W <ea>,D0					- not implemented by us yet
+	{ 0xffc0, 0x04c0, }, // CMP2.L <ea>,D0					- not implemented by us yet
+	{ 0xffff, 0x083c, }, // BTST #imm,#imm					- not supported by Musashi
+	{ 0xffff, 0x0a7c, }, // EORI #imm,SR					- not implemented by us yet
+	{ 0xffc0, 0x0ac0, }, // CAS.B D0,D0,<ea>				- not implemented by us yet
+	{ 0xffc0, 0x0cc0, }, // CAS.W D0,D0,<ea>				- not implemented by us yet
+	{ 0xffc0, 0x0e00, }, // MOVES.B <ea>,Dn					- not implemented by us yet
+	{ 0xffc0, 0x0e40, }, // MOVES.W <ea>,Dn					- not implemented by us yet
+	{ 0xffc0, 0x0e80, }, // MOVES.L <ea>,Dn					- not implemented by us yet
+	{ 0xffc0, 0x0ec0, }, // CAS.L D0,D0,<ea>				- not implemented by us yet
+	{ 0xffc0, 0x46c0, }, // MOVE <ea>,SR					- not implemented by us yet
+	{ 0xffff, 0x4e72, }, // STOP #imm						- not implemented by us yet
+	{ 0xffff, 0x4e7a, }, // MOVEC Rn,reg					- not implemented by us yet
+	{ 0xffff, 0x4e7b, }, // MOVEC reg,Rn					- not implemented by us yet
+	{ 0xffff, 0x61ff, }, // BSR.L <relative displacement>	- not supported by Musashi
+	{ 0xf000, 0xf000, }, // Line-F instructions				- not implemented by us yet
 };
 
 void writeInstructionBufferToMusashiMemory(const uint16_t* instructionBuffer, uint instructionBufferSize)
@@ -45,14 +45,18 @@ bool diffAgainstMusashi(uint totalWords, uint musashiInstructionLength, uint16_t
 {
 	uint i;
 	bool found = false;
-	if (totalWords * 2 == musashiInstructionLength)
-		return false;
 
 	for (i = 0; i < (sizeof ignoreOps / sizeof ignoreOps[0]); ++i)
 		if ((opWord & ignoreOps[i].mask) == ignoreOps[i].match)
 			found = true;
 
-	return !found;
+	if (found)
+		return false;
+			
+	if (totalWords * 2 != musashiInstructionLength)
+		return true;
+
+	return false;
 }
 
 bool soakTestOpWordDecoding(void)
