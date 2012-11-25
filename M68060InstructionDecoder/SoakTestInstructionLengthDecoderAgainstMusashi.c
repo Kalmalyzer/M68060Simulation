@@ -26,6 +26,10 @@ IgnoreOp ignoreOps[] =
 	{ 0xffc0, 0x0e40, }, // MOVES.W <ea>,Dn
 	{ 0xffc0, 0x0e80, }, // MOVES.L <ea>,Dn
 	{ 0xffc0, 0x0ec0, }, // CAS.L D0,D0,<ea>
+	{ 0xffc0, 0x46c0, }, // MOVE <ea>,SR
+	{ 0xffff, 0x4e72, }, // STOP #imm
+	{ 0xffff, 0x4e7a, }, // MOVEC Rn,reg
+	{ 0xffff, 0x4e7b, }, // MOVEC reg,Rn
 };
 
 void writeInstructionBufferToMusashiMemory(const uint16_t* instructionBuffer, uint instructionBufferSize)
@@ -33,6 +37,20 @@ void writeInstructionBufferToMusashiMemory(const uint16_t* instructionBuffer, ui
 	uint word;
 	for (word = 0; word < instructionBufferSize; ++word)
 		m68k_write_memory_16(word * sizeof(uint16_t), instructionBuffer[word]);
+}
+
+bool diffAgainstMusashi(uint totalWords, uint musashiInstructionLength, uint16_t opWord)
+{
+	uint i;
+	bool found = false;
+	if (totalWords * 2 == musashiInstructionLength)
+		return false;
+
+	for (i = 0; i < (sizeof ignoreOps / sizeof ignoreOps[0]); ++i)
+		if ((opWord & ignoreOps[i].mask) == ignoreOps[i].match)
+			found = true;
+
+	return !found;
 }
 
 bool soakTestOpWordDecoding(void)
@@ -63,18 +81,12 @@ bool soakTestOpWordDecoding(void)
 		writeInstructionBufferToMusashiMemory(instructionBuffer, sizeof instructionBuffer / sizeof instructionBuffer[0]);
 		musashiInstructionLength = m68k_disassemble(musashiDisassembledInstruction, 0, M68K_CPU_TYPE_68040);
 
-		if (musashiInstructionLength != instructionLength.totalWords * 2)
+		if (diffAgainstMusashi(instructionLength.totalWords, musashiInstructionLength, opWord))
 		{
-			uint i;
-			bool found = false;
-			printf("Error: instruction length decoding mismatch for instruction %04x (%s) - M68060InstructionLength decoder claims %d bytes, Musashi claims %d bytes\n",
-			opWord, musashiDisassembledInstruction, instructionLength.totalWords * 2, musashiInstructionLength);
-			for (i = 0; i < (sizeof ignoreOps / sizeof ignoreOps[0]); ++i)
-				if ((opWord & ignoreOps[i].mask) == ignoreOps[i].match)
-					found = true;
-					
-			if (!found)
-				return false;
+			printf("Error: instruction length decoding mismatch for opword %04x -\n", opWord);
+			printf("M68060InstructionLengthDecoder claims instruction %s, %d bytes\n", instructionLength.description, instructionLength.totalWords * 2);
+			printf("Musashi disassembler claims instruction %s, %d bytes\n",musashiDisassembledInstruction, musashiInstructionLength);
+			return false;
 		}
 		
 		if (previousDescription != instructionLength.description)
