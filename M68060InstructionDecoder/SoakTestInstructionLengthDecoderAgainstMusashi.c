@@ -30,6 +30,8 @@ IgnoreOp ignoreOps[] =
 	{ 0xffff, 0x4e72, }, // STOP #imm
 	{ 0xffff, 0x4e7a, }, // MOVEC Rn,reg
 	{ 0xffff, 0x4e7b, }, // MOVEC reg,Rn
+	{ 0xffff, 0x61ff, }, // BSR.L <relative displacement>		<- Musashi doesn't recognize this particular form of BSR
+	{ 0xf000, 0xf000, }, // Most line-F instructions are not yet handled
 };
 
 void writeInstructionBufferToMusashiMemory(const uint16_t* instructionBuffer, uint instructionBufferSize)
