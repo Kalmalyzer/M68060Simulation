@@ -141,8 +141,6 @@ bool soakTestExtensionWordDecoding(void)
 			return false;
 		}
 
-		printf("%s %04x: %d\n", musashiDisassembledInstruction, instructionBuffer[1], instructionLength.totalWords);
-		
 		if (previousDescription != instructionLength.description)
 		{
 			printf("%04x %04x: %s\n", instructionBuffer[0], instructionBuffer[1], instructionLength.description);
