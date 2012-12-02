@@ -21,7 +21,7 @@ typedef struct
 	AguOffset aguOffset;
 	IeeImmediate ieeImmediate;
 
-	uint32_t extensionWords;
+	uint16_t extensionWords[2];
 	
 	Pairability pairability;
 

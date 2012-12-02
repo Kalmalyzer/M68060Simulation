@@ -153,6 +153,22 @@ Program {
 	},
 }
 
+------------------------------------------------------------------------------------------------------
+-- Build rules for test program for an instruction decoder that is based purely on the first OpWord --
+-- This is a flawed approach, and will not work for all instructions;                               --
+-- therefore, this program will likely get deprecated in the future                                 --
+------------------------------------------------------------------------------------------------------
+
+Program {
+	Name = "TestOpIntouOPDecomposer",
+	Sources = {
+		"M68060InstructionDecoder/M68060DecomposeOpIntouOPs.c",
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/TestOpIntouOPDecomposer.c",
+	},
+}
+
 -------------------------------------------------
 -- Minimal AGU/ALU implementation test program --
 -------------------------------------------------
@@ -180,5 +196,7 @@ Default "InstructionLengthDisassembler"
 Default "TestOpWordDecoder"
 
 Default "TestPairability"
+
+Default "TestOpIntouOPDecomposer"
 
 Default "TestAguAlu"
