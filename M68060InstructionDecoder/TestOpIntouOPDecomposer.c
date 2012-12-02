@@ -50,7 +50,16 @@ int main(void)
 		bool success = decomposeOpIntouOPs(testInstruction->instructionWords, testInstruction->numInstructionWords, uOPs, &numuOPs);
 
 		if (success)
+		{
+			uint uOPIndex;
 			printf("success: decoding %s yields %d uOPs\n", testInstruction->description, numuOPs);
+			for (uOPIndex = 0; uOPIndex < numuOPs; ++uOPIndex)
+			{
+				uOP* uOP = &uOPs[uOPIndex];
+				printf("  %s, AguBase %s, AguIndex %s, AguResult %s, ieeA %s, ieeB %s, ieeResult %s\n", uOP->mnemonic, 
+					uOP->aguBase, uOP->aguIndex, uOP->aguResult, uOP->ieeA, uOP->ieeB, uOP->ieeResult);
+			}
+		}
 		else
 			printf("failure: unable to decode decoding %s\n", testInstruction->description);
 	}

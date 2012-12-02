@@ -92,6 +92,7 @@ typedef struct
 	EAModeMask sourceEAModeMask;
 	EAEncoding destinationEAEncoding;
 	EAModeMask destinationEAModeMask;
+	
 } OpWordClassInfo;
 
 static OpWordClassInfo opWordClassInformation[] =
@@ -297,6 +298,7 @@ void decodeuOPs(uint16_t* instructionWords, uint numInstructionWords, uOP* uOPs,
 {
 	uint16_t opWord = *instructionWords;
 	const OpWordDecodeInfo* opWordDecodeInfo = opWordDecodeInformation;
+	uOP* uOP = uOPs;
 
 	*numuOPs = 0;
 
@@ -306,6 +308,13 @@ void decodeuOPs(uint16_t* instructionWords, uint numInstructionWords, uOP* uOPs,
 	}
 
 	M68060_ASSERT(opWordDecodeInfo->mask != 0 || opWordDecodeInfo->match != 0, "No decoding pattern available for instruction");
+
+	// Logic for filling out a single uOP
+	
+	memset(uOP, 0, sizeof(*uOP));
+	uOP->mnemonic = opWordDecodeInfo->description;
+
+	(*numuOPs)++;
 }
 
 bool decomposeOpIntouOPs(uint16_t* instructionWords, uint numInstructionWordsAvailable, uOP* uOPs, uint* numuOPs)
