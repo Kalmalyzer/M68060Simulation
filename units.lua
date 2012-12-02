@@ -1,7 +1,9 @@
 
 require "tundra.syntax.glob" 
 
---------------------------------------------------
+---------------------------------------------------------------------------------------
+-- Build rules for Musashi; both as a static library, and a stand-alone test program --
+---------------------------------------------------------------------------------------
 
 DefRule {
 	Name = "m68kmake",
@@ -68,7 +70,9 @@ Program {
 	Depends = { "Musashi" },
 }
  
---------------------------------------------------
+---------------------------------------------------
+-- Cache line allocation-simulation test program --
+---------------------------------------------------
 
 Program {
 	Name = "TestCache",
@@ -79,33 +83,9 @@ Program {
 	},
 }
 
-Program {
-	Name = "TestOpWordDecoder",
-	Sources = {
-		"M68060InstructionDecoder/M68060OpWordDecoder.c",
-		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
-		"M68060InstructionDecoder/TestOpWordDecoder.c",
-	},
-}
-
-Program {
-	Name = "TestPairability",
-	Sources = {
-		"M68060InstructionDecoder/M68060OpWordDecoder.c",
-		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
-		"M68060InstructionDecoder/M68060PairabilityTests.c",
-		"M68060InstructionDecoder/TestPairability.c",
-	},
-}
-
-Program {
-	Name = "TestAguAlu",
-	Sources = {
-		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
-		"M68060InstructionExecution/M68060AguAlu.c",
-		"M68060InstructionExecution/TestAguAlu.c",
-	},
-}
+------------------------------------------------
+-- Instruction length decoder's test programs --
+------------------------------------------------
 
 Program {
 	Name = "TestInstructionLengthDecoder",
@@ -142,14 +122,63 @@ Program {
 	},
 }
 
+------------------------------------------------------------------------------------------------------
+-- Build rules for test program for an instruction decoder that is based purely on the first OpWord --
+-- This is a flawed approach, and will not work for all instructions;                               --
+-- therefore, this program will likely get deprecated in the future                                 --
+------------------------------------------------------------------------------------------------------
+
+Program {
+	Name = "TestOpWordDecoder",
+	Sources = {
+		"M68060InstructionDecoder/M68060OpWordDecoder.c",
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionDecoder/TestOpWordDecoder.c",
+	},
+}
+
+---------------------------------------------------------------------------------------------------
+-- Build rules for test program that checks instruction pairability based on the leading OpWords --
+-- This is a flawed approach, and will not work for all instructions;                            --
+-- therefore, this program will likely get rewritten to handle uOPs gracefully in the future     --
+---------------------------------------------------------------------------------------------------
+
+Program {
+	Name = "TestPairability",
+	Sources = {
+		"M68060InstructionDecoder/M68060OpWordDecoder.c",
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionDecoder/M68060PairabilityTests.c",
+		"M68060InstructionDecoder/TestPairability.c",
+	},
+}
+
+-------------------------------------------------
+-- Minimal AGU/ALU implementation test program --
+-------------------------------------------------
+
+Program {
+	Name = "TestAguAlu",
+	Sources = {
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionExecution/M68060AguAlu.c",
+		"M68060InstructionExecution/TestAguAlu.c",
+	},
+}
+
+
+Default "Musashi"
+Default "TestMusashi"
+
 Default "TestCache"
-Default "TestOpWordDecoder"
-Default "TestPairability"
-Default "TestAguAlu"
+
 Default "TestInstructionLengthDecoder"
 Default "SoakTestInstructionLengthDecoder"
 Default "SoakTestInstructionLengthDecoderAgainstMusashi"
 Default "InstructionLengthDisassembler"
 
-Default "Musashi"
-Default "TestMusashi"
+Default "TestOpWordDecoder"
+
+Default "TestPairability"
+
+Default "TestAguAlu"
