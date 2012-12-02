@@ -310,7 +310,7 @@ bool decodeBriefOrFullExtensionWordLength(uint16_t firstExtensionWord, uint* num
 				numExtensionWords += 2;
 				break;
 			case DisplacementSize_Reserved:
-#ifdef MUSASHI_COMPATIBLITY_MODE
+#ifdef MUSASHI_COMPATIBILITY_MODE
 				break;
 #else
 				return false;
@@ -338,7 +338,7 @@ bool decodeBriefOrFullExtensionWordLength(uint16_t firstExtensionWord, uint* num
 				numExtensionWords += 2;
 				break;
 			default:
-#ifdef MUSASHI_COMPATIBLITY_MODE
+#ifdef MUSASHI_COMPATIBILITY_MODE
 				break;
 #else
 				return false;
