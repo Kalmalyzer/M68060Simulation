@@ -290,7 +290,7 @@ static OpWordLengthInfo opWordLengthInformation[] =
 	{ 0, 0, "Unknown instruction", },
 };
 
-bool decodeBriefOrFullExtensionWordLength(uint16_t firstExtensionWord, uint* numExtensionWords_)
+static bool decodeBriefOrFullExtensionWordLength(uint16_t firstExtensionWord, uint* numExtensionWords_)
 {
 	uint numExtensionWords = 1;
 		
@@ -351,7 +351,7 @@ bool decodeBriefOrFullExtensionWordLength(uint16_t firstExtensionWord, uint* num
 	return true;
 }
 
-bool decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lower3Bits eaLower3Bits, EAMode* eaMode)
+static bool decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lower3Bits eaLower3Bits, EAMode* eaMode)
 {
 	switch (eaUpper3Bits)
 	{
@@ -412,7 +412,7 @@ typedef enum
 
 } DecodeOperandLengthResult;
 
-DecodeOperandLengthResult decodeOperandLength(EAMode eaMode, bool firstExtensionWordAvailable, uint16_t firstExtensionWord, OperationSize operationSize, uint* numExtensionWords)
+static DecodeOperandLengthResult decodeOperandLength(EAMode eaMode, bool firstExtensionWordAvailable, uint16_t firstExtensionWord, OperationSize operationSize, uint* numExtensionWords)
 {
 	switch (eaMode)
 	{
@@ -485,7 +485,7 @@ DecodeOperandLengthResult decodeOperandLength(EAMode eaMode, bool firstExtension
 	return DecodeOperandLengthResult_ValidInstruction;
 }
 
-bool decodeOperand(uint16_t opWord, EAEncoding eaEncoding, EAMode* eaMode)
+static bool decodeOperand(uint16_t opWord, EAEncoding eaEncoding, EAMode* eaMode)
 {
 	switch (eaEncoding)
 	{
@@ -521,7 +521,7 @@ bool decodeOperand(uint16_t opWord, EAEncoding eaEncoding, EAMode* eaMode)
 	}
 }
 
-bool decodeOperationSize(uint16_t opWord, SizeEncoding sizeEncoding, OperationSize* operationSize)
+static bool decodeOperationSize(uint16_t opWord, SizeEncoding sizeEncoding, OperationSize* operationSize)
 {
 	switch (sizeEncoding)
 	{
@@ -606,7 +606,7 @@ bool decodeOperationSize(uint16_t opWord, SizeEncoding sizeEncoding, OperationSi
 	}
 }
 
-bool isValidEAMode(EAMode eaMode, EAModeMask eaModeMask)
+static bool isValidEAMode(EAMode eaMode, EAModeMask eaModeMask)
 {
 	return (eaMode == EAMode_None || ((1U << eaMode) & eaModeMask));
 }
