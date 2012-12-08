@@ -25,9 +25,13 @@ typedef enum
 	ExecutionResource_A7,
 	ExecutionResource_AguResult,
 	ExecutionResource_MemoryOperand,
-	ExecutionResource_ImmediateOperand,
-	ExecutionResource_AbsoluteMemoryAddress,
+	ExecutionResource_ImmediateOperand, // Deprecated
+	ExecutionResource_AbsoluteMemoryAddress, // Deprecated
 	ExecutionResource_PC,
+	ExecutionResource_uOpWord0,
+	ExecutionResource_uOpWord1,
+	ExecutionResource_uOpLong,
+	ExecutionResource_AguTemp,
 	ExecutionResource_Unknown,
 
 } ExecutionResource;
@@ -76,14 +80,23 @@ const char* AguOperationToString(AguOperation aguOperation);
 
 typedef enum
 {
-	AguOffset_None,
-	AguOffset_D8,
-	AguOffset_D16,
-	AguOffset_D32,
+	AguIndexSize_Word,
+	AguIndexSize_Long,
 
-} AguOffset;
+} AguIndexSize;
 
-const char* AguOffsetToString(AguOffset aguOffset);
+const char* AguIndexSizeToString(AguIndexSize aguIndexSize);
+
+typedef enum
+{
+	AguDisplacementSize_None,
+	AguDisplacementSize_S8,
+	AguDisplacementSize_S16,
+	AguDisplacementSize_S32,
+
+} AguDisplacementSize;
+
+const char* AguDisplacementSizeToString(AguDisplacementSize aguDisplacementSize);
 
 typedef enum
 {

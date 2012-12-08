@@ -30,6 +30,10 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 		"ImmediateOperand",
 		"AbsoluteMemoryAddress",
 		"PC",
+		"uOpWord0",
+		"uOpWord1",
+		"uOpLong",
+		"AguTemp",
 		"Unknown",
 	};
 
@@ -94,19 +98,32 @@ const char* AguOperationToString(AguOperation aguOperation)
 	return aguOperationStrings[(int) aguOperation];
 }
 
-const char* AguOffsetToString(AguOffset aguOffset)
+const char* AguIndexSizeToString(AguIndexSize aguIndexSize)
 {
-	static const char* aguOffsetStrings[] =
+	static const char* aguIndexSizeStrings[] =
+	{
+		"Word",
+		"Long",
+	};
+
+	M68060_ASSERT((size_t) aguIndexSize < (sizeof aguIndexSizeStrings / sizeof aguIndexSizeStrings[0]), "Invalid aguIndexSize");
+
+	return aguIndexSizeStrings[(int) aguIndexSize];
+}
+
+const char* AguDisplacementSizeToString(AguDisplacementSize aguDisplacementSize)
+{
+	static const char* aguDisplacementSizeStrings[] =
 	{
 		"None",
-		"D8",
-		"D16",
-		"D32",
+		"S8",
+		"S16",
+		"S32",
 	};
 		
-	M68060_ASSERT((size_t) aguOffset < (sizeof aguOffsetStrings / sizeof aguOffsetStrings[0]), "Invalid aguOffset");
+	M68060_ASSERT((size_t) aguDisplacementSize < (sizeof aguDisplacementSizeStrings / sizeof aguDisplacementSizeStrings[0]), "Invalid aguDisplacementSize");
 
-	return aguOffsetStrings[(int) aguOffset];
+	return aguDisplacementSizeStrings[(int) aguDisplacementSize];
 }
 
 const char* IeeImmediateToString(IeeImmediate ieeImmediate)

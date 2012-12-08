@@ -193,9 +193,9 @@ Default "SoakTestInstructionLengthDecoder"
 Default "SoakTestInstructionLengthDecoderAgainstMusashi"
 Default "InstructionLengthDisassembler"
 
-Default "TestOpWordDecoder"
+--Default "TestOpWordDecoder"
 
-Default "TestPairability"
+--Default "TestPairability"
 
 Default "TestOpIntouOPDecomposer"
 

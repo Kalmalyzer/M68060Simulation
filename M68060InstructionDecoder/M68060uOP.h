@@ -5,6 +5,12 @@
 #include "../Types.h"
 #include "M68060InstructionDecoderTypes.h"
 
+typedef enum
+{
+	IeeOperation_None,
+	IeeOperation_Add,
+} IeeOperation;
+
 typedef struct
 {
 	const char* mnemonic;
@@ -17,8 +23,10 @@ typedef struct
 	bool memoryRead;
 	bool memoryWrite;
 	OpMode opMode;
+	uint aguIndexShift;
+	AguIndexSize aguIndexSize;
+	AguDisplacementSize aguDisplacementSize;
 	AguOperation aguOperation;
-	AguOffset aguOffset;
 	IeeImmediate ieeImmediate;
 
 	uint16_t extensionWords[2];
