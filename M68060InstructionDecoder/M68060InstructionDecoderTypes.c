@@ -102,6 +102,7 @@ const char* AguIndexSizeToString(AguIndexSize aguIndexSize)
 {
 	static const char* aguIndexSizeStrings[] =
 	{
+		"None",
 		"Word",
 		"Long",
 	};
@@ -139,4 +140,19 @@ const char* IeeImmediateToString(IeeImmediate ieeImmediate)
 	M68060_ASSERT((size_t) ieeImmediate < (sizeof ieeImmediateStrings / sizeof ieeImmediateStrings[0]), "Invalid ieeImmediate");
 
 	return ieeImmediateStrings[(int) ieeImmediate];
+}
+
+const char* OperationSizeToString(OperationSize operationSize)
+{
+	static const char* operationSizeStrings[] =
+	{
+		"None",
+		"Byte",
+		"Word",
+		"Long",
+	};
+		
+	M68060_ASSERT((size_t) operationSize < (sizeof operationSizeStrings / sizeof operationSizeStrings[0]), "Invalid operationSize");
+
+	return operationSizeStrings[(int) operationSize];
 }

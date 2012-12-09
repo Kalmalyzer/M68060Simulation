@@ -14,22 +14,28 @@ typedef enum
 typedef struct
 {
 	const char* mnemonic;
+
+	uint16_t extensionWords[2];
+	
 	ExecutionResource aguBase;
 	ExecutionResource aguIndex;
-	ExecutionResource aguResult;
-	ExecutionResource ieeA;
-	ExecutionResource ieeB;
-	ExecutionResource ieeResult;
-	bool memoryRead;
-	bool memoryWrite;
-	OpMode opMode;
 	uint aguIndexShift;
 	AguIndexSize aguIndexSize;
 	AguDisplacementSize aguDisplacementSize;
 	AguOperation aguOperation;
-	IeeImmediate ieeImmediate;
+	ExecutionResource aguResult;
 
-	uint16_t extensionWords[2];
+	bool memoryRead;
+
+	ExecutionResource ieeA;
+	ExecutionResource ieeB;
+	IeeImmediate ieeImmediate; // Obsolete
+	OperationSize ieeOperationSize;
+	ExecutionResource ieeResult;
+
+	bool memoryWrite;
+
+	OpMode opMode;
 	
 	Pairability pairability;
 

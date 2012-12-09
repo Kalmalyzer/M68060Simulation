@@ -4,18 +4,6 @@
 
 typedef enum
 {
-	OperationSize_Reserved,
-	OperationSize_Byte,
-	OperationSize_Word,
-	OperationSize_Long,
-} OperationSize;
-
-enum { OpWord_OperationSize_Shift = 9 };
-enum { OpWord_OperationSize_Bits = 2 };
-enum { OpWord_OperationSize_Mask = ((1 << OpWord_OperationSize_Bits) - 1) << OpWord_OperationSize_Shift };
-
-typedef enum
-{
 	OpSize_Byte,
 	OpSize_Word,
 	OpSize_Long,

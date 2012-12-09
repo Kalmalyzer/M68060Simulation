@@ -5,7 +5,7 @@
 #include "../Types.h"
 #include "M68060uOP.h"
 
-bool decomposeOpIntouOPs(uint16_t* instructionStream, uint numInstructionWords, uOP* uOPs, uint* numuOPs);
+bool decomposeOpIntouOPs(const uint16_t* instructionStream, uint numInstructionWords, uOP* uOPs, uint* numuOPs);
 
 
 #endif

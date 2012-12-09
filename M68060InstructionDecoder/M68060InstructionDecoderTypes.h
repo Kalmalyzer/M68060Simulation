@@ -80,6 +80,7 @@ const char* AguOperationToString(AguOperation aguOperation);
 
 typedef enum
 {
+	AguIndexSize_None,
 	AguIndexSize_Word,
 	AguIndexSize_Long,
 
@@ -108,5 +109,16 @@ typedef enum
 } IeeImmediate;
 
 const char* IeeImmediateToString(IeeImmediate ieeImmediate);
+
+typedef enum
+{
+	OperationSize_None,
+	OperationSize_Byte,
+	OperationSize_Word,
+	OperationSize_Long,
+
+} OperationSize;
+
+const char* OperationSizeToString(OperationSize operationSize);
 
 #endif

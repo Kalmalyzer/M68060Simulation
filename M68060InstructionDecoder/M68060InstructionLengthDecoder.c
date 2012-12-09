@@ -2,6 +2,7 @@
 #include "../Assert.h"
 
 #include "M68060EA.h"
+#include "M68060InstructionDecoderTypes.h"
 #include "M68060OpWord.h"
 
 //Define this if you want decoding of some illegal EAs to not outright reject the instruction.
@@ -526,7 +527,7 @@ static bool decodeOperationSize(uint16_t opWord, SizeEncoding sizeEncoding, Oper
 	switch (sizeEncoding)
 	{
 		case SizeEncoding_None:
-			*operationSize = OperationSize_Reserved;
+			*operationSize = OperationSize_None;
 			return true;
 		case SizeEncoding_Byte:
 			*operationSize = OperationSize_Byte;
