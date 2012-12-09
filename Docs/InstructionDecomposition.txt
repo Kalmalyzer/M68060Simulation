@@ -1,0 +1,217 @@
+
+Overview
+========
+
+The 68060's instruction decoder breaks down all classic 680x0 integer instructions (Ops) into micro-ops (Uops) which are max 6 bytes in size.
+The first word of each Uop will always be the first word of the instruction. This is where register numbers, 3-bit immediates,
+operation types, etc are specified.
+The next two words is where the Uop's immediate operands, displacements etc are supplied. This is where 8-, 16- and 32-bit values are supplied.
+
+
+Most (but not all) instructions that are 6 or fewer bytes in length translate into a single Uop. There are rules for this
+in chapter 10 of the M68060UM but those rules are not conclusive.
+
+
+Pairability of Uops
+===================
+
+If an Op breaks down into a single Uop, then it pairs according to the M68060UM.
+
+If an Op breaks down into more than one Uop, then all Uops except the last will run as pOEP-only.
+The last Uop pairs according to the M68060UM.
+
+
+How to identify the Op->Uop breakdown
+=====================================
+
+There are a couple of basic tenets to observe.
+* The instruction fetch will deliver 1 longword / cycle to the instruction decoder.
+* The instruction decoder can emit at least 2 Uops / cycle.
+* There is a 16-instruction FIFO between the instruction decoder and the instruction execution pipelines.
+* Each of the instruction execution pipelines can consume up to 2 Uops / cycle.
+
+Since each instruction is at least 1 word in size, the instruction decoder will never be the bottleneck in the system.
+The key factors are instruction fetch and instruction execution pipelines.
+
+If you have a sequence like this in your program:
+
+	and.l	#$12345678,d0
+	and.l	#$12345678,d1
+	and.l	#$12345678,d0
+	and.l	#$12345678,d1
+	...
+
+... then, the instruction fetch will deliver 4 bytes per cycle, but the instruction pipelines will consume 12 bytes worth
+of instructions each cycle. So, if you want to empty the FIFO for whatever reason, performing 16 of the above instructions
+should do the trick.
+
+If you place this instruction in your program, you get the opposite results:
+
+	divu.l	#1,d0		; d0 is presumed to be zero beforehand
+
+The instruction is 6 bytes large - so takes two cycles for the instruction fetch to deliver the instruction.
+On the other hand, the instruction is pOEP-only and stays in the pOEP's IEE stage for 38 cycles. This is more than enough
+for the instruction fetch and decode to completely fill the FIFO.
+
+In order to minimize the impact of the instruction cache, place the code that is to be timed in a loop that gets executed
+many times:
+
+	moveq	#0,d0
+	move.l	#10000,d7
+.loop:
+	divu.l	#1,d0
+
+	<place instruction sequence to inspect here>
+
+	divu.l	#1,d0
+	subq.l	#1,d7
+	bne.s	.loop
+
+This loop will have constant overhead, and there is no risk that Op->Uop breakdown or pairability will cause unintended
+effects. Since the DIVUs are pOEP-only, they will never pair with the first or last instruction in the sequence.
+
+
+Pseudo-registers and pseudo-instructions
+========================================
+
+When an Op is broken down into multiple Uops, the intermediate results need to be transferred between the subsequent Uops.
+One simple way to describe this is to introduce a few extra processor registers.
+These registers do not necessarily exist in the actual register file; they are simply names used to match up
+inputs and outputs of various CPU pipeline stages.
+The following pseudo-registers will be used:
+
+	AGU_TEMP
+	IEE_TEMP
+
+Any extra Uops are generally intended not to touch flags. Therefore a pseudo-instruction will be introduced:
+
+	load
+
+This instruction performs a move (to AGU_TEMP or IEE_TEMP) but it will not affect flags.
+
+
+Encoding of a single Op as an Uop
+=================================
+
+An instruction like the following will get encoded as 1 Uop:
+
+	add.l	$12(a0,d0.w*4),d1
+
+The operation itself, operation size, the register references, and size+scale for the operand is passed in the first word.
+The two extension words will contain the 8-byte displacement.
+
+
+Op->Uop breakdown for MOVE
+==========================
+
+MOVE with double memory operands are split up into separate load & store Uops:
+
+	MOVE.L	(A0),(A1)
+	=>
+	LOAD	(A0),IEE_TEMP
+	MOVE.L	IEE_TEMP,(A1)
+
+
+Op->Uop breakdown for 68020+ addressing modes
+=============================================
+
+MOVE with (bd,An,Xi*SF) instruction source operand takes 1 extra cycle to compute:
+
+	MOVE.L	($11111111,A0,D0.L*4),D1
+	=>
+	LEA	($11111111,A0,D0.L*4),AGU_TEMP
+	MOVE.L	(AGU_TEMP),D1
+
+MOVE with memory indirect source operand - regardless of which elements are present and which are suppressed - take 3 extra cycles to compute:
+		
+	MOVE.L	([$11111111,A0,D0.L*4],$22222222),D1
+	=>
+	LOAD.L	[$11111111,A0,D0.L*4],AGU_TEMP
+	LEA	(AGU_TEMP,$22222222),AGU_TEMP
+	MOVE.L	(AGU_TEMP),D1
+
+MOVE with double 68020+ addressing modes uses the AGU_TEMP pseudo-register several times:
+		
+	MOVE.L	([$11111111,A0,D0.L*4],$22222222),([$33333333,A1,D2.L*8],$44444444)
+	=>
+	LOAD.L	[$11111111,A0,D0.L*4],AGU_TEMP
+	LEA.L	(AGU_TEMP,$22222222),AGU_TEMP
+	LOAD.L	(AGU_TEMP),IEE_TEMP
+	LOAD.L	[$33333333,A1,D2.L*8],AGU_TEMP
+	LEA.L	(AGU_TEMP,$44444444),AGU_TEMP
+	MOVE.L	IEE_TEMP,(AGU_TEMP)
+
+ADD operations with memory indirect operands use the AGU_TEMP pseudo register with the same usage pattern as MOVE:
+	
+	ADD.L	([$11111111,A0,D0.L*4],$22222222),D1
+	=>
+	LOAD.L	[$11111111,A0,D0.L*4],AGU_TEMP
+	LEA	(AGU_TEMP,$22222222),AGU_TEMP
+	ADD.L	(AGU_TEMP),D1
+
+	ADD.W	([$11111111,A0,D0.L*4],$22222222),D1
+	=>
+	LOAD.L	[$11111111,A0,D0.L*4],AGU_TEMP
+	LEA	(AGU_TEMP,$22222222),AGU_TEMP
+	ADD.W	(AGU_TEMP),D1
+
+	ADD.L	D1,([$11111111,A0,D0.L*4],$22222222)
+	=>
+	LOAD.L	[$11111111,A0,D0.L*4],AGU_TEMP
+	LEA	(AGU_TEMP,$22222222),AGU_TEMP
+	ADD.L	D1,(AGU_TEMP)
+
+	ADD.W	D1,([$11111111,A0,D0.L*4],$22222222)
+	=>
+	LOAD.L	[$11111111,A0,D0.L*4],AGU_TEMP
+	LEA	(AGU_TEMP,$22222222),AGU_TEMP
+	ADD.W	D1,(AGU_TEMP)
+
+
+Op->Uop breakdown for xxxI instructions
+=======================================
+
+The CMPI/ADDI/SUBI/ANDI/ORI/EORI instructions will normally get encoded as 1 Uop:
+
+	andi.w	#$1234,(a0)
+
+The operation itself, operation size, and the register reference is passed in the first word.
+The two extension words contain the 16-bit immediate value.
+
+However, if the second operand has an addressing mode which requires an immediate operand, then
+the instruction will be broken into two Uops:
+
+	andi.w	#$1234,$5678(a0)
+	=>
+	load.w	#$1234,IEE_TEMP
+	andi.w	IEE_TEMP,$5678(a0)
+
+Each of the two above instructions translates to a single Uop.
+
+More complicated addressing modes will cause more Uops, as seen in examples later on.
+
+It would theoretically be possible for the CPU to pack both the 16-bit immediate operand and the 16-bit displacement into
+the two extension words and keep the ANDI as a single instruction in the above example. The CPU doesn't do so though -
+presumably because the CPU is using standardized logic for handling the addressing modes (and introducing Uops).
+
+If the instruction also has a 68020+ addressing mode then both the AGU_TEMP and the IEE_TEMP pseudo registers will be used:
+
+	ADDI.L	#$12345678,([$11111111,A0,D0.L*4],$22222222)
+	=>
+	LOAD.L	#$12345678,IEE_TEMP
+	LOAD.L	[$11111111,A0,D0.L*4],AGU_TEMP
+	LEA	(AGU_TEMP,$22222222),AGU_TEMP
+	ADD.L	IEE_TEMP,(AGU_TEMP)
+
+
+Op->Uop breakdown for op (An)+,An
+====================================
+
+Instructions on the above form have cases where both the AGU and the IEE pipeline stages want to read & write the
+same register. These will be split into two Uops by the instruction decoder, to simplify implementation of the
+instruction execution pipelines:
+
+	ADDA.L	(A3)+,A3
+	=>
+	LOAD.L	(A3)+,IEE_TEMP
+	ADDA.L	IEE_TEMP,A3
