@@ -7,7 +7,8 @@
 typedef enum
 {
 	ExecutionResource_None,
-	ExecutionResource_D0,
+
+	ExecutionResource_D0,	// Contents of integer register file
 	ExecutionResource_D1,
 	ExecutionResource_D2,
 	ExecutionResource_D3,
@@ -23,15 +24,20 @@ typedef enum
 	ExecutionResource_A5,
 	ExecutionResource_A6,
 	ExecutionResource_A7,
-	ExecutionResource_AguResult,
-	ExecutionResource_MemoryOperand,
+
+	ExecutionResource_AguResult, // Output from AGU
+
+	ExecutionResource_MemoryOperand, // Result from OC stage
 	ExecutionResource_ImmediateOperand, // Deprecated
 	ExecutionResource_AbsoluteMemoryAddress, // Deprecated
-	ExecutionResource_PC,
-	ExecutionResource_uOpWord0,
-	ExecutionResource_uOpWord1,
-	ExecutionResource_uOpLong,
-	ExecutionResource_AguTemp,
+	ExecutionResource_PC, // Contents of PC register
+
+	ExecutionResource_uOpWord0, // First uOP extension word
+	ExecutionResource_uOpWord1, // Second uOP extension word
+	ExecutionResource_uOpLong, // Both uOP extension words, seen as a 32-bit value
+
+	ExecutionResource_AguTemp, // Temporary register used when decomposing complex addressing modes into multiple uOPs
+
 	ExecutionResource_Unknown,
 
 } ExecutionResource;

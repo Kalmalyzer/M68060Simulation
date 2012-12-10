@@ -427,14 +427,23 @@ static uint decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 		
 		if (!baseRegisterSuppressed)
 			firstOp.aguBase = baseRegister;
-			
+
 		if (hasDoubleIndirection)
+		{
+			firstOp.mnemonic = "LOAD";
+			firstOp.memoryRead = true;
 			firstOp.ieeA = ExecutionResource_MemoryOperand;
+			firstOp.ieeResult = ExecutionResource_AguTemp;
+
+			secondOp.mnemonic = "LEA";
+			secondOp.aguBase = ExecutionResource_AguTemp;
+			secondOp.aguResult = ExecutionResource_AguTemp;
+		}
 		else
-			firstOp.ieeA = ExecutionResource_AguResult;
-		firstOp.ieeResult = ExecutionResource_AguTemp;
-		secondOp.aguBase = ExecutionResource_AguTemp;
-		secondOp.aguResult = ExecutionResource_AguTemp;
+		{
+			firstOp.mnemonic = "LEA";
+			firstOp.aguResult = ExecutionResource_AguTemp;
+		}
 		
 		switch (baseDisplacementSize)
 		{
@@ -507,26 +516,13 @@ static uint decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 			indexOp->aguIndexSize = (firstExtensionWord & ExtensionWord_WL_Mask) ? AguIndexSize_Long : AguIndexSize_Word;
 		}
 
+		**generateduOP = firstOp;
+		(*generateduOP)++;
+		numInjecteduOPs++;
+
 		if (hasDoubleIndirection)
 		{
-			firstOp.mnemonic = "LOAD";
-			secondOp.mnemonic = "LEA";
-
-			firstOp.memoryRead = true;
-			
-			**generateduOP = firstOp;
-			(*generateduOP)++;
-			numInjecteduOPs++;
-			
 			**generateduOP = secondOp;
-			(*generateduOP)++;
-			numInjecteduOPs++;
-		}
-		else
-		{
-			firstOp.mnemonic = "LEA";
-			
-			**generateduOP = firstOp;
 			(*generateduOP)++;
 			numInjecteduOPs++;
 		}

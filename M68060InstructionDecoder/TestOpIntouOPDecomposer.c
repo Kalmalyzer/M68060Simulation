@@ -658,15 +658,15 @@ TestInstruction instructionStream[] =
 				AguIndexSize_Long,
 				AguDisplacementSize_S16,
 				AguOperation_None,
-				ExecutionResource_None,
+				ExecutionResource_AguTemp,
 
 				false,
 
-				ExecutionResource_AguResult,
+				ExecutionResource_None,
 				ExecutionResource_None,
 				IeeImmediate_None,
 				OperationSize_None,
-				ExecutionResource_AguTemp,
+				ExecutionResource_None,
 
 				false,
 				OpMode_None,
@@ -712,15 +712,15 @@ TestInstruction instructionStream[] =
 				AguIndexSize_None,
 				AguDisplacementSize_S32,
 				AguOperation_None,
-				ExecutionResource_None,
+				ExecutionResource_AguTemp,
 
 				false,
 
-				ExecutionResource_AguResult,
+				ExecutionResource_None,
 				ExecutionResource_None,
 				IeeImmediate_None,
 				OperationSize_None,
-				ExecutionResource_AguTemp,
+				ExecutionResource_None,
 
 				false,
 				OpMode_None,
@@ -766,15 +766,15 @@ TestInstruction instructionStream[] =
 				AguIndexSize_Long,
 				AguDisplacementSize_S32,
 				AguOperation_None,
-				ExecutionResource_None,
+				ExecutionResource_AguTemp,
 
 				false,
 
-				ExecutionResource_AguResult,
+				ExecutionResource_None,
 				ExecutionResource_None,
 				IeeImmediate_None,
 				OperationSize_None,
-				ExecutionResource_AguTemp,
+				ExecutionResource_None,
 
 				false,
 				OpMode_None,
@@ -1230,7 +1230,7 @@ void printuOP(uint id, const uOP* uOP)
 {
 	printf("    uOP %d: %s\n", id, uOP->mnemonic);
 	printf("      ExtensionWords: %04x,%04x\n", uOP->extensionWords[0], uOP->extensionWords[1]);
-	printf("      Agu: Base %s, Index %s, IndexShift %d, IndexSize %s, DisplacementSize %s, Operation %s, Result %s, \n",
+	printf("      Agu: Base %s, Index %s, IndexShift %d, IndexSize %s, DisplacementSize %s, Operation %s, Result %s\n",
 		ExecutionResourceToString(uOP->aguBase), ExecutionResourceToString(uOP->aguIndex),
 		uOP->aguIndexShift, AguIndexSizeToString(uOP->aguIndexSize), AguDisplacementSizeToString(uOP->aguDisplacementSize),
 		AguOperationToString(uOP->aguOperation), ExecutionResourceToString(uOP->aguResult));
