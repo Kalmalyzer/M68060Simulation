@@ -125,21 +125,6 @@ const char* AguDisplacementSizeToString(AguDisplacementSize aguDisplacementSize)
 	return aguDisplacementSizeStrings[(int) aguDisplacementSize];
 }
 
-const char* IeeImmediateToString(IeeImmediate ieeImmediate)
-{
-	static const char* ieeImmediateStrings[] =
-	{
-		"None",
-		"D8",
-		"D16",
-		"D32",
-	};
-		
-	M68060_ASSERT((size_t) ieeImmediate < (sizeof ieeImmediateStrings / sizeof ieeImmediateStrings[0]), "Invalid ieeImmediate");
-
-	return ieeImmediateStrings[(int) ieeImmediate];
-}
-
 const char* OperationSizeToString(OperationSize operationSize)
 {
 	static const char* operationSizeStrings[] =

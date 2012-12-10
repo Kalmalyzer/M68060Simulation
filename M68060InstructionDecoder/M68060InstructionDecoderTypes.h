@@ -105,17 +105,6 @@ const char* AguDisplacementSizeToString(AguDisplacementSize aguDisplacementSize)
 
 typedef enum
 {
-	IeeImmediate_None,
-	IeeImmediate_D8,
-	IeeImmediate_D16,
-	IeeImmediate_D32,
-
-} IeeImmediate;
-
-const char* IeeImmediateToString(IeeImmediate ieeImmediate);
-
-typedef enum
-{
 	OperationSize_None,
 	OperationSize_Byte,
 	OperationSize_Word,
