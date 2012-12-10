@@ -29,7 +29,6 @@ typedef struct
 
 	ExecutionResource ieeA;
 	ExecutionResource ieeB;
-	IeeImmediate ieeImmediate; // Obsolete
 	OperationSize ieeOperationSize;
 	ExecutionResource ieeResult;
 

@@ -122,21 +122,6 @@ Program {
 	},
 }
 
-------------------------------------------------------------------------------------------------------
--- Build rules for test program for an instruction decoder that is based purely on the first OpWord --
--- This is a flawed approach, and will not work for all instructions;                               --
--- therefore, this program will likely get deprecated in the future                                 --
-------------------------------------------------------------------------------------------------------
-
-Program {
-	Name = "TestOpWordDecoder",
-	Sources = {
-		"M68060InstructionDecoder/M68060OpWordDecoder.c",
-		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
-		"M68060InstructionDecoder/TestOpWordDecoder.c",
-	},
-}
-
 ---------------------------------------------------------------------------------------------------
 -- Build rules for test program that checks instruction pairability based on the leading OpWords --
 -- This is a flawed approach, and will not work for all instructions;                            --
@@ -153,11 +138,9 @@ Program {
 	},
 }
 
-------------------------------------------------------------------------------------------------------
--- Build rules for test program for an instruction decoder that is based purely on the first OpWord --
--- This is a flawed approach, and will not work for all instructions;                               --
--- therefore, this program will likely get deprecated in the future                                 --
-------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-- Build rules for test program for a proper instruction -> uOP(s) decoder --
+-----------------------------------------------------------------------------
 
 Program {
 	Name = "TestOpIntouOPDecomposer",
@@ -192,8 +175,6 @@ Default "TestInstructionLengthDecoder"
 Default "SoakTestInstructionLengthDecoder"
 Default "SoakTestInstructionLengthDecoderAgainstMusashi"
 Default "InstructionLengthDisassembler"
-
---Default "TestOpWordDecoder"
 
 --Default "TestPairability"
 

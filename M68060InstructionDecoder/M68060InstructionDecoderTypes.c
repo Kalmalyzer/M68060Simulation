@@ -27,8 +27,6 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 		"A7",
 		"AguResult",
 		"MemoryOperand",
-		"ImmediateOperand",
-		"AbsoluteMemoryAddress",
 		"PC",
 		"uOpWord0",
 		"uOpWord1",

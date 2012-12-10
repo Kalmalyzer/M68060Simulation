@@ -28,8 +28,6 @@ typedef enum
 	ExecutionResource_AguResult, // Output from AGU
 
 	ExecutionResource_MemoryOperand, // Result from OC stage
-	ExecutionResource_ImmediateOperand, // Deprecated
-	ExecutionResource_AbsoluteMemoryAddress, // Deprecated
 	ExecutionResource_PC, // Contents of PC register
 
 	ExecutionResource_uOpWord0, // First uOP extension word
