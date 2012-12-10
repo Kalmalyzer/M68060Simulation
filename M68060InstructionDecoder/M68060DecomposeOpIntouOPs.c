@@ -746,6 +746,7 @@ static void decodeuOPs(const uint16_t* instructionWords, const InstructionLength
 			mainuOP.memoryRead |= mainuOP.memoryWrite;
 	}
 
+	mainuOP.ieeOperation = opWordDecodeInfo->ieeOperation;
 	mainuOP.ieeResult = decodeIeeResult(opWordClassInfo->decodeIeeResult, mainuOP.ieeA, mainuOP.ieeB);
 	
 	mainuOP.mnemonic = opWordDecodeInfo->description;

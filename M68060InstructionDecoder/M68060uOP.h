@@ -5,12 +5,6 @@
 #include "../Types.h"
 #include "M68060InstructionDecoderTypes.h"
 
-typedef enum
-{
-	IeeOperation_None,
-	IeeOperation_Add,
-} IeeOperation;
-
 typedef struct
 {
 	const char* mnemonic;
@@ -30,6 +24,7 @@ typedef struct
 	ExecutionResource ieeA;
 	ExecutionResource ieeB;
 	OperationSize ieeOperationSize;
+	IeeOperation ieeOperation;
 	ExecutionResource ieeResult;
 
 	bool memoryWrite;

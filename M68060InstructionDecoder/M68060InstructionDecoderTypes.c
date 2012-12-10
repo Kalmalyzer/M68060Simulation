@@ -119,3 +119,17 @@ const char* OperationSizeToString(OperationSize operationSize)
 
 	return operationSizeStrings[(int) operationSize];
 }
+
+const char* IeeOperationToString(IeeOperation ieeOperation)
+{
+	static const char* ieeOperationStrings[] =
+	{
+		"None",
+		"Add",
+	};
+
+	M68060_ASSERT((size_t) ieeOperation < (sizeof ieeOperationStrings / sizeof ieeOperationStrings[0]), "Invalid ieeOperation");
+
+	return ieeOperationStrings[(int) ieeOperation];
+}
+

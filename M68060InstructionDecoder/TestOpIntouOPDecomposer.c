@@ -35,6 +35,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 				ExecutionResource_D1,
 				OperationSize_Byte,
+				IeeOperation_Add,
 				ExecutionResource_D1,
 
 				false,
@@ -63,6 +64,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D6,
 				ExecutionResource_D0,
 				OperationSize_Byte,
+				IeeOperation_Add,
 				ExecutionResource_D0,
 
 				false,
@@ -91,6 +93,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 				ExecutionResource_D0,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D0,
 
 				false,
@@ -119,6 +122,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 				ExecutionResource_D0,
 				OperationSize_Long,
+				IeeOperation_Add,
 				ExecutionResource_D0,
 
 				false,
@@ -147,6 +151,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 				ExecutionResource_D1,
 				OperationSize_Byte,
+				IeeOperation_Add,
 				ExecutionResource_D1,
 
 				false,
@@ -175,6 +180,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 				ExecutionResource_D2,
 				OperationSize_Byte,
+				IeeOperation_Add,
 				ExecutionResource_D2,
 
 				false,
@@ -203,6 +209,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 				ExecutionResource_D7,
 				OperationSize_Byte,
+				IeeOperation_Add,
 				ExecutionResource_D7,
 
 				false,
@@ -231,6 +238,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D1,
 				ExecutionResource_D0,
 				OperationSize_Byte,
+				IeeOperation_Add,
 				ExecutionResource_D0,
 
 				false,
@@ -259,6 +267,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D2,
 				ExecutionResource_D0,
 				OperationSize_Byte,
+				IeeOperation_Add,
 				ExecutionResource_D0,
 
 				false,
@@ -287,6 +296,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D3,
 				ExecutionResource_D0,
 				OperationSize_Byte,
+				IeeOperation_Add,
 				ExecutionResource_D0,
 
 				false,
@@ -315,6 +325,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D6,
 				ExecutionResource_D0,
 				OperationSize_Byte,
+				IeeOperation_Add,
 				ExecutionResource_D0,
 
 				false,
@@ -343,6 +354,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_A3,
 				ExecutionResource_D5,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -371,6 +383,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D5,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -399,6 +412,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D5,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -427,6 +441,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D5,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -455,6 +470,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D5,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -483,6 +499,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D5,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -511,6 +528,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D5,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -539,6 +557,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D5,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -567,6 +586,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D5,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -595,6 +615,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D5,
 				OperationSize_Long,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -623,6 +644,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_uOpWord0,
 				ExecutionResource_D5,
 				OperationSize_Word,
+				IeeOperation_Add,
 				ExecutionResource_D5,
 
 				false,
@@ -651,6 +673,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_None,
 
 				false,
@@ -673,6 +696,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D3,
 				OperationSize_Long,
+				IeeOperation_Add,
 				ExecutionResource_D3,
 
 				false,
@@ -701,6 +725,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_None,
 
 				false,
@@ -723,6 +748,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D3,
 				OperationSize_Long,
+				IeeOperation_Add,
 				ExecutionResource_D3,
 
 				false,
@@ -751,6 +777,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_None,
 
 				false,
@@ -773,6 +800,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D3,
 				OperationSize_Long,
+				IeeOperation_Add,
 				ExecutionResource_D3,
 
 				false,
@@ -801,6 +829,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -823,6 +852,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_None,
 
 				false,
@@ -845,6 +875,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D3,
 				OperationSize_Long,
+				IeeOperation_Add,
 				ExecutionResource_D3,
 
 				false,
@@ -873,6 +904,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -895,6 +927,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_None,
 
 				false,
@@ -917,6 +950,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D3,
 				OperationSize_Long,
+				IeeOperation_Add,
 				ExecutionResource_D3,
 
 				false,
@@ -945,6 +979,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -967,6 +1002,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_None,
 
 				false,
@@ -989,6 +1025,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D3,
 				OperationSize_Long,
+				IeeOperation_Add,
 				ExecutionResource_D3,
 
 				false,
@@ -1017,6 +1054,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -1039,6 +1077,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_None,
 
 				false,
@@ -1061,6 +1100,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D3,
 				OperationSize_Long,
+				IeeOperation_Add,
 				ExecutionResource_D3,
 
 				false,
@@ -1089,6 +1129,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -1111,6 +1152,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 				ExecutionResource_None,
 				OperationSize_None,
+				IeeOperation_None,
 				ExecutionResource_None,
 
 				false,
@@ -1133,6 +1175,7 @@ TestInstruction instructionStream[] =
 				ExecutionResource_MemoryOperand,
 				ExecutionResource_D3,
 				OperationSize_Long,
+				IeeOperation_Add,
 				ExecutionResource_D3,
 
 				false,
@@ -1162,6 +1205,7 @@ bool areuOPsEquivalent(const uOP* a, const uOP* b)
 		&& a->ieeA == b->ieeA
 		&& a->ieeB == b->ieeB
 		&& a->ieeOperationSize == b->ieeOperationSize
+		&& a->ieeOperation == b->ieeOperation
 		&& a->ieeResult == b->ieeResult
 		&& a->memoryWrite == b->memoryWrite
 		&& a->pairability == b->pairability;
@@ -1176,8 +1220,9 @@ void printuOP(uint id, const uOP* uOP)
 		uOP->aguIndexShift, AguIndexSizeToString(uOP->aguIndexSize), AguDisplacementSizeToString(uOP->aguDisplacementSize),
 		AguOperationToString(uOP->aguOperation), ExecutionResourceToString(uOP->aguResult));
 	printf("      MemoryRead: %s\n", uOP->memoryRead ? "yes" : "no");
-	printf("      Iee: A %s, B %s, OperationSize %s, Result %s\n", ExecutionResourceToString(uOP->ieeA), ExecutionResourceToString(uOP->ieeB),
-		OperationSizeToString(uOP->ieeOperationSize), ExecutionResourceToString(uOP->ieeResult));
+	printf("      Iee: A %s, B %s, OperationSize %s, Operation %s, Result %s\n",
+		ExecutionResourceToString(uOP->ieeA), ExecutionResourceToString(uOP->ieeB),
+		OperationSizeToString(uOP->ieeOperationSize), IeeOperationToString(uOP->ieeOperation), ExecutionResourceToString(uOP->ieeResult));
 	printf("      MemoryWrite: %s\n", uOP->memoryWrite ? "yes" : "no");
 }
 

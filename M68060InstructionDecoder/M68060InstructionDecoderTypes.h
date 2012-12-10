@@ -98,4 +98,13 @@ typedef enum
 
 const char* OperationSizeToString(OperationSize operationSize);
 
+typedef enum
+{
+	IeeOperation_None,
+	IeeOperation_Add,
+
+} IeeOperation;
+
+const char* IeeOperationToString(IeeOperation ieeOperation);
+
 #endif
