@@ -363,7 +363,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -391,7 +391,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_PostIncrement,
 				ExecutionResource_A3,
 
 				true,
@@ -419,7 +419,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_PreDecrement,
 				ExecutionResource_A3,
 
 				true,
@@ -447,7 +447,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_S16,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -475,7 +475,7 @@ TestInstruction instructionStream[] =
 				2,
 				AguIndexSize_Word,
 				AguDisplacementSize_S8,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -503,7 +503,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_S16,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -531,7 +531,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_S32,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -559,7 +559,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_S16,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -587,7 +587,7 @@ TestInstruction instructionStream[] =
 				2,
 				AguIndexSize_Word,
 				AguDisplacementSize_S8,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -643,7 +643,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_Long,
 				AguDisplacementSize_S16,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -665,7 +665,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -693,7 +693,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_S32,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -715,7 +715,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -743,7 +743,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_Long,
 				AguDisplacementSize_S32,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -765,7 +765,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -793,7 +793,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_S32,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -815,7 +815,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_Long,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -837,7 +837,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -865,7 +865,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_S32,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -887,7 +887,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_Long,
 				AguDisplacementSize_S16,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -909,7 +909,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -937,7 +937,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_S32,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -959,7 +959,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_Long,
 				AguDisplacementSize_S32,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -981,7 +981,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -1009,7 +1009,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_S16,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -1031,7 +1031,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_Long,
 				AguDisplacementSize_S32,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -1053,7 +1053,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -1081,7 +1081,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_Long,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,
@@ -1103,7 +1103,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_S32,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_AguTemp,
 
 				false,
@@ -1125,7 +1125,7 @@ TestInstruction instructionStream[] =
 				0,
 				AguIndexSize_None,
 				AguDisplacementSize_None,
-				AguOperation_None,
+				AguOperation_OffsetBaseIndexScale,
 				ExecutionResource_None,
 
 				true,

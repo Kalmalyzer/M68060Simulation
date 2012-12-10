@@ -441,20 +441,24 @@ static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 		if (!baseRegisterSuppressed)
 			firstOp.aguBase = baseRegister;
 
+
 		if (hasDoubleIndirection)
 		{
 			firstOp.mnemonic = "LOAD";
 			firstOp.memoryRead = true;
+			firstOp.aguOperation = AguOperation_OffsetBaseIndexScale;
 			firstOp.ieeA = ExecutionResource_MemoryOperand;
 			firstOp.ieeResult = ExecutionResource_AguTemp;
 
 			secondOp.mnemonic = "LEA";
 			secondOp.aguBase = ExecutionResource_AguTemp;
+			secondOp.aguOperation = AguOperation_OffsetBaseIndexScale;
 			secondOp.aguResult = ExecutionResource_AguTemp;
 		}
 		else
 		{
 			firstOp.mnemonic = "LEA";
+			firstOp.aguOperation = AguOperation_OffsetBaseIndexScale;
 			firstOp.aguResult = ExecutionResource_AguTemp;
 		}
 		
@@ -535,6 +539,7 @@ static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 			writeuOP(uOPWriteBuffer, &secondOp);
 
 		mainuOP->aguBase = ExecutionResource_AguTemp;
+		mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
 	}
 	else
 	{
@@ -545,6 +550,7 @@ static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 		mainuOP->aguIndexShift = (firstExtensionWord & ExtensionWord_Scale_Mask) >> ExtensionWord_Scale_Shift;
 		mainuOP->aguIndexSize = (firstExtensionWord & ExtensionWord_WL_Mask) ? AguIndexSize_Long : AguIndexSize_Word;
 		mainuOP->aguDisplacementSize = AguDisplacementSize_S8;
+		mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
 		mainuOP->extensionWords[0] = firstExtensionWord & 0xff;
 	}
 }
@@ -563,17 +569,20 @@ static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lowe
 			return;
 		case EA6BitMode_Upper3Bits_Mem_An:
 			mainuOP->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
+			mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
 			*ieeInput = ExecutionResource_MemoryOperand;
 			*hasMemoryReference = true;
 			return;
 		case EA6BitMode_Upper3Bits_Mem_An_PostIncrement:
 			mainuOP->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
+			mainuOP->aguOperation = AguOperation_PostIncrement;
 			mainuOP->aguResult = ExecutionResource_A0 + (uint) eaLower3Bits;
 			*ieeInput = ExecutionResource_MemoryOperand;
 			*hasMemoryReference = true;
 			return;
 		case EA6BitMode_Upper3Bits_Mem_PreDecrement_An:
 			mainuOP->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
+			mainuOP->aguOperation = AguOperation_PreDecrement;
 			mainuOP->aguResult = ExecutionResource_A0 + (uint) eaLower3Bits;
 			*ieeInput = ExecutionResource_MemoryOperand;
 			*hasMemoryReference = true;
@@ -582,6 +591,7 @@ static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lowe
 			mainuOP->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
 			mainuOP->aguDisplacementSize = AguDisplacementSize_S16;
 			mainuOP->extensionWords[0] = operandSpecifierWords[0];
+			mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
 			*ieeInput = ExecutionResource_MemoryOperand;
 			*hasMemoryReference = true;
 			return;
@@ -598,6 +608,7 @@ static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lowe
 			{
 				case EA6BitMode_Lower3Bits_Mem_Absolute_Word:
 					mainuOP->aguDisplacementSize = AguDisplacementSize_S16;
+					mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
 					mainuOP->extensionWords[0] = operandSpecifierWords[0];
 					*ieeInput = ExecutionResource_MemoryOperand;
 					*hasMemoryReference = true;
@@ -606,6 +617,7 @@ static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lowe
 					mainuOP->aguDisplacementSize = AguDisplacementSize_S32;
 					mainuOP->extensionWords[0] = operandSpecifierWords[0];
 					mainuOP->extensionWords[1] = operandSpecifierWords[1];
+					mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
 					*ieeInput = ExecutionResource_MemoryOperand;
 					*hasMemoryReference = true;
 					return;
@@ -613,6 +625,7 @@ static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lowe
 					mainuOP->aguBase = ExecutionResource_PC;
 					mainuOP->aguDisplacementSize = AguDisplacementSize_S16;
 					mainuOP->extensionWords[0] = operandSpecifierWords[0];
+					mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
 					*ieeInput = ExecutionResource_MemoryOperand;
 					*hasMemoryReference = true;
 					return;
