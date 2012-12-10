@@ -102,6 +102,7 @@ typedef enum
 {
 	IeeOperation_None,
 	IeeOperation_Add,
+	IeeOperation_AddA,
 
 } IeeOperation;
 

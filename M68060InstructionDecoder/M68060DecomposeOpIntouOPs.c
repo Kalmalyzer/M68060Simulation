@@ -48,7 +48,8 @@ typedef enum
 	OpWordClass_Move_W,
 	OpWordClass_Move_L,
 	OpWordClass_EncodedSize_Ea_Dn,
-	OpWordClass_EncodedSize_Ea_Rn,
+	OpWordClass_EncodedSize_Ea_Dn_2,
+	OpWordClass_EncodedSize_Ea_An,
 	OpWordClass_LongMulDiv,
 	OpWordClass_Bitfield_ReadEa,
 	OpWordClass_Control,
@@ -99,6 +100,7 @@ typedef enum
 	DecodeOperand_None,
 	DecodeOperand_DefaultEALocation,
 	DecodeOperand_DefaultDnLocation,
+	DecodeOperand_DefaultAnLocation,
 
 } DecodeOperand;
 
@@ -132,7 +134,8 @@ static OpWordClassInfo opWordClassInformation[] =
 	{ 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_MoveDestinationEALocation, EAModeMask_Alterable, }, // OpWordClass_Move_W,
 	{ 0, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_MoveDestinationEALocation, EAModeMask_Alterable, }, // OpWordClass_Move_L,
 	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_Data, EAEncoding_None, EAModeMask_None, }, // OpWordClass_EncodedSize_Ea_Dn,
-	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_None, EAModeMask_None, DecodeOperand_DefaultEALocation, DecodeOperand_DefaultDnLocation, DecodeIeeResult_IeeB, }, // OpWordClass_EncodedSize_Ea_Rn,
+	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_None, EAModeMask_None, DecodeOperand_DefaultEALocation, DecodeOperand_DefaultDnLocation, DecodeIeeResult_IeeB, }, // OpWordClass_EncodedSize_Ea_Dn_2,
+	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_None, EAModeMask_None, DecodeOperand_DefaultEALocation, DecodeOperand_DefaultAnLocation, DecodeIeeResult_IeeB, }, // OpWordClass_EncodedSize_Ea_An,
 	{ 1, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAModeMask_Data, EAEncoding_None, EAModeMask_None, }, // OpWordClass_LongMulDiv,
 	{ 1, SizeEncoding_None, EAEncoding_DefaultEALocation, EAModeMask_DnOrControl, EAEncoding_None, EAModeMask_None, }, // OpWordClass_Bitfield_ReadEa,
 	{ 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAModeMask_Control, EAEncoding_None, EAModeMask_None, }, // OpWordClass_Control,
@@ -177,10 +180,11 @@ static OpWordDecodeInfo opWordDecodeInformation[] =
 	{ 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", OpWordClass_NoExtraWords, },
 	{ 0xf138, 0xd100, "ADDX Dx,Dy", OpWordClass_NoExtraWords, }, // Shadows ADD Dn,<ea>
 	{ 0xf138, 0xd108, "ADDX -(Ax),-(Ay)", OpWordClass_NoExtraWords, }, // Shadows ADD Dn,<ea>
-	{ 0xf1c0, 0xd0c0, "ADDA.W <ea>,An", OpWordClass_EncodedSize_Ea_Rn, }, // Shadows ADD <ea>,Dn
-	{ 0xf1c0, 0xd1c0, "ADDA.L <ea>,An", OpWordClass_EncodedSize_Ea_Rn, }, // Shadows ADD Dn,<ea>
 */
-	{ 0xf100, 0xd000, "ADD <ea>,Dn", OpWordClass_EncodedSize_Ea_Rn, IeeOperation_Add },
+	{ 0xf1c0, 0xd0c0, "ADDA.W <ea>,An", OpWordClass_EncodedSize_Ea_An, IeeOperation_AddA }, // Shadows ADD <ea>,Dn
+	{ 0xf1c0, 0xd1c0, "ADDA.L <ea>,An", OpWordClass_EncodedSize_Ea_An, IeeOperation_AddA }, // Shadows ADD Dn,<ea>
+
+	{ 0xf100, 0xd000, "ADD <ea>,Dn", OpWordClass_EncodedSize_Ea_Dn_2, IeeOperation_Add },
 
 	{ 0xf100, 0xd100, "ADD Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_1, IeeOperation_Add },
 /*
@@ -238,7 +242,7 @@ static OpWordDecodeInfo opWordDecodeInformation[] =
 	{ 0xf1c0, 0xb100, "EOR.B Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_2, }, // Shadows CMP
 	{ 0xf1c0, 0xb140, "EOR.W Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_2, }, // Shadows CMP
 	{ 0xf1c0, 0xb180, "EOR.L Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_2, }, // Shadows CMP
-	{ 0xf000, 0xb000, "CMP <ea>,Rn", OpWordClass_EncodedSize_Ea_Rn, },
+	{ 0xf000, 0xb000, "CMP <ea>,Rn", OpWordClass_EncodedSize_Ea_Rn, }, // Should be split into OpWordClass_EncodedSize_Ea_Dn_2 & OpWordClass_EncodedSize_Ea_An
 	{ 0xff00, 0x0c00, "CMPI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea_Read, },
 	{ 0xf1c0, 0x81c0, "DIVS.W <ea>,Dn", OpWordClass_Word_SrcEa, },
 	{ 0xffc0, 0x4c40, "DIVS/DIVU.L <ea>,Dr:Dq (can be 32bit or 64bit division)", OpWordClass_LongMulDiv, },
@@ -306,9 +310,9 @@ static OpWordDecodeInfo opWordDecodeInformation[] =
 
 	{ 0xf138, 0x9100, "SUBX Dx,Dy", OpWordClass_NoExtraWords, }, // Shadows SUB Dn,<e>
 	{ 0xf138, 0x9108, "SUBX -(Ax),-(Ay)", OpWordClass_NoExtraWords, }, // Shadows SUB Dn,<e>
-	{ 0xf1c0, 0x90c0, "SUBA.W <ea>,An", OpWordClass_EncodedSize_Ea_Rn, }, // Shadows SUB <ea>,Dn
-	{ 0xf1c0, 0x91c0, "SUBA.L <ea>,An", OpWordClass_EncodedSize_Ea_Rn, }, // Shadows SUB Dn,<ea>
-	{ 0xf100, 0x9000, "SUB <ea>,Dn", OpWordClass_EncodedSize_Ea_Rn, },
+	{ 0xf1c0, 0x90c0, "SUBA.W <ea>,An", OpWordClass_EncodedSize_Ea_An, }, // Shadows SUB <ea>,Dn
+	{ 0xf1c0, 0x91c0, "SUBA.L <ea>,An", OpWordClass_EncodedSize_Ea_An, }, // Shadows SUB Dn,<ea>
+	{ 0xf100, 0x9000, "SUB <ea>,Dn", OpWordClass_EncodedSize_Ea_Dn_2, },
 	{ 0xf100, 0x9100, "SUB Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_1, },
 	{ 0xff00, 0x0400, "SUBI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea_ReadWrite, },
 	{ 0xf100, 0x5100, "SUBQ #imm,<ea>", OpWordClass_DestEa_Alterable, },
@@ -687,6 +691,13 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 		{
 			ExecutionResource dn = ExecutionResource_D0 + ((opWord & OpWord_DefaultRegisterEncoding_Mask) >> OpWord_DefaultRegisterEncoding_Shift);
 			*ieeInput = dn;
+			*hasMemoryReference = false;
+			break;
+		}
+	case DecodeOperand_DefaultAnLocation:
+		{
+			ExecutionResource an = ExecutionResource_A0 + ((opWord & OpWord_DefaultRegisterEncoding_Mask) >> OpWord_DefaultRegisterEncoding_Shift);
+			*ieeInput = an;
 			*hasMemoryReference = false;
 			break;
 		}

@@ -1241,6 +1241,66 @@ TestInstruction instructionStream[] =
 			},
 		},
 	},
+
+	{ "ADDA.W #$1234,A1", 2, { 0xd2fc, 0x1234, }, 
+		1, 
+		{
+			{
+				"ADDA.W <ea>,An",
+				{ 0x1234, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_uOpWord0,
+				ExecutionResource_A1,
+				OperationSize_Word,
+				IeeOperation_AddA,
+				ExecutionResource_A1,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADDA.L #$12345678,A1", 3, { 0xd3fc, 0x1234, 0x5678, },
+			1, 
+		{
+			{
+				"ADDA.L <ea>,An",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_uOpLong,
+				ExecutionResource_A1,
+				OperationSize_Long,
+				IeeOperation_AddA,
+				ExecutionResource_A1,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+
 };
 
 bool areuOPsEquivalent(const uOP* a, const uOP* b)
