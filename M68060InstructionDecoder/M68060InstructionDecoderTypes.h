@@ -57,22 +57,6 @@ const char* PairabilityToString(Pairability pairability);
 
 typedef enum
 {
-	OpMode_None,
-	OpMode_EaToRegister_Data_Byte,
-	OpMode_EaToRegister_Data_Word,
-	OpMode_EaToRegister_Data_Long,
-	OpMode_EaToRegister_Address_WordWithSignExtension,
-	OpMode_RegisterToEa_Data_Byte,
-	OpMode_RegisterToEa_Data_Word,
-	OpMode_RegisterToEa_Data_Long,
-	OpMode_EaToRegister_Address_Long,
-
-} OpMode;
-
-const char* OpModeToString(OpMode opMode);
-
-typedef enum
-{
 	AguOperation_None,
 	AguOperation_PostIncrement,
 	AguOperation_PreDecrement,

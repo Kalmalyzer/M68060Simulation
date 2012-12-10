@@ -61,26 +61,6 @@ const char* PairabilityToString(Pairability pairability)
 	return pairabilityStrings[(int) pairability];
 }
 
-const char* OpModeToString(OpMode opMode)
-{
-	static const char* opModeStrings[] =
-	{
-		"None",
-		"EaToRegister_Data_Byte",
-		"EaToRegister_Data_Word",
-		"EaToRegister_Data_Long",
-		"EaToRegister_Address_WordWithSignExtension",
-		"RegisterToEa_Data_Byte",
-		"RegisterToEa_Data_Word",
-		"RegisterToEa_Data_Long",
-		"EaToRegister_Address_Long",
-	};
-
-	M68060_ASSERT((size_t) opMode < (sizeof opModeStrings / sizeof opModeStrings[0]), "Invalid opMode");
-	
-	return opModeStrings[(int) opMode];
-}
-
 const char* AguOperationToString(AguOperation aguOperation)
 {
 	static const char* aguOperationStrings[] =
