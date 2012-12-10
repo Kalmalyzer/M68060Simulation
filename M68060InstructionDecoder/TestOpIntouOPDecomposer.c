@@ -1184,8 +1184,63 @@ TestInstruction instructionStream[] =
 		},
 	},
 
-	//{ "ADD.W D5,(A3)", { 0xdb53, }, 1, },
-	//{ "ADD.W D5,(A3)+", { 0xdb5b, }, 1, },
+	{ "ADD.W D5,(A3)", 1, { 0xdb53, },
+		1, 
+		{
+			{
+				"ADD Dn,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_A3,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D5,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Word,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADD.W D5,(A3)+", 1, { 0xdb5b, },
+		1, 
+		{
+			{
+				"ADD Dn,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_A3,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_PostIncrement,
+				ExecutionResource_A3,
+
+				true,
+
+				ExecutionResource_D5,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Word,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
 };
 
 bool areuOPsEquivalent(const uOP* a, const uOP* b)
