@@ -603,6 +603,34 @@ TestInstruction instructionStream[] =
 		},
 	},
 
+	{ "ADD.W #$1234,D5", 2, { 0xda7c, 0x1234, },
+		1,
+		{
+			{
+				"ADD <ea>,Dn",
+				{ 0x1234, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_uOpWord0,
+				ExecutionResource_D5,
+				OperationSize_Word,
+				ExecutionResource_D5,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
 	{ "ADD.L ($1234.W,A0,D0.L),D3", 3, { 0xd6b0, 0x0920, 0x1234, },
 		2, 
 		{
@@ -1113,7 +1141,6 @@ TestInstruction instructionStream[] =
 		},
 	},
 
-	//{ "ADD.W #$1234,D5", { 0xda7c, 0x1234, }, 2, },
 	//{ "ADD.W D5,(A3)", { 0xdb53, }, 1, },
 	//{ "ADD.W D5,(A3)+", { 0xdb5b, }, 1, },
 };
