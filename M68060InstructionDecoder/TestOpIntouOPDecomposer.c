@@ -38,7 +38,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D1,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -67,7 +66,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -96,7 +94,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -125,7 +122,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -154,7 +150,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D1,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -183,7 +178,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D2,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -212,7 +206,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D7,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -241,7 +234,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -270,7 +262,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -299,7 +290,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -328,7 +318,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D0,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -357,7 +346,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D5,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -386,7 +374,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D5,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -415,7 +402,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D5,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -444,7 +430,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D5,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -473,7 +458,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D5,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -502,7 +486,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D5,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -531,7 +514,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D5,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -560,7 +542,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D5,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -589,7 +570,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D5,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -618,7 +598,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D5,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -647,7 +626,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -670,7 +648,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D3,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -699,7 +676,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -722,7 +698,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D3,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -751,7 +726,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -774,7 +748,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D3,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -803,7 +776,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -826,7 +798,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -849,7 +820,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D3,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -878,7 +848,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -901,7 +870,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -924,7 +892,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D3,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -953,7 +920,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -976,7 +942,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -999,7 +964,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D3,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -1028,7 +992,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -1051,7 +1014,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -1074,7 +1036,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D3,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -1103,7 +1064,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -1126,7 +1086,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_None,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 			{
@@ -1149,7 +1108,6 @@ TestInstruction instructionStream[] =
 				ExecutionResource_D3,
 
 				false,
-				OpMode_None,
 				Pairability_pOEP_Or_sOEP,
 			},
 		},
@@ -1179,7 +1137,6 @@ bool areuOPsEquivalent(const uOP* a, const uOP* b)
 		&& a->ieeOperationSize == b->ieeOperationSize
 		&& a->ieeResult == b->ieeResult
 		&& a->memoryWrite == b->memoryWrite
-		&& a->opMode == b->opMode
 		&& a->pairability == b->pairability;
 }
 

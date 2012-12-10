@@ -34,8 +34,6 @@ typedef struct
 
 	bool memoryWrite;
 
-	OpMode opMode;
-	
 	Pairability pairability;
 
 } uOP;
