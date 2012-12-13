@@ -1910,9 +1910,326 @@ static const InstructionTestCase ea6BitTests[] =
 
 };
 
+static const InstructionTestCase immediateTests[] =
+{
+	{ "ADDI.B #$12,D2", 2, { 0x0602, 0x0012, },
+		1,
+		{
+			{
+				"ADDI #imm,<ea>",
+				{ 0x0012, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_uOpByte0,
+				ExecutionResource_D2,
+				OperationSize_Byte,
+				IeeOperation_Add,
+				ExecutionResource_D2,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADDI.W #$1234,D2", 2, { 0x0642, 0x1234, },
+		1,
+		{
+			{
+				"ADDI #imm,<ea>",
+				{ 0x1234, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_uOpWord0,
+				ExecutionResource_D2,
+				OperationSize_Word,
+				IeeOperation_Add,
+				ExecutionResource_D2,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADDI.L #$12345678,D2", 3, { 0x0682, 0x1234, 0x5678, },
+		1,
+		{
+			{
+				"ADDI #imm,<ea>",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_uOpLong,
+				ExecutionResource_D2,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_D2,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADDI.W #$1234,$1234(A1,D2.L)", 4, { 0x0671, 0x1234, 0x2920, 0x1234, },
+		3,
+		{
+			{
+				"LOADI",
+				{ 0x1234, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_uOpWord0,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_ImmediateTemp,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"LEA",
+				{ 0x1234, 0, },
+
+				ExecutionResource_A1,
+				ExecutionResource_D2,
+				0,
+				AguIndexSize_Long,
+				AguDisplacementSize_S16,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_AguTemp,
+
+				false,
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_None,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"ADDI #imm,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_ImmediateTemp,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Word,
+				IeeOperation_Add,
+				ExecutionResource_MemoryOperand,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADDI.W #$1234,$12345678.L", 4, { 0x0679, 0x1234, 0x1234, 0x5678, },
+		2,
+		{
+			{
+				"LOADI",
+				{ 0x1234, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_uOpWord0,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_ImmediateTemp,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"ADDI #imm,<ea>",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_S32,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_ImmediateTemp,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Word,
+				IeeOperation_Add,
+				ExecutionResource_MemoryOperand,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "ADDI.W #$1234,([$12345678,A1,D2.L])", 6, { 0x0671, 0x1234, 0x2931, 0x1234, 0x5678, },
+		4,
+		{
+			{
+				"LOADI",
+				{ 0x1234, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_uOpWord0,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_ImmediateTemp,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"LOAD",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_A1,
+				ExecutionResource_D2,
+				0,
+				AguIndexSize_Long,
+				AguDisplacementSize_S32,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_MemoryOperand,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_AguTemp,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"LEA",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_AguTemp,
+
+				false,
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_None,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"ADDI #imm,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_ImmediateTemp,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Word,
+				IeeOperation_Add,
+				ExecutionResource_MemoryOperand,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+};
+
 TestSuite testSuites[] =
 {
 	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
+	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
 };
 
 bool areuOPsEquivalent(const uOP* a, const uOP* b)

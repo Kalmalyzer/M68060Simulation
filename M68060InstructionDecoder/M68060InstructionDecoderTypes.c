@@ -28,11 +28,12 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 		"AguResult",
 		"MemoryOperand",
 		"PC",
+		"uOpByte0",
 		"uOpWord0",
 		"uOpWord1",
 		"uOpLong",
 		"AguTemp",
-		"Unknown",
+		"ImmediateTemp",
 	};
 
 	M68060_ASSERT((size_t) executionResource < (sizeof executionResourceStrings / sizeof executionResourceStrings[0]), "Invalid executionResource");

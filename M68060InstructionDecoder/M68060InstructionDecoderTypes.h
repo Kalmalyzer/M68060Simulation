@@ -30,13 +30,13 @@ typedef enum
 	ExecutionResource_MemoryOperand, // Result from OC stage
 	ExecutionResource_PC, // Contents of PC register
 
+	ExecutionResource_uOpByte0, // Lower byte of first uOP extension word
 	ExecutionResource_uOpWord0, // First uOP extension word
 	ExecutionResource_uOpWord1, // Second uOP extension word
 	ExecutionResource_uOpLong, // Both uOP extension words, seen as a 32-bit value
 
 	ExecutionResource_AguTemp, // Temporary register used when decomposing complex addressing modes into multiple uOPs
-
-	ExecutionResource_Unknown,
+	ExecutionResource_ImmediateTemp, // Temporary register used when decomposing instructions with both immediates and displacements into multiple uOPs
 
 } ExecutionResource;
 

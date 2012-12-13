@@ -101,7 +101,7 @@ typedef enum
 	DecodeOperand_DefaultEALocation,
 	DecodeOperand_DefaultDnLocation,
 	DecodeOperand_DefaultAnLocation,
-
+	DecodeOperand_Immediate,
 } DecodeOperand;
 
 typedef enum
@@ -145,7 +145,7 @@ static OpWordClassInfo opWordClassInformation[] =
 	{ 0, SizeEncoding_Byte, EAEncoding_Immediate, EAModeMask_All, EAEncoding_DefaultEALocation, EAModeMask_Data, }, // OpWordClass_BitImmInstruction_Read,
 	{ 0, SizeEncoding_Byte, EAEncoding_Immediate, EAModeMask_All, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_BitImmInstruction_ReadWrite,
 	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAModeMask_All, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable | EAModeMask_MemoryReference_PC, }, // OpWordClass_EncodedSize_Imm_Ea_Read,
-	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAModeMask_All, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_EncodedSize_Imm_Ea_ReadWrite,
+	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAModeMask_All, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, DecodeOperand_Immediate, DecodeOperand_DefaultEALocation, DecodeIeeResult_IeeB, }, // OpWordClass_EncodedSize_Imm_Ea_ReadWrite,
 	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_MemoryAlterable, DecodeOperand_DefaultDnLocation, DecodeOperand_DefaultEALocation, DecodeIeeResult_None, }, // OpWordClass_EncodedSize_Rn_Ea_1,
 	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_EncodedSize_Rn_Ea_2,
 	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_All, }, // OpWordClass_EncodedSize_DestEa_Read,
@@ -187,9 +187,9 @@ static OpWordDecodeInfo opWordDecodeInformation[] =
 	{ 0xf100, 0xd000, "ADD <ea>,Dn", OpWordClass_EncodedSize_Ea_Dn_2, IeeOperation_Add },
 
 	{ 0xf100, 0xd100, "ADD Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_1, IeeOperation_Add },
-/*
-	{ 0xff00, 0x0600, "ADDI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea_ReadWrite, },
-	{ 0xf100, 0x5000, "ADDQ #imm,<ea>", OpWordClass_DestEa_Alterable, },
+
+	{ 0xff00, 0x0600, "ADDI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea_ReadWrite, IeeOperation_Add },
+/*	{ 0xf100, 0x5000, "ADDQ #imm,<ea>", OpWordClass_DestEa_Alterable, },
 	{ 0xf1f8, 0xc140, "EXG Dm,Dn", OpWordClass_NoExtraWords, }, // Shadows AND
 	{ 0xf1f8, 0xc148, "EXG Am,An", OpWordClass_NoExtraWords, }, // Shadows AND
 	{ 0xf1f8, 0xc188, "EXG Dm,An", OpWordClass_NoExtraWords, }, // Shadows AND
@@ -644,7 +644,7 @@ static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lowe
 					{
 						case OperationSize_Byte:
 							mainuOP->extensionWords[0] = operandSpecifierWords[0] & 0xff;
-							*ieeInput = ExecutionResource_uOpWord0;
+							*ieeInput = ExecutionResource_uOpByte0;
 							*hasMemoryReference = false;
 							return;
 						case OperationSize_Word:
@@ -673,6 +673,83 @@ static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lowe
 	}
 }
 
+static void decodeImmediateOperand(OperationSize immediateSize, const uint16_t* operandSpecifierWords, uOP* mainuOP, ExecutionResource* ieeInput, bool* hasMemoryReference)
+{
+	switch (immediateSize)
+	{
+		case OperationSize_Byte:
+			mainuOP->extensionWords[0] = operandSpecifierWords[0] & 0xff;
+			*ieeInput = ExecutionResource_uOpByte0;
+			break;
+		case OperationSize_Word:
+			mainuOP->extensionWords[0] = operandSpecifierWords[0];
+			*ieeInput = ExecutionResource_uOpWord0;
+			break;
+		case OperationSize_Long:
+			mainuOP->extensionWords[0] = operandSpecifierWords[0];
+			mainuOP->extensionWords[1] = operandSpecifierWords[1];
+			*ieeInput = ExecutionResource_uOpLong;
+			break;
+	}
+	*hasMemoryReference = false;
+}
+
+static bool needsExtensionWords(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lower3Bits eaLower3Bits)
+{
+	switch (eaUpper3Bits)
+	{
+		case EA6BitMode_Upper3Bits_Dn:
+		case EA6BitMode_Upper3Bits_An:
+		case EA6BitMode_Upper3Bits_Mem_An:
+		case EA6BitMode_Upper3Bits_Mem_An_PostIncrement:
+		case EA6BitMode_Upper3Bits_Mem_PreDecrement_An:
+			return false;
+		case EA6BitMode_Upper3Bits_Mem_D16_An:
+		case EA6BitMode_Upper3Bits_Mem_BriefOrFullExtensionWord_An:
+			return true;
+		case EA6BitMode_Upper3Bits_CheckLower3Bits:
+			switch (eaLower3Bits)
+			{
+				case EA6BitMode_Lower3Bits_Mem_Absolute_Word:
+				case EA6BitMode_Lower3Bits_Mem_Absolute_Long:
+				case EA6BitMode_Lower3Bits_Mem_D16_PC:
+				case EA6BitMode_Lower3Bits_Mem_BriefOrFullExtensionWord_PC:
+				case EA6BitMode_Lower3Bits_Immediate:
+					return true;
+				default:
+					M68060_ERROR("Invalid 6-bit EA");
+					return false;
+			}
+			break;
+		default:
+			M68060_ERROR("Invalid 6-bit EA");
+			return false;
+	}
+}
+
+static bool hasImmediateIeeA(uOP* mainuOP)
+{
+	return (mainuOP->ieeA == ExecutionResource_uOpByte0)
+		|| (mainuOP->ieeA == ExecutionResource_uOpWord0)
+		|| (mainuOP->ieeA == ExecutionResource_uOpWord1)
+		|| (mainuOP->ieeA == ExecutionResource_uOpLong);
+}
+
+static void transferIeeAImmediateToSeparateuOP(uOP* mainuOP, uOPWriteBuffer* uOPWriteBuffer)
+{
+	uOP loadI = { 0 };
+	loadI.mnemonic = "LOADI";
+	loadI.extensionWords[0] = mainuOP->extensionWords[0];
+	loadI.extensionWords[1] = mainuOP->extensionWords[1];
+	loadI.ieeA = mainuOP->ieeA;
+	loadI.ieeResult = ExecutionResource_ImmediateTemp;
+	writeuOP(uOPWriteBuffer, &loadI);
+
+	mainuOP->extensionWords[0] = 0;
+	mainuOP->extensionWords[1] = 0;
+	mainuOP->ieeA = ExecutionResource_ImmediateTemp;
+}
+
 static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, OperationSize immediateSize, const uint16_t* operandSpecifierWords, uOP* mainuOP, ExecutionResource* ieeInput, uOPWriteBuffer* uOPWriteBuffer, bool* hasMemoryReference)
 {
 	switch (decodeOperand)
@@ -684,6 +761,10 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			uint ea6BitMode = opWord & 0x3f;
 			EA6BitMode_Upper3Bits eaUpper3Bits = (ea6BitMode >> 3) & 7;
 			EA6BitMode_Lower3Bits eaLower3Bits = ea6BitMode & 7;
+			if (needsExtensionWords(eaUpper3Bits, eaLower3Bits) && hasImmediateIeeA(mainuOP))
+			{
+				transferIeeAImmediateToSeparateuOP(mainuOP, uOPWriteBuffer);
+			}
 			decodeEA6BitMode(eaUpper3Bits, eaLower3Bits, immediateSize, operandSpecifierWords, mainuOP, ieeInput, uOPWriteBuffer, hasMemoryReference);
 			break;
 		}
@@ -699,6 +780,11 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			ExecutionResource an = ExecutionResource_A0 + ((opWord & OpWord_DefaultRegisterEncoding_Mask) >> OpWord_DefaultRegisterEncoding_Shift);
 			*ieeInput = an;
 			*hasMemoryReference = false;
+			break;
+		}
+	case DecodeOperand_Immediate:
+		{
+			decodeImmediateOperand(immediateSize, operandSpecifierWords, mainuOP, ieeInput, hasMemoryReference);
 			break;
 		}
 	default:
