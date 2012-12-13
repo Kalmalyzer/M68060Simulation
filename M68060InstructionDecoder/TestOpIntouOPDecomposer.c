@@ -11,9 +11,16 @@ typedef struct
 	uint16_t numuOPs;
 	const uOP uOPs[16];
 	
-} TestInstruction;
+} InstructionTestCase;
 
-TestInstruction instructionStream[] =
+typedef struct
+{
+	const char* description;
+	const InstructionTestCase* tests;
+	uint numTests;
+} TestSuite;
+
+static const InstructionTestCase ea6BitTests[] =
 {
 	{ "ADD.B D0,D1", 1, { 0xd200, },
 		1, 
@@ -1300,7 +1307,612 @@ TestInstruction instructionStream[] =
 		},
 	},
 
+	{ "ADD.L D3,(A1)+", 1, { 0xd799, },
+		1, 
+		{
+			{
+				"ADD Dn,<ea>",
+				{ 0, 0, },
 
+				ExecutionResource_A1,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_PostIncrement,
+				ExecutionResource_A1,
+
+				true,
+
+				ExecutionResource_D3,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADD.L D3,-(A2)", 1, { 0xd7a2, },
+		1, 
+		{
+			{
+				"ADD Dn,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_A2,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_PreDecrement,
+				ExecutionResource_A2,
+
+				true,
+
+				ExecutionResource_D3,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADD.W D3,($1234,A1)", 2, { 0xd769, 0x1234, },
+		1, 
+		{
+			{
+				"ADD Dn,<ea>",
+				{ 0x1234, 0, },
+
+				ExecutionResource_A1,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_S16,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D3,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Word,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADD.W D5,$12(A1,D3.W*4)", 2, { 0xdb71, 0x3412, },
+		1, 
+		{
+			{
+				"ADD Dn,<ea>",
+				{ 0x0012, 0, },
+
+				ExecutionResource_A1,
+				ExecutionResource_D3,
+				2,
+				AguIndexSize_Word,
+				AguDisplacementSize_S8,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D5,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Word,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADD.B D1,$1234.W", 2, { 0xd338, 0x1234, },
+		1, 
+		{
+			{
+				"ADD Dn,<ea>",
+				{ 0x1234, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_S16,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D1,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Byte,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADD.W D1,$12345678.L", 3, { 0xd379, 0x1234, 0x5678, },
+		1, 
+		{
+			{
+				"ADD Dn,<ea>",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_S32,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D1,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Word,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "ADD.L D3,($12345678.L,A0,D0.L)", 4, { 0xd7b0, 0x0930, 0x1234, 0x5678, },
+		2, 
+		{
+			{
+				"LEA",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_A0,
+				ExecutionResource_D0,
+				0,
+				AguIndexSize_Long,
+				AguDisplacementSize_S32,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_AguTemp,
+
+				false,
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_None,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"ADD Dn,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D3,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "ADD.L D3,([$12345678.L,A0],D0.L)", 4, { 0xd7b0, 0x0935, 0x1234, 0x5678, },
+		3, 
+		{
+			{
+				"LOAD",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_A0,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_S32,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_MemoryOperand,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_AguTemp,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"LEA",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_D0,
+				0,
+				AguIndexSize_Long,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_AguTemp,
+
+				false,
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_None,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"ADD Dn,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D3,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADD.L D3,([$12345678.L,A0],D0.L,$1234.W)", 5, { 0xd7b0, 0x0936, 0x1234, 0x5678, 0x1234, },
+		3, 
+		{
+			{
+				"LOAD",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_A0,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_S32,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_MemoryOperand,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_AguTemp,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"LEA",
+				{ 0x1234, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_D0,
+				0,
+				AguIndexSize_Long,
+				AguDisplacementSize_S16,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_AguTemp,
+
+				false,
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_None,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"ADD Dn,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D3,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADD.L D3,([$12345678.L,A0],D0.L,$12345678.L)", 6, { 0xd7b0, 0x0937, 0x1234, 0x5678, 0x1234, 0x5678, },
+		3, 
+		{
+			{
+				"LOAD",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_A0,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_S32,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_MemoryOperand,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_AguTemp,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"LEA",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_D0,
+				0,
+				AguIndexSize_Long,
+				AguDisplacementSize_S32,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_AguTemp,
+
+				false,
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_None,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"ADD Dn,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D3,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "ADD.L D3,([$1234.W,A0],D0.L,$12345678.L)", 5, { 0xd7b0, 0x0927, 0x1234, 0x1234, 0x5678, },
+		3, 
+		{
+			{
+				"LOAD",
+				{ 0x1234, 0, },
+
+				ExecutionResource_A0,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_S16,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_MemoryOperand,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_AguTemp,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"LEA",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_D0,
+				0,
+				AguIndexSize_Long,
+				AguDisplacementSize_S32,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_AguTemp,
+
+				false,
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_None,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"ADD Dn,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D3,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "ADD.L D3,([A0,D0.L],$12345678.L)", 4, { 0xd7b0, 0x0913, 0x1234, 0x5678, },
+		3, 
+		{
+			{
+				"LOAD",
+				{ 0, 0, },
+
+				ExecutionResource_A0,
+				ExecutionResource_D0,
+				0,
+				AguIndexSize_Long,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_MemoryOperand,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_AguTemp,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"LEA",
+				{ 0x1234, 0x5678, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_S32,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_AguTemp,
+
+				false,
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_None,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+			{
+				"ADD Dn,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_D3,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+};
+
+TestSuite testSuites[] =
+{
+	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
 };
 
 bool areuOPsEquivalent(const uOP* a, const uOP* b)
@@ -1341,51 +1953,97 @@ void printuOP(uint id, const uOP* uOP)
 	printf("      MemoryWrite: %s\n", uOP->memoryWrite ? "yes" : "no");
 }
 
-int main(void)
+void runTestSuite(const InstructionTestCase* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)
 {
-	uint i;
-
-	for (i = 0; i < (sizeof instructionStream / sizeof instructionStream[0]); ++i)
+	uint numSuccessfulTests = 0;
+	uint numTotalTests = 0;
+	uint testId;
+	
+	for (testId = 0; testId < numTests; ++testId)
 	{
-		const TestInstruction* testInstruction = &instructionStream[i];
+		bool success = true;
+
+		const InstructionTestCase* InstructionTestCase = &tests[testId];
 		uOP uOPs[16];
 		uint numuOPs;
-		bool success = decomposeOpIntouOPs(testInstruction->instructionWords, testInstruction->numInstructionWords, uOPs, &numuOPs);
+		bool decodeSuccess = decomposeOpIntouOPs(InstructionTestCase->instructionWords, InstructionTestCase->numInstructionWords, uOPs, &numuOPs);
 
-		if (!success)
-			printf("failure: unable to decode %s\n", testInstruction->description);
+		if (!decodeSuccess)
+		{
+			success = false;
+			if (printFailure)
+				printf("failure: unable to decode %s\n", InstructionTestCase->description);
+		}
 		else
 		{
-			bool identical = true;
+			bool decodeduOPsMatchReference = true;
 			int uOP;
 
-			if (numuOPs != testInstruction->numuOPs)
-				identical = false;
+			if (numuOPs != InstructionTestCase->numuOPs)
+				decodeduOPsMatchReference = false;
 			else
 			{
 				for (uOP = 0; uOP < numuOPs; ++uOP)
 				{
-					if (!areuOPsEquivalent(&uOPs[uOP], &testInstruction->uOPs[uOP]))
-						identical = false;
+					if (!areuOPsEquivalent(&uOPs[uOP], &InstructionTestCase->uOPs[uOP]))
+						decodeduOPsMatchReference = false;
 				}
 			}
 				
-			if (identical)
-				printf("success: decoded %s into %d uOPs properly\n", testInstruction->description, testInstruction->numuOPs);
+			if (decodeduOPsMatchReference)
+			{
+				if (printSuccess)
+					printf("success: decoded %s into %d uOPs properly\n", InstructionTestCase->description, InstructionTestCase->numuOPs);
+			}
 			else
 			{
-				printf("failure: decoding %s should yield the following uOPs:\n", testInstruction->description);
+				success = false;
+				if (printFailure)
+				{
+					printf("failure: decoding %s should yield the following uOPs:\n", InstructionTestCase->description);
 
-				for (uOP = 0; uOP < testInstruction->numuOPs; ++uOP)
-					printuOP(uOP, &testInstruction->uOPs[uOP]);
+					for (uOP = 0; uOP < InstructionTestCase->numuOPs; ++uOP)
+						printuOP(uOP, &InstructionTestCase->uOPs[uOP]);
 
-				printf("  but yielded the following uOPs:\n");
+					printf("  but yielded the following uOPs:\n");
 
-				for (uOP = 0; uOP < numuOPs; ++uOP)
-					printuOP(uOP, &uOPs[uOP]);
+					for (uOP = 0; uOP < numuOPs; ++uOP)
+						printuOP(uOP, &uOPs[uOP]);
+				}
 			}
 		}
+
+		if (success)
+			numSuccessfulTests++;
+		numTotalTests++;
 	}
+
+	*accumulatedSuccessfulTests += numSuccessfulTests;
+	*accumulatedTotalTests += numTotalTests;
+}
+
+
+int main(void)
+{
+	bool printSuccess = true;
+	bool printFailure = true;
+	
+	uint numSuccessfulTests = 0;
+	uint numTotalTests = 0;
+
+	uint suite = 0;
+
+	printf("Testing M68060 Op -> uOP decoder\n");
+	printf("\n");
+
+	for (suite = 0; suite < (sizeof testSuites / sizeof testSuites[0]); ++suite)
+	{
+		printf("Running %s\n", testSuites[suite].description);
+		runTestSuite(testSuites[suite].tests, testSuites[suite].numTests, printSuccess, printFailure, &numSuccessfulTests, &numTotalTests);
+	}
+
+	printf("\n");
+	printf("%u out of %u tests succeeded.\n", numSuccessfulTests, numTotalTests);
 	
 	return 0;
 }
