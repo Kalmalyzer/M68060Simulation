@@ -166,6 +166,19 @@ Program {
 }
 
 -------------------------------------------------
+-- Minimal IEE/ALU implementation test program --
+-------------------------------------------------
+
+Program {
+	Name = "TestIeeAlu",
+	Sources = {
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionExecution/M68060IeeAlu.c",
+		"M68060InstructionExecution/TestIeeAlu.c",
+	},
+}
+
+-------------------------------------------------
 -- Minimal Integer Register File implementation test program --
 -------------------------------------------------
 
@@ -206,5 +219,6 @@ Default "InstructionLengthDisassembler"
 Default "TestOpIntouOPDecomposer"
 
 Default "TestAguAlu"
+Default "TestIeeAlu"
 Default "TestIntegerRegisterFile"
 Default "TestDummyMemorySubSystem"
