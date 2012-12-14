@@ -178,6 +178,19 @@ Program {
 	},
 }
 
+-------------------------------------------
+-- Minimal memory subsystem test program --
+-------------------------------------------
+
+Program {
+	Name = "TestDummyMemorySubSystem",
+	Sources = {
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionExecution/DummyMemorySubSystem.c",
+		"M68060InstructionExecution/TestDummyMemorySubSystem.c",
+	},
+}
+
 Default "Musashi"
 Default "TestMusashi"
 
@@ -194,3 +207,4 @@ Default "TestOpIntouOPDecomposer"
 
 Default "TestAguAlu"
 Default "TestIntegerRegisterFile"
+Default "TestDummyMemorySubSystem"
