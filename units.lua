@@ -165,6 +165,18 @@ Program {
 	},
 }
 
+-------------------------------------------------
+-- Minimal Integer Register File implementation test program --
+-------------------------------------------------
+
+Program {
+	Name = "TestIntegerRegisterFile",
+	Sources = {
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionExecution/M68060IntegerRegisterFile.c",
+		"M68060InstructionExecution/TestIntegerRegisterFile.c",
+	},
+}
 
 Default "Musashi"
 Default "TestMusashi"
@@ -181,3 +193,4 @@ Default "InstructionLengthDisassembler"
 Default "TestOpIntouOPDecomposer"
 
 Default "TestAguAlu"
+Default "TestIntegerRegisterFile"
