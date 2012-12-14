@@ -59,6 +59,8 @@ void evaluateAguAluOperation(AguOperation aguOperation, OperationSize operationS
 {
 	switch (aguOperation)
 	{
+		case  AguOperation_None:
+			break;
 		case  AguOperation_OffsetBaseIndexScale:
 			{
 				uint32_t result = baseValue + (indexValueTo32Bit(indexValue, indexSize) << indexShift) + displacementValueTo32Bit(displacementValue, displacementSize);
