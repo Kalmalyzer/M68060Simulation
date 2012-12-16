@@ -31,6 +31,6 @@ typedef struct
 
 	Pairability pairability;
 
-} uOP;
+} UOp;
 
 #endif

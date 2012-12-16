@@ -1,5 +1,5 @@
 
-#include "M68060DecomposeOpIntouOPs.h"
+#include "M68060DecodeOpIntoUOps.h"
 #include "../Types.h"
 
 typedef struct 
@@ -8,8 +8,8 @@ typedef struct
 	uint numInstructionWords;
 	uint16_t instructionWords[16];
 	
-	uint16_t numuOPs;
-	const uOP uOPs[16];
+	uint16_t numUOps;
+	const UOp UOps[16];
 	
 } InstructionTestCase;
 
@@ -2232,7 +2232,7 @@ TestSuite testSuites[] =
 	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
 };
 
-bool areuOPsEquivalent(const uOP* a, const uOP* b)
+bool areUOpsEquivalent(const UOp* a, const UOp* b)
 {
 	return
 		!strcmp(a->mnemonic, b->mnemonic)
@@ -2255,20 +2255,20 @@ bool areuOPsEquivalent(const uOP* a, const uOP* b)
 		&& a->pairability == b->pairability;
 }
 
-void printuOP(uint id, const uOP* uOP)
+void printUOp(uint id, const UOp* UOp)
 {
-	printf("    uOP %d: %s\n", id, uOP->mnemonic);
-	printf("      ExtensionWords: %04x,%04x\n", uOP->extensionWords[0], uOP->extensionWords[1]);
+	printf("    UOp %d: %s\n", id, UOp->mnemonic);
+	printf("      ExtensionWords: %04x,%04x\n", UOp->extensionWords[0], UOp->extensionWords[1]);
 	printf("      Agu: Base %s, Index %s, IndexShift %d, IndexSize %s, DisplacementSize %s, Operation %s, Result %s\n",
-		ExecutionResourceToString(uOP->aguBase), ExecutionResourceToString(uOP->aguIndex),
-		uOP->aguIndexShift, AguIndexSizeToString(uOP->aguIndexSize), AguDisplacementSizeToString(uOP->aguDisplacementSize),
-		AguOperationToString(uOP->aguOperation), ExecutionResourceToString(uOP->aguResult));
-	printf("      MemoryRead: %s\n", uOP->memoryRead ? "yes" : "no");
+		ExecutionResourceToString(UOp->aguBase), ExecutionResourceToString(UOp->aguIndex),
+		UOp->aguIndexShift, AguIndexSizeToString(UOp->aguIndexSize), AguDisplacementSizeToString(UOp->aguDisplacementSize),
+		AguOperationToString(UOp->aguOperation), ExecutionResourceToString(UOp->aguResult));
+	printf("      MemoryRead: %s\n", UOp->memoryRead ? "yes" : "no");
 	printf("      Iee: A %s, B %s, OperationSize %s, Operation %s, Result %s\n",
-		ExecutionResourceToString(uOP->ieeA), ExecutionResourceToString(uOP->ieeB),
-		OperationSizeToString(uOP->ieeOperationSize), IeeOperationToString(uOP->ieeOperation), ExecutionResourceToString(uOP->ieeResult));
-	printf("      MemoryWrite: %s\n", uOP->memoryWrite ? "yes" : "no");
-	printf("      Pairability: %s\n", PairabilityToString(uOP->pairability));
+		ExecutionResourceToString(UOp->ieeA), ExecutionResourceToString(UOp->ieeB),
+		OperationSizeToString(UOp->ieeOperationSize), IeeOperationToString(UOp->ieeOperation), ExecutionResourceToString(UOp->ieeResult));
+	printf("      MemoryWrite: %s\n", UOp->memoryWrite ? "yes" : "no");
+	printf("      Pairability: %s\n", PairabilityToString(UOp->pairability));
 }
 
 void runTestSuite(const InstructionTestCase* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)
@@ -2282,9 +2282,9 @@ void runTestSuite(const InstructionTestCase* tests, uint numTests, bool printSuc
 		bool success = true;
 
 		const InstructionTestCase* InstructionTestCase = &tests[testId];
-		uOP uOPs[16];
-		uint numuOPs;
-		bool decodeSuccess = decomposeOpIntouOPs(InstructionTestCase->instructionWords, InstructionTestCase->numInstructionWords, uOPs, &numuOPs);
+		UOp UOps[16];
+		uint numUOps;
+		bool decodeSuccess = decomposeOpIntoUOps(InstructionTestCase->instructionWords, InstructionTestCase->numInstructionWords, UOps, &numUOps);
 
 		if (!decodeSuccess)
 		{
@@ -2294,39 +2294,39 @@ void runTestSuite(const InstructionTestCase* tests, uint numTests, bool printSuc
 		}
 		else
 		{
-			bool decodeduOPsMatchReference = true;
-			int uOP;
+			bool decodedUOpsMatchReference = true;
+			int UOp;
 
-			if (numuOPs != InstructionTestCase->numuOPs)
-				decodeduOPsMatchReference = false;
+			if (numUOps != InstructionTestCase->numUOps)
+				decodedUOpsMatchReference = false;
 			else
 			{
-				for (uOP = 0; uOP < numuOPs; ++uOP)
+				for (UOp = 0; UOp < numUOps; ++UOp)
 				{
-					if (!areuOPsEquivalent(&uOPs[uOP], &InstructionTestCase->uOPs[uOP]))
-						decodeduOPsMatchReference = false;
+					if (!areUOpsEquivalent(&UOps[UOp], &InstructionTestCase->UOps[UOp]))
+						decodedUOpsMatchReference = false;
 				}
 			}
 				
-			if (decodeduOPsMatchReference)
+			if (decodedUOpsMatchReference)
 			{
 				if (printSuccess)
-					printf("success: decoded %s into %d uOPs properly\n", InstructionTestCase->description, InstructionTestCase->numuOPs);
+					printf("success: decoded %s into %d UOps properly\n", InstructionTestCase->description, InstructionTestCase->numUOps);
 			}
 			else
 			{
 				success = false;
 				if (printFailure)
 				{
-					printf("failure: decoding %s should yield the following uOPs:\n", InstructionTestCase->description);
+					printf("failure: decoding %s should yield the following UOps:\n", InstructionTestCase->description);
 
-					for (uOP = 0; uOP < InstructionTestCase->numuOPs; ++uOP)
-						printuOP(uOP, &InstructionTestCase->uOPs[uOP]);
+					for (UOp = 0; UOp < InstructionTestCase->numUOps; ++UOp)
+						printUOp(UOp, &InstructionTestCase->UOps[UOp]);
 
-					printf("  but yielded the following uOPs:\n");
+					printf("  but yielded the following UOps:\n");
 
-					for (uOP = 0; uOP < numuOPs; ++uOP)
-						printuOP(uOP, &uOPs[uOP]);
+					for (UOp = 0; UOp < numUOps; ++UOp)
+						printUOp(UOp, &UOps[UOp]);
 				}
 			}
 		}
@@ -2351,7 +2351,7 @@ int main(void)
 
 	uint suite = 0;
 
-	printf("Testing M68060 Op -> uOP decoder\n");
+	printf("Testing M68060 Op -> UOp decoder\n");
 	printf("\n");
 
 	for (suite = 0; suite < (sizeof testSuites / sizeof testSuites[0]); ++suite)

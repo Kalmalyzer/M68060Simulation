@@ -1,6 +1,6 @@
 
 #include "M68060SimpleOEP.h"
-#include "../M68060InstructionDecoder/M68060DecomposeOpIntouOPs.h"
+#include "../M68060InstructionDecoder/M68060DecodeOpIntoUOps.h"
 
 typedef struct
 {
@@ -19,19 +19,19 @@ M68kOp instructionStream[] =
 	{ "ADD.W (A1),D3", 1, { 0xd651, }, }, 
 };
 
-void printuOP(const uOP* uOP)
+void printUOp(const UOp* UOp)
 {
-	printf("    uOP: %s\n", uOP->mnemonic);
-	printf("      ExtensionWords: %04x,%04x\n", uOP->extensionWords[0], uOP->extensionWords[1]);
+	printf("    UOp: %s\n", UOp->mnemonic);
+	printf("      ExtensionWords: %04x,%04x\n", UOp->extensionWords[0], UOp->extensionWords[1]);
 	printf("      Agu: Base %s, Index %s, IndexShift %d, IndexSize %s, DisplacementSize %s, Operation %s, Result %s\n",
-		ExecutionResourceToString(uOP->aguBase), ExecutionResourceToString(uOP->aguIndex),
-		uOP->aguIndexShift, AguIndexSizeToString(uOP->aguIndexSize), AguDisplacementSizeToString(uOP->aguDisplacementSize),
-		AguOperationToString(uOP->aguOperation), ExecutionResourceToString(uOP->aguResult));
-	printf("      MemoryRead: %s\n", uOP->memoryRead ? "yes" : "no");
+		ExecutionResourceToString(UOp->aguBase), ExecutionResourceToString(UOp->aguIndex),
+		UOp->aguIndexShift, AguIndexSizeToString(UOp->aguIndexSize), AguDisplacementSizeToString(UOp->aguDisplacementSize),
+		AguOperationToString(UOp->aguOperation), ExecutionResourceToString(UOp->aguResult));
+	printf("      MemoryRead: %s\n", UOp->memoryRead ? "yes" : "no");
 	printf("      Iee: A %s, B %s, OperationSize %s, Operation %s, Result %s\n",
-		ExecutionResourceToString(uOP->ieeA), ExecutionResourceToString(uOP->ieeB),
-		OperationSizeToString(uOP->ieeOperationSize), IeeOperationToString(uOP->ieeOperation), ExecutionResourceToString(uOP->ieeResult));
-	printf("      MemoryWrite: %s\n", uOP->memoryWrite ? "yes" : "no");
+		ExecutionResourceToString(UOp->ieeA), ExecutionResourceToString(UOp->ieeB),
+		OperationSizeToString(UOp->ieeOperationSize), IeeOperationToString(UOp->ieeOperation), ExecutionResourceToString(UOp->ieeResult));
+	printf("      MemoryWrite: %s\n", UOp->memoryWrite ? "yes" : "no");
 }
 
 void printRegisters(void)
@@ -48,21 +48,21 @@ int main(void)
 	for (instructionPos = 0; instructionPos < (sizeof instructionStream / sizeof instructionStream[0]); ++instructionPos)
 	{
 		const M68kOp* op = &instructionStream[instructionPos];
-		uOP uOPs[16];
-		uint numuOPs;
-		uint uOPId;
+		UOp UOps[16];
+		uint numUOps;
+		uint UOpId;
 
 		printf("Decoding %s\n", op->description);
-		decomposeOpIntouOPs(op->instructionWords, op->totalInstructionWords, uOPs, &numuOPs);
+		decomposeOpIntoUOps(op->instructionWords, op->totalInstructionWords, UOps, &numUOps);
 		
-		printf("Total %u uOPs\n", numuOPs);
+		printf("Total %u UOps\n", numUOps);
 		
-		for (uOPId = 0; uOPId < numuOPs; ++uOPId)
+		for (UOpId = 0; UOpId < numUOps; ++UOpId)
 		{
-			const uOP* uOP = &uOPs[uOPId];
-			printf("Executing %s\n", uOP->mnemonic);
-			printuOP(uOP);
-			executeuOP(uOP);
+			const UOp* UOp = &UOps[UOpId];
+			printf("Executing %s\n", UOp->mnemonic);
+			printUOp(UOp);
+			executeUOp(UOp);
 			printRegisters();
 		}
 	}

@@ -129,7 +129,7 @@ Program {
 Program {
 	Name = "TestPairability",
 	Sources = {
-		"M68060InstructionDecoder/M68060DecomposeOpIntouOPs.c",
+		"M68060InstructionDecoder/M68060DecodeOpIntoUOps.c",
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
 		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
 		"M68060InstructionDecoder/M68060PairabilityTests.c",
@@ -138,16 +138,16 @@ Program {
 }
 
 ----------------------------------------------------
--- Test program for instruction -> uOP(s) decoder --
+-- Test program for instruction -> UOp(s) decoder --
 ----------------------------------------------------
 
 Program {
-	Name = "TestOpIntouOPDecomposer",
+	Name = "TestOpIntoUOpDecoder",
 	Sources = {
-		"M68060InstructionDecoder/M68060DecomposeOpIntouOPs.c",
+		"M68060InstructionDecoder/M68060DecodeOpIntoUOps.c",
 		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
-		"M68060InstructionDecoder/TestOpIntouOPDecomposer.c",
+		"M68060InstructionDecoder/TestOpIntoUOpDecoder.c",
 	},
 }
 
@@ -210,7 +210,7 @@ Program {
 Program {
 	Name = "TestSimpleOEP",
 	Sources = {
-		"M68060InstructionDecoder/M68060DecomposeOpIntouOPs.c",
+		"M68060InstructionDecoder/M68060DecodeOpIntoUOps.c",
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
 		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
 		"M68060InstructionExecution/DummyMemorySubSystem.c",
@@ -236,7 +236,7 @@ Default "InstructionLengthDisassembler"
 
 Default "TestPairability"
 
-Default "TestOpIntouOPDecomposer"
+Default "TestOpIntoUOpDecoder"
 
 Default "TestAguAlu"
 Default "TestIeeAlu"

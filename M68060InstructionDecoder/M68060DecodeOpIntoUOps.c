@@ -2,21 +2,21 @@
 #ifndef M68060OPWORDDECODER_H
 #define M68060OPWORDDECODER_H
 
-#include "M68060DecomposeOpIntouOPs.h"
+#include "M68060DecodeOpIntoUOps.h"
 #include "../Assert.h"
 #include "../Types.h"
 #include "M68060EA.h"
 #include "M68060InstructionDecoderTypes.h"
 #include "M68060InstructionLengthDecoder.h"
 #include "M68060OpWord.h"
-#include "M68060uOP.h"
+#include "M68060UOp.h"
 
 typedef struct
 {
-	uOP* uOPs;
-	uint numuOPs;
+	UOp* UOps;
+	uint numUOps;
 
-} uOPWriteBuffer;
+} UOpWriteBuffer;
 
 typedef enum
 {
@@ -329,10 +329,10 @@ static OpWordDecodeInfo opWordDecodeInformation[] =
 	{ 0, 0, "Unknown instruction", },
 };
 
-static void writeuOP(uOPWriteBuffer* uOPWriteBuffer, uOP* uOP)
+static void writeUOp(UOpWriteBuffer* UOpWriteBuffer, UOp* UOp)
 {
-	uOPWriteBuffer->uOPs[uOPWriteBuffer->numuOPs] = *uOP;
-	uOPWriteBuffer->numuOPs++;
+	UOpWriteBuffer->UOps[UOpWriteBuffer->numUOps] = *UOp;
+	UOpWriteBuffer->numUOps++;
 }
 
 static bool decodeIeeOperationSize(uint16_t opWord, SizeEncoding sizeEncoding, OperationSize* ieeOperationSize)
@@ -420,7 +420,7 @@ static bool decodeIeeOperationSize(uint16_t opWord, SizeEncoding sizeEncoding, O
 	}
 }
 
-static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords, uOP* mainuOP, uOPWriteBuffer* uOPWriteBuffer, ExecutionResource baseRegister)
+static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords, UOp* mainUOp, UOpWriteBuffer* UOpWriteBuffer, ExecutionResource baseRegister)
 {
 	uint16_t firstExtensionWord = operandSpecifierWords[0];
 		
@@ -430,11 +430,11 @@ static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 		DisplacementSize outerDisplacementSize = (firstExtensionWord & FullExtensionWord_OuterDisplacementSize_Mask) >> FullExtensionWord_OuterDisplacementSize_Shift;
 		IS_IIS is_iis = (firstExtensionWord & FullExtensionWord_IS_IIS_Mask);
 
-		uOP firstOp = { 0 };
-		uOP secondOp = { 0 };
-		uOP* indexOp = 0;
+		UOp firstOp = { 0 };
+		UOp secondOp = { 0 };
+		UOp* indexOp = 0;
 
-		uint numInjecteduOPs = 0;
+		uint numInjectedUOps = 0;
 		
 		bool baseRegisterSuppressed = (firstExtensionWord & FullExtensionWord_BaseRegisterSuppress_Mask);
 		bool indexRegisterSuppressed = (firstExtensionWord & FullExtensionWord_IndexSuppress_Mask);
@@ -541,29 +541,29 @@ static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 			indexOp->aguIndexSize = (firstExtensionWord & ExtensionWord_WL_Mask) ? AguIndexSize_Long : AguIndexSize_Word;
 		}
 
-		writeuOP(uOPWriteBuffer, &firstOp);
+		writeUOp(UOpWriteBuffer, &firstOp);
 
 		if (hasDoubleIndirection)
-			writeuOP(uOPWriteBuffer, &secondOp);
+			writeUOp(UOpWriteBuffer, &secondOp);
 
-		mainuOP->aguBase = ExecutionResource_AguTemp;
-		mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
+		mainUOp->aguBase = ExecutionResource_AguTemp;
+		mainUOp->aguOperation = AguOperation_OffsetBaseIndexScale;
 	}
 	else
 	{
 		ExecutionResource indexRegisterType = (firstExtensionWord & ExtensionWord_DA_Mask) ? ExecutionResource_A0 : ExecutionResource_D0;
 		ExecutionResource indexRegister = indexRegisterType + ((firstExtensionWord & ExtensionWord_Register_Mask) >> ExtensionWord_Register_Shift);
-		mainuOP->aguBase = baseRegister;
-		mainuOP->aguIndex = indexRegister;
-		mainuOP->aguIndexShift = (firstExtensionWord & ExtensionWord_Scale_Mask) >> ExtensionWord_Scale_Shift;
-		mainuOP->aguIndexSize = (firstExtensionWord & ExtensionWord_WL_Mask) ? AguIndexSize_Long : AguIndexSize_Word;
-		mainuOP->aguDisplacementSize = AguDisplacementSize_S8;
-		mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
-		mainuOP->extensionWords[0] = firstExtensionWord & 0xff;
+		mainUOp->aguBase = baseRegister;
+		mainUOp->aguIndex = indexRegister;
+		mainUOp->aguIndexShift = (firstExtensionWord & ExtensionWord_Scale_Mask) >> ExtensionWord_Scale_Shift;
+		mainUOp->aguIndexSize = (firstExtensionWord & ExtensionWord_WL_Mask) ? AguIndexSize_Long : AguIndexSize_Word;
+		mainUOp->aguDisplacementSize = AguDisplacementSize_S8;
+		mainUOp->aguOperation = AguOperation_OffsetBaseIndexScale;
+		mainUOp->extensionWords[0] = firstExtensionWord & 0xff;
 	}
 }
 
-static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lower3Bits eaLower3Bits, OperationSize immediateSize, const uint16_t* operandSpecifierWords, uOP* mainuOP, ExecutionResource* ieeInput, uOPWriteBuffer* uOPWriteBuffer, bool* hasMemoryReference)
+static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lower3Bits eaLower3Bits, OperationSize immediateSize, const uint16_t* operandSpecifierWords, UOp* mainUOp, ExecutionResource* ieeInput, UOpWriteBuffer* UOpWriteBuffer, bool* hasMemoryReference)
 {
 	switch (eaUpper3Bits)
 	{
@@ -576,30 +576,30 @@ static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lowe
 			*hasMemoryReference = false;
 			return;
 		case EA6BitMode_Upper3Bits_Mem_An:
-			mainuOP->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
-			mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
+			mainUOp->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
+			mainUOp->aguOperation = AguOperation_OffsetBaseIndexScale;
 			*ieeInput = ExecutionResource_MemoryOperand;
 			*hasMemoryReference = true;
 			return;
 		case EA6BitMode_Upper3Bits_Mem_An_PostIncrement:
-			mainuOP->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
-			mainuOP->aguOperation = AguOperation_PostIncrement;
-			mainuOP->aguResult = ExecutionResource_A0 + (uint) eaLower3Bits;
+			mainUOp->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
+			mainUOp->aguOperation = AguOperation_PostIncrement;
+			mainUOp->aguResult = ExecutionResource_A0 + (uint) eaLower3Bits;
 			*ieeInput = ExecutionResource_MemoryOperand;
 			*hasMemoryReference = true;
 			return;
 		case EA6BitMode_Upper3Bits_Mem_PreDecrement_An:
-			mainuOP->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
-			mainuOP->aguOperation = AguOperation_PreDecrement;
-			mainuOP->aguResult = ExecutionResource_A0 + (uint) eaLower3Bits;
+			mainUOp->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
+			mainUOp->aguOperation = AguOperation_PreDecrement;
+			mainUOp->aguResult = ExecutionResource_A0 + (uint) eaLower3Bits;
 			*ieeInput = ExecutionResource_MemoryOperand;
 			*hasMemoryReference = true;
 			return;
 		case EA6BitMode_Upper3Bits_Mem_D16_An:
-			mainuOP->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
-			mainuOP->aguDisplacementSize = AguDisplacementSize_S16;
-			mainuOP->extensionWords[0] = operandSpecifierWords[0];
-			mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
+			mainUOp->aguBase = ExecutionResource_A0 + (uint) eaLower3Bits;
+			mainUOp->aguDisplacementSize = AguDisplacementSize_S16;
+			mainUOp->extensionWords[0] = operandSpecifierWords[0];
+			mainUOp->aguOperation = AguOperation_OffsetBaseIndexScale;
 			*ieeInput = ExecutionResource_MemoryOperand;
 			*hasMemoryReference = true;
 			return;
@@ -608,56 +608,56 @@ static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lowe
 				ExecutionResource an = ExecutionResource_A0 + (uint) eaLower3Bits;
 				*ieeInput = ExecutionResource_MemoryOperand;
 				*hasMemoryReference = true;
-				decodeBriefOrFullExtensionWord(operandSpecifierWords, mainuOP, uOPWriteBuffer, an);
+				decodeBriefOrFullExtensionWord(operandSpecifierWords, mainUOp, UOpWriteBuffer, an);
 				return;
 			}
 		case EA6BitMode_Upper3Bits_CheckLower3Bits:
 			switch (eaLower3Bits)
 			{
 				case EA6BitMode_Lower3Bits_Mem_Absolute_Word:
-					mainuOP->aguDisplacementSize = AguDisplacementSize_S16;
-					mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
-					mainuOP->extensionWords[0] = operandSpecifierWords[0];
+					mainUOp->aguDisplacementSize = AguDisplacementSize_S16;
+					mainUOp->aguOperation = AguOperation_OffsetBaseIndexScale;
+					mainUOp->extensionWords[0] = operandSpecifierWords[0];
 					*ieeInput = ExecutionResource_MemoryOperand;
 					*hasMemoryReference = true;
 					return;
 				case EA6BitMode_Lower3Bits_Mem_Absolute_Long:
-					mainuOP->aguDisplacementSize = AguDisplacementSize_S32;
-					mainuOP->extensionWords[0] = operandSpecifierWords[0];
-					mainuOP->extensionWords[1] = operandSpecifierWords[1];
-					mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
+					mainUOp->aguDisplacementSize = AguDisplacementSize_S32;
+					mainUOp->extensionWords[0] = operandSpecifierWords[0];
+					mainUOp->extensionWords[1] = operandSpecifierWords[1];
+					mainUOp->aguOperation = AguOperation_OffsetBaseIndexScale;
 					*ieeInput = ExecutionResource_MemoryOperand;
 					*hasMemoryReference = true;
 					return;
 				case EA6BitMode_Lower3Bits_Mem_D16_PC:
-					mainuOP->aguBase = ExecutionResource_PC;
-					mainuOP->aguDisplacementSize = AguDisplacementSize_S16;
-					mainuOP->extensionWords[0] = operandSpecifierWords[0];
-					mainuOP->aguOperation = AguOperation_OffsetBaseIndexScale;
+					mainUOp->aguBase = ExecutionResource_PC;
+					mainUOp->aguDisplacementSize = AguDisplacementSize_S16;
+					mainUOp->extensionWords[0] = operandSpecifierWords[0];
+					mainUOp->aguOperation = AguOperation_OffsetBaseIndexScale;
 					*ieeInput = ExecutionResource_MemoryOperand;
 					*hasMemoryReference = true;
 					return;
 				case EA6BitMode_Lower3Bits_Mem_BriefOrFullExtensionWord_PC:
 					*ieeInput = ExecutionResource_MemoryOperand;
 					*hasMemoryReference = true;
-					decodeBriefOrFullExtensionWord(operandSpecifierWords, mainuOP, uOPWriteBuffer, ExecutionResource_PC);
+					decodeBriefOrFullExtensionWord(operandSpecifierWords, mainUOp, UOpWriteBuffer, ExecutionResource_PC);
 					return;
 				case EA6BitMode_Lower3Bits_Immediate:
 					switch (immediateSize)
 					{
 						case OperationSize_Byte:
-							mainuOP->extensionWords[0] = operandSpecifierWords[0] & 0xff;
+							mainUOp->extensionWords[0] = operandSpecifierWords[0] & 0xff;
 							*ieeInput = ExecutionResource_uOpByte0;
 							*hasMemoryReference = false;
 							return;
 						case OperationSize_Word:
-							mainuOP->extensionWords[0] = operandSpecifierWords[0];
+							mainUOp->extensionWords[0] = operandSpecifierWords[0];
 							*ieeInput = ExecutionResource_uOpWord0;
 							*hasMemoryReference = false;
 							return;
 						case OperationSize_Long:
-							mainuOP->extensionWords[0] = operandSpecifierWords[0];
-							mainuOP->extensionWords[1] = operandSpecifierWords[1];
+							mainUOp->extensionWords[0] = operandSpecifierWords[0];
+							mainUOp->extensionWords[1] = operandSpecifierWords[1];
 							*ieeInput = ExecutionResource_uOpLong;
 							*hasMemoryReference = false;
 							return;
@@ -676,21 +676,21 @@ static void decodeEA6BitMode(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_Lowe
 	}
 }
 
-static void decodeImmediateOperand(OperationSize immediateSize, const uint16_t* operandSpecifierWords, uOP* mainuOP, ExecutionResource* ieeInput, bool* hasMemoryReference)
+static void decodeImmediateOperand(OperationSize immediateSize, const uint16_t* operandSpecifierWords, UOp* mainUOp, ExecutionResource* ieeInput, bool* hasMemoryReference)
 {
 	switch (immediateSize)
 	{
 		case OperationSize_Byte:
-			mainuOP->extensionWords[0] = operandSpecifierWords[0] & 0xff;
+			mainUOp->extensionWords[0] = operandSpecifierWords[0] & 0xff;
 			*ieeInput = ExecutionResource_uOpByte0;
 			break;
 		case OperationSize_Word:
-			mainuOP->extensionWords[0] = operandSpecifierWords[0];
+			mainUOp->extensionWords[0] = operandSpecifierWords[0];
 			*ieeInput = ExecutionResource_uOpWord0;
 			break;
 		case OperationSize_Long:
-			mainuOP->extensionWords[0] = operandSpecifierWords[0];
-			mainuOP->extensionWords[1] = operandSpecifierWords[1];
+			mainUOp->extensionWords[0] = operandSpecifierWords[0];
+			mainUOp->extensionWords[1] = operandSpecifierWords[1];
 			*ieeInput = ExecutionResource_uOpLong;
 			break;
 	}
@@ -730,31 +730,31 @@ static bool needsExtensionWords(EA6BitMode_Upper3Bits eaUpper3Bits, EA6BitMode_L
 	}
 }
 
-static bool hasImmediateIeeA(uOP* mainuOP)
+static bool hasImmediateIeeA(UOp* mainUOp)
 {
-	return (mainuOP->ieeA == ExecutionResource_uOpByte0)
-		|| (mainuOP->ieeA == ExecutionResource_uOpWord0)
-		|| (mainuOP->ieeA == ExecutionResource_uOpWord1)
-		|| (mainuOP->ieeA == ExecutionResource_uOpLong);
+	return (mainUOp->ieeA == ExecutionResource_uOpByte0)
+		|| (mainUOp->ieeA == ExecutionResource_uOpWord0)
+		|| (mainUOp->ieeA == ExecutionResource_uOpWord1)
+		|| (mainUOp->ieeA == ExecutionResource_uOpLong);
 }
 
-static void transferIeeAImmediateToSeparateuOP(uOP* mainuOP, uOPWriteBuffer* uOPWriteBuffer)
+static void transferIeeAImmediateToSeparateUOp(UOp* mainUOp, UOpWriteBuffer* UOpWriteBuffer)
 {
-	uOP loadI = { 0 };
+	UOp loadI = { 0 };
 	loadI.mnemonic = "LOADI";
-	loadI.extensionWords[0] = mainuOP->extensionWords[0];
-	loadI.extensionWords[1] = mainuOP->extensionWords[1];
-	loadI.ieeA = mainuOP->ieeA;
+	loadI.extensionWords[0] = mainUOp->extensionWords[0];
+	loadI.extensionWords[1] = mainUOp->extensionWords[1];
+	loadI.ieeA = mainUOp->ieeA;
 	loadI.ieeResult = ExecutionResource_ImmediateTemp;
 	loadI.pairability = Pairability_pOEP_Only;
-	writeuOP(uOPWriteBuffer, &loadI);
+	writeUOp(UOpWriteBuffer, &loadI);
 
-	mainuOP->extensionWords[0] = 0;
-	mainuOP->extensionWords[1] = 0;
-	mainuOP->ieeA = ExecutionResource_ImmediateTemp;
+	mainUOp->extensionWords[0] = 0;
+	mainUOp->extensionWords[1] = 0;
+	mainUOp->ieeA = ExecutionResource_ImmediateTemp;
 }
 
-static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, OperationSize immediateSize, const uint16_t* operandSpecifierWords, uOP* mainuOP, ExecutionResource* ieeInput, uOPWriteBuffer* uOPWriteBuffer, bool* hasMemoryReference)
+static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, OperationSize immediateSize, const uint16_t* operandSpecifierWords, UOp* mainUOp, ExecutionResource* ieeInput, UOpWriteBuffer* UOpWriteBuffer, bool* hasMemoryReference)
 {
 	switch (decodeOperand)
 	{
@@ -765,11 +765,11 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			uint ea6BitMode = opWord & 0x3f;
 			EA6BitMode_Upper3Bits eaUpper3Bits = (ea6BitMode >> 3) & 7;
 			EA6BitMode_Lower3Bits eaLower3Bits = ea6BitMode & 7;
-			if (needsExtensionWords(eaUpper3Bits, eaLower3Bits) && hasImmediateIeeA(mainuOP))
+			if (needsExtensionWords(eaUpper3Bits, eaLower3Bits) && hasImmediateIeeA(mainUOp))
 			{
-				transferIeeAImmediateToSeparateuOP(mainuOP, uOPWriteBuffer);
+				transferIeeAImmediateToSeparateUOp(mainUOp, UOpWriteBuffer);
 			}
-			decodeEA6BitMode(eaUpper3Bits, eaLower3Bits, immediateSize, operandSpecifierWords, mainuOP, ieeInput, uOPWriteBuffer, hasMemoryReference);
+			decodeEA6BitMode(eaUpper3Bits, eaLower3Bits, immediateSize, operandSpecifierWords, mainUOp, ieeInput, UOpWriteBuffer, hasMemoryReference);
 			break;
 		}
 	case DecodeOperand_DefaultDnLocation:
@@ -788,7 +788,7 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 		}
 	case DecodeOperand_Immediate:
 		{
-			decodeImmediateOperand(immediateSize, operandSpecifierWords, mainuOP, ieeInput, hasMemoryReference);
+			decodeImmediateOperand(immediateSize, operandSpecifierWords, mainUOp, ieeInput, hasMemoryReference);
 			break;
 		}
 	default:
@@ -813,12 +813,12 @@ static ExecutionResource decodeIeeResult(DecodeIeeResult decodeIeeResult, Execut
 	}
 }
 
-static void decodeuOPs(const uint16_t* instructionWords, const InstructionLength* instructionLength, uOPWriteBuffer* uOPWriteBuffer)
+static void decodeUOps(const uint16_t* instructionWords, const InstructionLength* instructionLength, UOpWriteBuffer* UOpWriteBuffer)
 {
 	uint16_t opWord = *instructionWords;
 	const OpWordDecodeInfo* opWordDecodeInfo = opWordDecodeInformation;
 	const OpWordClassInfo* opWordClassInfo;
-	uOP mainuOP = { 0 };
+	UOp mainUOp = { 0 };
 
 	while ((opWord & opWordDecodeInfo->mask) != opWordDecodeInfo->match)
 	{
@@ -829,39 +829,39 @@ static void decodeuOPs(const uint16_t* instructionWords, const InstructionLength
 
 	opWordClassInfo = &opWordClassInformation[opWordDecodeInfo->class];
 
-	decodeIeeOperationSize(opWord, opWordClassInfo->sizeEncoding, &mainuOP.ieeOperationSize);
+	decodeIeeOperationSize(opWord, opWordClassInfo->sizeEncoding, &mainUOp.ieeOperationSize);
 
 	if (opWordClassInfo->sourceDecodeOperand != DecodeOperand_None)
 	{
 			uint operandOffset = 1 + instructionLength->numSpecialOperandSpecifierWords;
 			bool hasMemoryReference;
-			decodeOperand(opWord, opWordClassInfo->sourceDecodeOperand, mainuOP.ieeOperationSize, instructionWords + operandOffset, &mainuOP, &mainuOP.ieeA, uOPWriteBuffer, &hasMemoryReference);
-			mainuOP.memoryRead = hasMemoryReference;
+			decodeOperand(opWord, opWordClassInfo->sourceDecodeOperand, mainUOp.ieeOperationSize, instructionWords + operandOffset, &mainUOp, &mainUOp.ieeA, UOpWriteBuffer, &hasMemoryReference);
+			mainUOp.memoryRead = hasMemoryReference;
 	}
 	
 	if (opWordClassInfo->destinationDecodeOperand != DecodeOperand_None)
 	{
 			uint operandOffset = 1 + instructionLength->numSpecialOperandSpecifierWords + instructionLength->numSourceEAExtensionWords;
 			bool hasMemoryReference;
-			decodeOperand(opWord, opWordClassInfo->destinationDecodeOperand, mainuOP.ieeOperationSize, instructionWords + operandOffset, &mainuOP, &mainuOP.ieeB, uOPWriteBuffer, &hasMemoryReference);
-			mainuOP.memoryWrite = hasMemoryReference;
-			mainuOP.memoryRead |= mainuOP.memoryWrite;
+			decodeOperand(opWord, opWordClassInfo->destinationDecodeOperand, mainUOp.ieeOperationSize, instructionWords + operandOffset, &mainUOp, &mainUOp.ieeB, UOpWriteBuffer, &hasMemoryReference);
+			mainUOp.memoryWrite = hasMemoryReference;
+			mainUOp.memoryRead |= mainUOp.memoryWrite;
 	}
 
-	mainuOP.ieeOperation = opWordDecodeInfo->ieeOperation;
-	mainuOP.ieeResult = decodeIeeResult(opWordClassInfo->decodeIeeResult, mainuOP.ieeA, mainuOP.ieeB);
+	mainUOp.ieeOperation = opWordDecodeInfo->ieeOperation;
+	mainUOp.ieeResult = decodeIeeResult(opWordClassInfo->decodeIeeResult, mainUOp.ieeA, mainUOp.ieeB);
 	
-	mainuOP.mnemonic = opWordDecodeInfo->description;
-	mainuOP.pairability = Pairability_pOEP_Or_sOEP; // TODO: some uOPs should have different classifications
+	mainUOp.mnemonic = opWordDecodeInfo->description;
+	mainUOp.pairability = Pairability_pOEP_Or_sOEP; // TODO: some UOps should have different classifications
 
-	writeuOP(uOPWriteBuffer, &mainuOP);
+	writeUOp(UOpWriteBuffer, &mainUOp);
 }
 
-bool decomposeOpIntouOPs(const uint16_t* instructionWords, uint numInstructionWordsAvailable, uOP* uOPs, uint* numuOPs)
+bool decomposeOpIntoUOps(const uint16_t* instructionWords, uint numInstructionWordsAvailable, UOp* UOps, uint* numUOps)
 {
 	InstructionLength instructionLength;
 	bool success = decodeInstructionLengthFromInstructionWords(instructionWords, numInstructionWordsAvailable, &instructionLength);
-	uOPWriteBuffer uOPWriteBuffer;
+	UOpWriteBuffer UOpWriteBuffer;
 
 	if (!success)
 		return false;
@@ -869,14 +869,14 @@ bool decomposeOpIntouOPs(const uint16_t* instructionWords, uint numInstructionWo
 	if (instructionLength.totalWords > numInstructionWordsAvailable)
 		return false;
 
-	M68060_ASSERT(instructionLength.description, "Unable to decode illegal instruction into uOPs");
+	M68060_ASSERT(instructionLength.description, "Unable to decode illegal instruction into UOps");
 
-	uOPWriteBuffer.uOPs = uOPs;
-	uOPWriteBuffer.numuOPs = 0;
+	UOpWriteBuffer.UOps = UOps;
+	UOpWriteBuffer.numUOps = 0;
 	
-	decodeuOPs(instructionWords, &instructionLength, &uOPWriteBuffer);
+	decodeUOps(instructionWords, &instructionLength, &UOpWriteBuffer);
 	
-	*numuOPs = uOPWriteBuffer.numuOPs;
+	*numUOps = UOpWriteBuffer.numUOps;
 	
 	return true;
 		

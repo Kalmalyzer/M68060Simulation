@@ -13,7 +13,7 @@ static uint32_t s_memoryOperand;
 static uint32_t s_aguTemp;
 static uint32_t s_immediateTemp;
 
-static uint32_t readExecutionResource(ExecutionResource executionResource, const uOP* uOP)
+static uint32_t readExecutionResource(ExecutionResource executionResource, const UOp* UOp)
 {
 	switch (executionResource)
 	{
@@ -41,11 +41,11 @@ static uint32_t readExecutionResource(ExecutionResource executionResource, const
 		case ExecutionResource_MemoryOperand:
 			return s_memoryOperand;
 		case ExecutionResource_uOpByte0:
-			return (uint32_t) (int32_t) (int8_t) uOP->extensionWords[0];
+			return (uint32_t) (int32_t) (int8_t) UOp->extensionWords[0];
 		case ExecutionResource_uOpWord0:
-			return (uint32_t) (int32_t) (int16_t) uOP->extensionWords[0];
+			return (uint32_t) (int32_t) (int16_t) UOp->extensionWords[0];
 		case ExecutionResource_uOpLong:
-			return (uOP->extensionWords[0] << 16) + uOP->extensionWords[1];
+			return (UOp->extensionWords[0] << 16) + UOp->extensionWords[1];
 		case ExecutionResource_AguTemp:
 			return s_aguTemp;
 		case ExecutionResource_ImmediateTemp:
@@ -116,7 +116,7 @@ static ExecutionResource translateAguDisplacementSizeToExecutionResource(AguDisp
 	}
 }
 
-void executeuOP(const uOP* uOP)
+void executeUOp(const UOp* UOp)
 {
 	uint32_t memoryReference = 0;
 	uint32_t ieeResultValue = 0;
@@ -124,34 +124,34 @@ void executeuOP(const uOP* uOP)
 	// AG stage
 	
 	{
-		uint32_t aguBaseValue = readExecutionResource(uOP->aguBase, uOP);
-		uint32_t aguIndexValue = readExecutionResource(uOP->aguIndex, uOP);
-		uint32_t aguDisplacementValue = readExecutionResource(translateAguDisplacementSizeToExecutionResource(uOP->aguDisplacementSize), uOP);
-		evaluateAguAluOperation(uOP->aguOperation, uOP->ieeOperationSize, aguBaseValue, aguIndexValue, uOP->aguIndexShift, uOP->aguIndexSize,
-			aguDisplacementValue, uOP->aguDisplacementSize, &s_aguResult, &memoryReference);
+		uint32_t aguBaseValue = readExecutionResource(UOp->aguBase, UOp);
+		uint32_t aguIndexValue = readExecutionResource(UOp->aguIndex, UOp);
+		uint32_t aguDisplacementValue = readExecutionResource(translateAguDisplacementSizeToExecutionResource(UOp->aguDisplacementSize), UOp);
+		evaluateAguAluOperation(UOp->aguOperation, UOp->ieeOperationSize, aguBaseValue, aguIndexValue, UOp->aguIndexShift, UOp->aguIndexSize,
+			aguDisplacementValue, UOp->aguDisplacementSize, &s_aguResult, &memoryReference);
 	}
 		
 	// OC stage
 
-	if (uOP->memoryRead)
-		s_memoryOperand = readMemory(memoryReference, uOP->ieeOperationSize);
+	if (UOp->memoryRead)
+		s_memoryOperand = readMemory(memoryReference, UOp->ieeOperationSize);
 
 	// EX stage
 	
 	{
-		uint32_t ieeAValue = readExecutionResource(uOP->ieeA, uOP);
-		uint32_t ieeBValue = readExecutionResource(uOP->ieeB, uOP);
-		evaluateIeeAluOperation(uOP->ieeOperation, uOP->ieeOperationSize, ieeAValue, ieeBValue, &ieeResultValue);
+		uint32_t ieeAValue = readExecutionResource(UOp->ieeA, UOp);
+		uint32_t ieeBValue = readExecutionResource(UOp->ieeB, UOp);
+		evaluateIeeAluOperation(UOp->ieeOperation, UOp->ieeOperationSize, ieeAValue, ieeBValue, &ieeResultValue);
 	}
 
 	// WB stage
 	
-	if (uOP->memoryWrite)
-		writeMemory(memoryReference, uOP->ieeOperationSize, ieeResultValue);
+	if (UOp->memoryWrite)
+		writeMemory(memoryReference, UOp->ieeOperationSize, ieeResultValue);
 		
-	if (uOP->aguResult != ExecutionResource_None)
-		writeExecutionResource(uOP->aguResult, s_aguResult);
-	if (uOP->ieeResult != ExecutionResource_None)
-		writeExecutionResource(uOP->ieeResult, ieeResultValue);
+	if (UOp->aguResult != ExecutionResource_None)
+		writeExecutionResource(UOp->aguResult, s_aguResult);
+	if (UOp->ieeResult != ExecutionResource_None)
+		writeExecutionResource(UOp->ieeResult, ieeResultValue);
 
 }

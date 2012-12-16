@@ -4,11 +4,11 @@
 
 typedef struct
 {
-	enum { MaxuOPs = 16 };
+	enum { MaxUOps = 16 };
 
 	const char* mnemonic;
-	uint numuOPs;
-	uOP uOPs[maxuOPs];
+	uint numUOps;
+	UOp UOps[maxUOps];
 	uint length;
 
 } DecodedInstruction;

@@ -26,72 +26,72 @@ const char* PairabilityTestResultToString(PairabilityTestResult pairabilityTestR
 	return pairabilityTestResultStrings[(int) pairabilityTestResult];
 }
 
-PairabilityTestResult checkPairability_Test2_InstructionClassification(uOP* uOP0, uOP* uOP1)
+PairabilityTestResult checkPairability_Test2_InstructionClassification(UOp* UOp0, UOp* UOp1)
 {
-	if (uOP0->pairability == Pairability_pOEP_Only)
+	if (UOp0->pairability == Pairability_pOEP_Only)
 		return PairabilityTestResult_Test2Failure_FirstInstructionIs_pOEPOnly;
 
-	if (uOP1->pairability != Pairability_pOEP_Or_sOEP)
+	if (UOp1->pairability != Pairability_pOEP_Or_sOEP)
 		return PairabilityTestResult_Test2Failure_SecondInstructionIsNot_pOEPOrsOEP;
 		
 	return PairabilityTestResult_Success;
 }
 
-PairabilityTestResult checkPairability_Test3_AllowableAddressingModesInsOEP(uOP* uOP1)
+PairabilityTestResult checkPairability_Test3_AllowableAddressingModesInsOEP(UOp* UOp1)
 {
-	if (uOP1->aguBase == ExecutionResource_PC)
+	if (UOp1->aguBase == ExecutionResource_PC)
 		return PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing;
 
-	// No need to test for Ops with double-indirection in sOEP, beecause those will generate pOEP-only support uOPs
+	// No need to test for Ops with double-indirection in sOEP, beecause those will generate pOEP-only support UOps
 	
 	return PairabilityTestResult_Success;
 }
 
-PairabilityTestResult checkPairability_Test4_AllowableOperandDataMemoryReference(uOP* uOP0, uOP* uOP1)
+PairabilityTestResult checkPairability_Test4_AllowableOperandDataMemoryReference(UOp* UOp0, UOp* UOp1)
 {
-	bool uOP0HasMemoryReference = (uOP0->memoryRead || uOP0->memoryWrite);
-	bool uOP1HasMemoryReference = (uOP1->memoryRead || uOP1->memoryWrite);
+	bool UOp0HasMemoryReference = (UOp0->memoryRead || UOp0->memoryWrite);
+	bool UOp1HasMemoryReference = (UOp1->memoryRead || UOp1->memoryWrite);
 
-	if (uOP0HasMemoryReference && uOP1HasMemoryReference)
+	if (UOp0HasMemoryReference && UOp1HasMemoryReference)
 		return PairabilityTestResult_Test4Failure_BothInstructionsReferenceMemory;
 
 	return PairabilityTestResult_Success;
 }
 
-PairabilityTestResult checkPairability_Test5_RegisterConflictsOnAguResources(uOP* uOP0, uOP* uOP1)
+PairabilityTestResult checkPairability_Test5_RegisterConflictsOnAguResources(UOp* UOp0, UOp* UOp1)
 {
-	if (isRegister(uOP1->aguBase))
+	if (isRegister(UOp1->aguBase))
 	{
-		if (uOP1->aguBase == uOP0->aguResult)
+		if (UOp1->aguBase == UOp0->aguResult)
 			return PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionAguResult;
-		else if (uOP1->aguBase == uOP0->ieeResult)
+		else if (UOp1->aguBase == UOp0->ieeResult)
 			return PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionIeeResult;
 	}
-	if (isRegister(uOP1->aguIndex))
+	if (isRegister(UOp1->aguIndex))
 	{
-		if (uOP1->aguIndex == uOP0->aguResult)
+		if (UOp1->aguIndex == UOp0->aguResult)
 			return PairabilityTestResult_Test5Failure_SecondInstructionIndexRegisterDependsOnFirstInstructionAguResult;
-		else if (uOP1->aguIndex == uOP0->ieeResult)
+		else if (UOp1->aguIndex == UOp0->ieeResult)
 			return PairabilityTestResult_Test5Failure_SecondInstructionIndexRegisterDependsOnFirstInstructionIeeResult;
 	}
 
 	return PairabilityTestResult_Success;
 }
 
-PairabilityTestResult checkPairability_Test6_RegisterConflictsOnIeeResources(uOP* uOP0, uOP* uOP1)
+PairabilityTestResult checkPairability_Test6_RegisterConflictsOnIeeResources(UOp* UOp0, UOp* UOp1)
 {
-	if (isRegister(uOP1->ieeA))
+	if (isRegister(UOp1->ieeA))
 	{
-		if (uOP1->ieeA == uOP0->aguResult)
+		if (UOp1->ieeA == UOp0->aguResult)
 			return PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionAguResult;
-		else if (uOP1->ieeA == uOP0->ieeResult)
+		else if (UOp1->ieeA == UOp0->ieeResult)
 			return PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionIeeResult;
 	}
-	if (isRegister(uOP1->ieeB))
+	if (isRegister(UOp1->ieeB))
 	{
-		if (uOP1->ieeB == uOP0->aguResult)
+		if (UOp1->ieeB == UOp0->aguResult)
 			return PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionAguResult;
-		else if (uOP1->ieeB == uOP0->ieeResult)
+		else if (UOp1->ieeB == UOp0->ieeResult)
 			return PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionIeeResult;
 	}
 
@@ -102,13 +102,13 @@ PairabilityTestResult checkPairability_Test6_RegisterConflictsOnIeeResources(uOP
 	return PairabilityTestResult_Success;
 }
 
-PairabilityTestResult checkPairability(uOP* uOP0, uOP* uOP1)
+PairabilityTestResult checkPairability(UOp* UOp0, UOp* UOp1)
 {
-	PairabilityTestResult test2Result = checkPairability_Test2_InstructionClassification(uOP0, uOP1);
-	PairabilityTestResult test3Result = checkPairability_Test3_AllowableAddressingModesInsOEP(uOP1);
-	PairabilityTestResult test4Result = checkPairability_Test4_AllowableOperandDataMemoryReference(uOP0, uOP1);
-	PairabilityTestResult test5Result = checkPairability_Test5_RegisterConflictsOnAguResources(uOP0, uOP1);
-	PairabilityTestResult test6Result = checkPairability_Test6_RegisterConflictsOnIeeResources(uOP0, uOP1);
+	PairabilityTestResult test2Result = checkPairability_Test2_InstructionClassification(UOp0, UOp1);
+	PairabilityTestResult test3Result = checkPairability_Test3_AllowableAddressingModesInsOEP(UOp1);
+	PairabilityTestResult test4Result = checkPairability_Test4_AllowableOperandDataMemoryReference(UOp0, UOp1);
+	PairabilityTestResult test5Result = checkPairability_Test5_RegisterConflictsOnAguResources(UOp0, UOp1);
+	PairabilityTestResult test6Result = checkPairability_Test6_RegisterConflictsOnIeeResources(UOp0, UOp1);
 
 	if (test2Result != PairabilityTestResult_Success)
 		return test2Result;

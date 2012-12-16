@@ -1,5 +1,5 @@
 
-#include "M68060DecomposeOpIntouOPs.h"
+#include "M68060DecodeOpIntoUOps.h"
 #include "M68060PairabilityTests.h"
 #include "../Types.h"
 
@@ -76,16 +76,16 @@ int main(void)
 	{
 		bool success = true;
 		const PairabilityTest* test = &pairabilityTests[i];
-		uint numuOPs0;
-		uOP uOPs0[16];
-		uint numuOPs1;
-		uOP uOPs1[16];
+		uint numUOps0;
+		UOp UOps0[16];
+		uint numUOps1;
+		UOp UOps1[16];
 		
-		bool decode0Success = decomposeOpIntouOPs(test->instruction0.instructionWords, test->instruction0.numWords, uOPs0, &numuOPs0);
-		bool decode1Success = decomposeOpIntouOPs(test->instruction1.instructionWords, test->instruction1.numWords, uOPs1, &numuOPs1);
+		bool decode0Success = decomposeOpIntoUOps(test->instruction0.instructionWords, test->instruction0.numWords, UOps0, &numUOps0);
+		bool decode1Success = decomposeOpIntoUOps(test->instruction1.instructionWords, test->instruction1.numWords, UOps1, &numUOps1);
 
-		bool op0HasMultipleuOPs = false;
-		bool op1HasMultipleuOPs = false;
+		bool op0HasMultipleUOps = false;
+		bool op1HasMultipleUOps = false;
 		
 		PairabilityTestResult pairabilityTestResult;
 		
@@ -96,15 +96,15 @@ int main(void)
 
 		if (success)
 		{
-			op0HasMultipleuOPs = (numuOPs0 > 1);
-			op1HasMultipleuOPs = (numuOPs1 > 1);
+			op0HasMultipleUOps = (numUOps0 > 1);
+			op1HasMultipleUOps = (numUOps1 > 1);
 		}
 
-		if (op0HasMultipleuOPs || op1HasMultipleuOPs)
+		if (op0HasMultipleUOps || op1HasMultipleUOps)
 			success = false;
 		
 		if (success)
-			pairabilityTestResult = checkPairability(&uOPs0[0], &uOPs1[0]);
+			pairabilityTestResult = checkPairability(&UOps0[0], &UOps1[0]);
 			
 		if (pairabilityTestResult != test->expectedResult)
 			success = false;
@@ -121,10 +121,10 @@ int main(void)
 				printf("instruction 0 does not decode properly\n");
 			else if (!decode1Success)
 				printf("instruction 1 does not decode properly\n");
-			else if (op0HasMultipleuOPs)
-				printf("instruction 0 decodes into multiple uOPs and will therefore not pair\n");
-			else if (op1HasMultipleuOPs)
-				printf("instruction 1 decodes into multiple uOPs and will therefore not pair\n");
+			else if (op0HasMultipleUOps)
+				printf("instruction 0 decodes into multiple UOps and will therefore not pair\n");
+			else if (op1HasMultipleUOps)
+				printf("instruction 1 decodes into multiple UOps and will therefore not pair\n");
 			else
 				printf("result %s - expected %s\n", 
 					PairabilityTestResultToString(pairabilityTestResult),
