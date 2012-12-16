@@ -454,17 +454,20 @@ static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 			firstOp.aguOperation = AguOperation_OffsetBaseIndexScale;
 			firstOp.ieeA = ExecutionResource_MemoryOperand;
 			firstOp.ieeResult = ExecutionResource_AguTemp;
+			firstOp.pairability = Pairability_pOEP_Only;
 
 			secondOp.mnemonic = "LEA";
 			secondOp.aguBase = ExecutionResource_AguTemp;
 			secondOp.aguOperation = AguOperation_OffsetBaseIndexScale;
 			secondOp.aguResult = ExecutionResource_AguTemp;
+			secondOp.pairability = Pairability_pOEP_Only;
 		}
 		else
 		{
 			firstOp.mnemonic = "LEA";
 			firstOp.aguOperation = AguOperation_OffsetBaseIndexScale;
 			firstOp.aguResult = ExecutionResource_AguTemp;
+			firstOp.pairability = Pairability_pOEP_Only;
 		}
 		
 		switch (baseDisplacementSize)
@@ -743,6 +746,7 @@ static void transferIeeAImmediateToSeparateuOP(uOP* mainuOP, uOPWriteBuffer* uOP
 	loadI.extensionWords[1] = mainuOP->extensionWords[1];
 	loadI.ieeA = mainuOP->ieeA;
 	loadI.ieeResult = ExecutionResource_ImmediateTemp;
+	loadI.pairability = Pairability_pOEP_Only;
 	writeuOP(uOPWriteBuffer, &loadI);
 
 	mainuOP->extensionWords[0] = 0;
@@ -848,6 +852,7 @@ static void decodeuOPs(const uint16_t* instructionWords, const InstructionLength
 	mainuOP.ieeResult = decodeIeeResult(opWordClassInfo->decodeIeeResult, mainuOP.ieeA, mainuOP.ieeB);
 	
 	mainuOP.mnemonic = opWordDecodeInfo->description;
+	mainuOP.pairability = Pairability_pOEP_Or_sOEP; // TODO: some uOPs should have different classifications
 
 	writeuOP(uOPWriteBuffer, &mainuOP);
 }

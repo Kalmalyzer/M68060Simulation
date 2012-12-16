@@ -122,25 +122,24 @@ Program {
 	},
 }
 
----------------------------------------------------------------------------------------------------
--- Build rules for test program that checks instruction pairability based on the leading OpWords --
--- This is a flawed approach, and will not work for all instructions;                            --
--- therefore, this program will likely get rewritten to handle uOPs gracefully in the future     --
----------------------------------------------------------------------------------------------------
+----------------------------------------------------
+-- Test program for instruction pairability check --
+----------------------------------------------------
 
 Program {
 	Name = "TestPairability",
 	Sources = {
-		"M68060InstructionDecoder/M68060OpWordDecoder.c",
+		"M68060InstructionDecoder/M68060DecomposeOpIntouOPs.c",
+		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
 		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
 		"M68060InstructionDecoder/M68060PairabilityTests.c",
 		"M68060InstructionDecoder/TestPairability.c",
 	},
 }
 
------------------------------------------------------------------------------
--- Build rules for test program for a proper instruction -> uOP(s) decoder --
------------------------------------------------------------------------------
+----------------------------------------------------
+-- Test program for instruction -> uOP(s) decoder --
+----------------------------------------------------
 
 Program {
 	Name = "TestOpIntouOPDecomposer",
@@ -178,9 +177,9 @@ Program {
 	},
 }
 
--------------------------------------------------
+---------------------------------------------------------------
 -- Minimal Integer Register File implementation test program --
--------------------------------------------------
+---------------------------------------------------------------
 
 Program {
 	Name = "TestIntegerRegisterFile",
@@ -223,6 +222,8 @@ Program {
 	},
 }
 
+--------------------------------------------------------------------------------------------------------
+
 Default "Musashi"
 Default "TestMusashi"
 
@@ -233,7 +234,7 @@ Default "SoakTestInstructionLengthDecoder"
 Default "SoakTestInstructionLengthDecoderAgainstMusashi"
 Default "InstructionLengthDisassembler"
 
---Default "TestPairability"
+Default "TestPairability"
 
 Default "TestOpIntouOPDecomposer"
 

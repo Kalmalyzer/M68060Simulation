@@ -20,6 +20,9 @@ If an Op breaks down into a single Uop, then it pairs according to the M68060UM.
 If an Op breaks down into more than one Uop, then all Uops except the last will run as pOEP-only.
 The last Uop pairs according to the M68060UM.
 
+An instruction that can pair, but breaks down into multiple Uops, is classified as pOEP-until-last in the manual.
+This means that the pOEP-until-last classification only applies to Ops; Uops will always belong to another class.
+
 
 How to identify the Op->Uop breakdown
 =====================================

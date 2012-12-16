@@ -49,7 +49,6 @@ typedef enum
 	Pairability_pOEP_Or_sOEP,
 	Pairability_pOEP_But_Allows_sOEP,
 	Pairability_pOEP_Only,
-	Pairability_pOEP_Until_Last,
 
 } Pairability;
 

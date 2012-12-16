@@ -2,7 +2,7 @@
 #ifndef M68060PAIRABILITYTESTS_H
 #define M68060PAIRABILITYTESTS_H
 
-#include "M68060OpWordDecoder.h"
+#include "M68060uOP.h"
 
 typedef enum
 {
@@ -23,6 +23,6 @@ typedef enum
 
 const char* PairabilityTestResultToString(PairabilityTestResult pairabilityTestResult);
 
-PairabilityTestResult checkPairability(DecodedOpWord* opWord0, DecodedOpWord* opWord1);
+PairabilityTestResult checkPairability(uOP* uOP0, uOP* uOP1);
 
 #endif

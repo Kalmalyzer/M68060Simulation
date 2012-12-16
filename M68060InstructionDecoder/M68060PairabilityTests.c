@@ -26,82 +26,89 @@ const char* PairabilityTestResultToString(PairabilityTestResult pairabilityTestR
 	return pairabilityTestResultStrings[(int) pairabilityTestResult];
 }
 
-PairabilityTestResult checkPairability_Test2_InstructionClassification(DecodedOpWord* opWord0, DecodedOpWord* opWord1)
+PairabilityTestResult checkPairability_Test2_InstructionClassification(uOP* uOP0, uOP* uOP1)
 {
-	if (opWord0->pairability == Pairability_pOEP_Only)
+	if (uOP0->pairability == Pairability_pOEP_Only)
 		return PairabilityTestResult_Test2Failure_FirstInstructionIs_pOEPOnly;
 
-	if (opWord1->pairability != Pairability_pOEP_Or_sOEP)
+	if (uOP1->pairability != Pairability_pOEP_Or_sOEP)
 		return PairabilityTestResult_Test2Failure_SecondInstructionIsNot_pOEPOrsOEP;
 		
 	return PairabilityTestResult_Success;
 }
 
-PairabilityTestResult checkPairability_Test3_AllowableAddressingModesInsOEP(DecodedOpWord* opWord1)
+PairabilityTestResult checkPairability_Test3_AllowableAddressingModesInsOEP(uOP* uOP1)
 {
-	if (opWord1->aguBase == ExecutionResource_PC)
+	if (uOP1->aguBase == ExecutionResource_PC)
 		return PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing;
 
-	// TODO: return failure if using {(bd, An, Xi*SF)} addressing mode
+	// No need to test for Ops with double-indirection in sOEP, beecause those will generate pOEP-only support uOPs
 	
 	return PairabilityTestResult_Success;
 }
 
-PairabilityTestResult checkPairability_Test4_AllowableOperandDataMemoryReference(DecodedOpWord* opWord0, DecodedOpWord* opWord1)
+PairabilityTestResult checkPairability_Test4_AllowableOperandDataMemoryReference(uOP* uOP0, uOP* uOP1)
 {
-	if (opWord0->hasMemoryReference && opWord1->hasMemoryReference)
+	bool uOP0HasMemoryReference = (uOP0->memoryRead || uOP0->memoryWrite);
+	bool uOP1HasMemoryReference = (uOP1->memoryRead || uOP1->memoryWrite);
+
+	if (uOP0HasMemoryReference && uOP1HasMemoryReference)
 		return PairabilityTestResult_Test4Failure_BothInstructionsReferenceMemory;
 
 	return PairabilityTestResult_Success;
 }
 
-PairabilityTestResult checkPairability_Test5_RegisterConflictsOnAguResources(DecodedOpWord* opWord0, DecodedOpWord* opWord1)
+PairabilityTestResult checkPairability_Test5_RegisterConflictsOnAguResources(uOP* uOP0, uOP* uOP1)
 {
-	if (isRegister(opWord1->aguBase))
+	if (isRegister(uOP1->aguBase))
 	{
-		if (opWord1->aguBase == opWord0->aguResult)
+		if (uOP1->aguBase == uOP0->aguResult)
 			return PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionAguResult;
-		else if (opWord1->aguBase == opWord0->ieeResult)
+		else if (uOP1->aguBase == uOP0->ieeResult)
 			return PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionIeeResult;
 	}
-	if (isRegister(opWord1->aguIndex))
+	if (isRegister(uOP1->aguIndex))
 	{
-		if (opWord1->aguIndex == opWord0->aguResult)
+		if (uOP1->aguIndex == uOP0->aguResult)
 			return PairabilityTestResult_Test5Failure_SecondInstructionIndexRegisterDependsOnFirstInstructionAguResult;
-		else if (opWord1->aguIndex == opWord0->ieeResult)
+		else if (uOP1->aguIndex == uOP0->ieeResult)
 			return PairabilityTestResult_Test5Failure_SecondInstructionIndexRegisterDependsOnFirstInstructionIeeResult;
 	}
 
 	return PairabilityTestResult_Success;
 }
 
-PairabilityTestResult checkPairability_Test6_RegisterConflictsOnIeeResources(DecodedOpWord* opWord0, DecodedOpWord* opWord1)
+PairabilityTestResult checkPairability_Test6_RegisterConflictsOnIeeResources(uOP* uOP0, uOP* uOP1)
 {
-	if (isRegister(opWord1->ieeA))
+	if (isRegister(uOP1->ieeA))
 	{
-		if (opWord1->ieeA == opWord0->aguResult)
+		if (uOP1->ieeA == uOP0->aguResult)
 			return PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionAguResult;
-		else if (opWord1->ieeA == opWord0->ieeResult)
+		else if (uOP1->ieeA == uOP0->ieeResult)
 			return PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionIeeResult;
 	}
-	if (isRegister(opWord1->ieeB))
+	if (isRegister(uOP1->ieeB))
 	{
-		if (opWord1->ieeB == opWord0->aguResult)
+		if (uOP1->ieeB == uOP0->aguResult)
 			return PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionAguResult;
-		else if (opWord1->ieeB == opWord0->ieeResult)
+		else if (uOP1->ieeB == uOP0->ieeResult)
 			return PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionIeeResult;
 	}
 
+	// TODO: There are some exceptions with regard to MOVE.L operations, that can make instructions pair.
+	// These exceptions should either be handled outside of the pairability tests - by rewriting the first/second instruction
+	//  such that the pairing tests automatically succeed - or by adding extra logic to this pairability test.
+	
 	return PairabilityTestResult_Success;
 }
 
-PairabilityTestResult checkPairability(DecodedOpWord* opWord0, DecodedOpWord* opWord1)
+PairabilityTestResult checkPairability(uOP* uOP0, uOP* uOP1)
 {
-	PairabilityTestResult test2Result = checkPairability_Test2_InstructionClassification(opWord0, opWord1);
-	PairabilityTestResult test3Result = checkPairability_Test3_AllowableAddressingModesInsOEP(opWord1);
-	PairabilityTestResult test4Result = checkPairability_Test4_AllowableOperandDataMemoryReference(opWord0, opWord1);
-	PairabilityTestResult test5Result = checkPairability_Test5_RegisterConflictsOnAguResources(opWord0, opWord1);
-	PairabilityTestResult test6Result = checkPairability_Test6_RegisterConflictsOnIeeResources(opWord0, opWord1);
+	PairabilityTestResult test2Result = checkPairability_Test2_InstructionClassification(uOP0, uOP1);
+	PairabilityTestResult test3Result = checkPairability_Test3_AllowableAddressingModesInsOEP(uOP1);
+	PairabilityTestResult test4Result = checkPairability_Test4_AllowableOperandDataMemoryReference(uOP0, uOP1);
+	PairabilityTestResult test5Result = checkPairability_Test5_RegisterConflictsOnAguResources(uOP0, uOP1);
+	PairabilityTestResult test6Result = checkPairability_Test6_RegisterConflictsOnIeeResources(uOP0, uOP1);
 
 	if (test2Result != PairabilityTestResult_Success)
 		return test2Result;

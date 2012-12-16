@@ -1,12 +1,19 @@
 
-#include "M68060OpWordDecoder.h"
+#include "M68060DecomposeOpIntouOPs.h"
 #include "M68060PairabilityTests.h"
 #include "../Types.h"
 
 typedef struct
 {
-	uint16_t opWord0;
-	uint16_t opWord1;
+	const char* description;
+	uint numWords;
+	uint16_t instructionWords[16];
+} TestInstruction;
+
+typedef struct
+{
+	TestInstruction instruction0;
+	TestInstruction instruction1;
 	PairabilityTestResult expectedResult;
 } PairabilityTest;
 
@@ -14,68 +21,115 @@ int main(void)
 {
 	static const PairabilityTest pairabilityTests[] =
 	{
-		{ 0x4e71,	// NOP					pOEP-only
-		  0xd000,	// ADD.B D0,D0			pOEP|sOEP	<- instruction class mismatch
-		  PairabilityTestResult_Test2Failure_FirstInstructionIs_pOEPOnly },
+//		{	{ "NOP", 					1, { 0x4e71, }, },	// pOEP-only
+//			{ "ADD.B D0,D0",			1, { 0xd000, }, },	// pOEP|sOEP	<- instruction class mismatch
+//			PairabilityTestResult_Test2Failure_FirstInstructionIs_pOEPOnly },
 
-		{ 0xd201,	// ADD.B D1,D1			pOEP|sOEP
-		  0xd000,	// ADD.B D0,D0			pOEP|sOEP
-		  PairabilityTestResult_Success },
+		{	{ "ADD.B D1,D1",			1, { 0xd201, }, },	// pOEP|sOEP
+			{ "ADD.B D0,D0", 			1, { 0xd000, }, },	// pOEP|sOEP
+			PairabilityTestResult_Success },
 
-		{ 0xda73,	// ADD.W d8(A3,Xn.q),D5	pOEP-until-last		<- not a standard instruction due to Xn not being part of opword
-		  0xd000,	// ADD.B D0,D0			pOEP|sOEP
-		  PairabilityTestResult_Success },
+		{	{ "ADD.W $12(A3,D0.L),D5",	2, { 0xda73, 0x0012, }, },	// pOEP|sOEP
+			{ "ADD.B D0,D0", 			1, { 0xd000, }, },			// pOEP|sOEP
+			PairabilityTestResult_Success },
 
-		{ 0xda7a,	// ADD.W d16(PC),D5		pOEP|sOEP
-		  0xd000,	// ADD.B D0,D0			pOEP|sOEP
-		  PairabilityTestResult_Success },
+		{	{ "ADD.W $1234(PC),D5",		2, { 0xda7a, 0x1234}, },	// pOEP|sOEP
+			{ "ADD.B D0,D0", 			1, { 0xd000, }, },			// pOEP|sOEP
+			PairabilityTestResult_Success },
 
-		{ 0xd000,	// ADD.B D0,D0			pOEP|sOEP
-		  0xda7a,	// ADD.W d16(PC),D5		pOEP|sOEP			<- PC relative addressing modes not allowed in sOEP
-		  PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing },
+		{	{ "ADD.B D0,D0",			1, { 0xd000, }, },			// pOEP|sOEP
+			{ "ADD.W $1234(PC),D5",		2, { 0xda7a, 0x1234, }, },	// pOEP|sOEP			<- PC relative addressing modes not allowed in sOEP
+			PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing },
 
-		{ 0xd1ca,	// ADD.W D0,A2			pOEP|sOEP
-		  0xd213, 	// ADD.W (A3),D1		pOEP|sOEP
-		  PairabilityTestResult_Success },
-		  
-		{ 0xd1cb,	// ADDA.W D0,A3			pOEP|sOEP
-		  0xd213, 	// ADD.W (A3),D1		pOEP|sOEP			<- Second instruction uses base register which is written by first instruction
-		  PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionIeeResult },
+		{	{ "ADD.W D0,A2",			1, { 0xd1ca, }, },	// pOEP|sOEP
+			{ "ADD.W (A3),D1",			1, { 0xd213, }, }, 	// pOEP|sOEP
+			PairabilityTestResult_Success },
 
-		{ 0xd000,	// ADD.B D0,D0			pOEP|sOEP
-		  0xd000,	// ADD.B D0,D0			pOEP|sOEP	<- register dependency
-		  PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionIeeResult },
+		{	{ "ADD.W (A3),D1",			1, { 0xd213, }, }, 	// pOEP|sOEP
+			{ "ADD.W (A3),D1",			1, { 0xd213, }, }, 	// pOEP|sOEP			<- Both instructions have a memory reference
+			PairabilityTestResult_Test4Failure_BothInstructionsReferenceMemory },
+			
+		{	{ "ADDA.W D0,A3",			1, { 0xd7c0, }, },	// pOEP|sOEP
+			{ "ADD.W (A3),D1",			1, { 0xd213, }, }, 	// pOEP|sOEP			<- Second instruction uses base register which is written by first instruction
+			PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionIeeResult },
 
-		{ 0xd000,	// ADD.B D0,D0			pOEP|sOEP
-		  0xd001,	// ADD.B D1,D0			pOEP|sOEP	<- register dependency
-		  PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionIeeResult },
+		{	{ "ADD.B D0,D0",			1, { 0xd000, }, },	// pOEP|sOEP
+			{ "ADD.B D0,D0",			1, { 0xd000, }, },	// pOEP|sOEP	<- register dependency
+			PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionIeeResult },
 
-		{ 0xd018,	// ADD.B (A0)+,D0		pOEP|sOEP
-		  0xd248,	// ADD.W A0,D1			pOEP|sOEP	<- register dependency
-		  PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionAguResult },
+		{	{ "ADD.B D0,D0",			1, { 0xd000, }, },	// pOEP|sOEP
+			{ "ADD.B D1,D0",			1, { 0xd001, }, },	// pOEP|sOEP	<- register dependency
+			PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionIeeResult },
 
-		{ 0xd018,	// ADD.B (A0)+,D0		pOEP|sOEP
-		  0xd3c8,	// ADDA.W D1,A0			pOEP|sOEP	<- register dependency
-		  PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionAguResult },
+		{	{ "ADD.B (A0)+,D0",			1, { 0xd018, }, },	// pOEP|sOEP
+			{ "ADD.W A0,D1",			1, { 0xd248, }, },	// pOEP|sOEP	<- register dependency
+			PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionAguResult },
+
+		{	{ "ADD.B (A0)+,D0",			1, { 0xd018, }, },	// pOEP|sOEP
+			{ "ADDA.W D1,A0",			1, { 0xd1c1, }, },	// pOEP|sOEP	<- register dependency
+			PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionAguResult },
 	};
 	
 	uint i;
 
 	for (i = 0; i < (sizeof pairabilityTests / sizeof pairabilityTests[0]); ++i)
 	{
-		const PairabilityTest* pairabilityTest = &pairabilityTests[i];
-		uint16_t opWord0 = pairabilityTest->opWord0;
-		uint16_t opWord1 = pairabilityTest->opWord1;
-		DecodedOpWord decodedOpWord0 = decodeOpWord(opWord0);
-		DecodedOpWord decodedOpWord1 = decodeOpWord(opWord1);
-		PairabilityTestResult testResult = checkPairability(&decodedOpWord0, &decodedOpWord1);
+		bool success = true;
+		const PairabilityTest* test = &pairabilityTests[i];
+		uint numuOPs0;
+		uOP uOPs0[16];
+		uint numuOPs1;
+		uOP uOPs1[16];
+		
+		bool decode0Success = decomposeOpIntouOPs(test->instruction0.instructionWords, test->instruction0.numWords, uOPs0, &numuOPs0);
+		bool decode1Success = decomposeOpIntouOPs(test->instruction1.instructionWords, test->instruction1.numWords, uOPs1, &numuOPs1);
 
-		if (testResult == pairabilityTest->expectedResult)
-			printf("Testing %04x and %04x: success, result %s\n", opWord0, opWord1, PairabilityTestResultToString(testResult));
+		bool op0HasMultipleuOPs = false;
+		bool op1HasMultipleuOPs = false;
+		
+		PairabilityTestResult pairabilityTestResult;
+		
+		if (!decode0Success)
+			success = false;
+		if (!decode1Success)
+			success = false;
+
+		if (success)
+		{
+			op0HasMultipleuOPs = (numuOPs0 > 1);
+			op1HasMultipleuOPs = (numuOPs1 > 1);
+		}
+
+		if (op0HasMultipleuOPs || op1HasMultipleuOPs)
+			success = false;
+		
+		if (success)
+			pairabilityTestResult = checkPairability(&uOPs0[0], &uOPs1[0]);
+			
+		if (pairabilityTestResult != test->expectedResult)
+			success = false;
+			
+		if (success)
+		{
+			printf("success: Testing %s and %s yields %s\n", test->instruction0.description, test->instruction1.description,
+				PairabilityTestResultToString(pairabilityTestResult));
+		}
 		else
-			printf("Testing %04x and %04x: failure, result %s - expected %s\n", opWord0, opWord1,
-				PairabilityTestResultToString(testResult),
-				PairabilityTestResultToString(pairabilityTest->expectedResult));
+		{
+			printf("failure: Testing %s and %s - ", test->instruction0.description, test->instruction1.description);
+			if (!decode0Success)
+				printf("instruction 0 does not decode properly\n");
+			else if (!decode1Success)
+				printf("instruction 1 does not decode properly\n");
+			else if (op0HasMultipleuOPs)
+				printf("instruction 0 decodes into multiple uOPs and will therefore not pair\n");
+			else if (op1HasMultipleuOPs)
+				printf("instruction 1 decodes into multiple uOPs and will therefore not pair\n");
+			else
+				printf("result %s - expected %s\n", 
+					PairabilityTestResultToString(pairabilityTestResult),
+					PairabilityTestResultToString(test->expectedResult));
+		}
 	}
 	
 	return 0;

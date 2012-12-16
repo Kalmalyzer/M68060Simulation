@@ -684,7 +684,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD <ea>,Dn",
@@ -736,7 +736,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD <ea>,Dn",
@@ -788,7 +788,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD <ea>,Dn",
@@ -840,7 +840,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -863,7 +863,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD <ea>,Dn",
@@ -915,7 +915,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -938,7 +938,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD <ea>,Dn",
@@ -990,7 +990,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -1013,7 +1013,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD <ea>,Dn",
@@ -1065,7 +1065,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -1088,7 +1088,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD <ea>,Dn",
@@ -1140,7 +1140,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -1163,7 +1163,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD <ea>,Dn",
@@ -1505,7 +1505,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD Dn,<ea>",
@@ -1557,7 +1557,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -1580,7 +1580,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD Dn,<ea>",
@@ -1632,7 +1632,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -1655,7 +1655,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD Dn,<ea>",
@@ -1707,7 +1707,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -1730,7 +1730,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD Dn,<ea>",
@@ -1782,7 +1782,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -1805,7 +1805,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD Dn,<ea>",
@@ -1857,7 +1857,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -1880,7 +1880,7 @@ static const InstructionTestCase ea6BitTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADD Dn,<ea>",
@@ -2023,7 +2023,7 @@ static const InstructionTestCase immediateTests[] =
 				ExecutionResource_ImmediateTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -2046,7 +2046,7 @@ static const InstructionTestCase immediateTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADDI #imm,<ea>",
@@ -2098,7 +2098,7 @@ static const InstructionTestCase immediateTests[] =
 				ExecutionResource_ImmediateTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADDI #imm,<ea>",
@@ -2150,7 +2150,7 @@ static const InstructionTestCase immediateTests[] =
 				ExecutionResource_ImmediateTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LOAD",
@@ -2173,7 +2173,7 @@ static const InstructionTestCase immediateTests[] =
 				ExecutionResource_AguTemp,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"LEA",
@@ -2196,7 +2196,7 @@ static const InstructionTestCase immediateTests[] =
 				ExecutionResource_None,
 
 				false,
-				Pairability_pOEP_Or_sOEP,
+				Pairability_pOEP_Only,
 			},
 			{
 				"ADDI #imm,<ea>",
@@ -2268,6 +2268,7 @@ void printuOP(uint id, const uOP* uOP)
 		ExecutionResourceToString(uOP->ieeA), ExecutionResourceToString(uOP->ieeB),
 		OperationSizeToString(uOP->ieeOperationSize), IeeOperationToString(uOP->ieeOperation), ExecutionResourceToString(uOP->ieeResult));
 	printf("      MemoryWrite: %s\n", uOP->memoryWrite ? "yes" : "no");
+	printf("      Pairability: %s\n", PairabilityToString(uOP->pairability));
 }
 
 void runTestSuite(const InstructionTestCase* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)
