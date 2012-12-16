@@ -2228,6 +2228,122 @@ static const InstructionTestCase immediateTests[] =
 
 static const InstructionTestCase integerArithmeticTests[] =
 {
+	{ "ADD.B D1,D3", 1, { 0xd601, },
+		1, 
+		{
+			{
+				"ADD <ea>,Dn",
+				{ 0, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_D1,
+				ExecutionResource_D3,
+				OperationSize_Byte,
+				IeeOperation_Add,
+				ExecutionResource_D3,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "ADD.L D1,D3", 1, { 0xd681, },
+		1, 
+		{
+			{
+				"ADD <ea>,Dn",
+				{ 0, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_D1,
+				ExecutionResource_D3,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_D3,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "ADDA.W D4,A5", 1, { 0xdac4, },
+		1, 
+		{
+			{
+				"ADDA.W <ea>,An",
+				{ 0, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_D4,
+				ExecutionResource_A5,
+				OperationSize_Word,
+				IeeOperation_AddA,
+				ExecutionResource_A5,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "ADDA.L (A2),A5", 1, { 0xdbd2, },
+		1, 
+		{
+			{
+				"ADDA.L <ea>,An",
+				{ 0, 0, },
+
+				ExecutionResource_A2,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_MemoryOperand,
+				ExecutionResource_A5,
+				OperationSize_Long,
+				IeeOperation_AddA,
+				ExecutionResource_A5,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
 	{ "ADDQ.L #2,D3", 1, { 0x5483, },
 		1,
 		{
@@ -2320,6 +2436,288 @@ static const InstructionTestCase integerArithmeticTests[] =
 			},
 		},
 	},
+
+	{ "SUB.B D1,D2", 1, { 0x9401, },
+		1, 
+		{
+			{
+				"SUB <ea>,Dn",
+				{ 0, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_D1,
+				ExecutionResource_D2,
+				OperationSize_Byte,
+				IeeOperation_Sub,
+				ExecutionResource_D2,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	{ "SUBA.W D4,A5", 1, { 0x9ac4, },
+		1, 
+		{
+			{
+				"SUBA.W <ea>,An",
+				{ 0, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_D4,
+				ExecutionResource_A5,
+				OperationSize_Word,
+				IeeOperation_SubA,
+				ExecutionResource_A5,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "SUBA.W (A2),A5", 1, { 0x9ad2, },
+		1, 
+		{
+			{
+				"SUBA.W <ea>,An",
+				{ 0, 0, },
+
+				ExecutionResource_A2,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_MemoryOperand,
+				ExecutionResource_A5,
+				OperationSize_Word,
+				IeeOperation_SubA,
+				ExecutionResource_A5,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "SUBA.L (A2),A5", 1, { 0x9bd2, },
+		1, 
+		{
+			{
+				"SUBA.L <ea>,An",
+				{ 0, 0, },
+
+				ExecutionResource_A2,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_MemoryOperand,
+				ExecutionResource_A5,
+				OperationSize_Long,
+				IeeOperation_SubA,
+				ExecutionResource_A5,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "SUB.L D2,-(A6)", 1, { 0x95a6, },
+		1, 
+		{
+			{
+				"SUB Dn,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_A6,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_PreDecrement,
+				ExecutionResource_A6,
+
+				true,
+
+				ExecutionResource_D2,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Long,
+				IeeOperation_Sub,
+				ExecutionResource_None,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "SUBI.W #$1234,D5", 2, { 0x0445, 0x1234, },
+		1,
+		{
+			{
+				"SUBI #imm,<ea>",
+				{ 0x1234, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_uOpWord0,
+				ExecutionResource_D5,
+				OperationSize_Word,
+				IeeOperation_Sub,
+				ExecutionResource_D5,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+	
+	{ "SUBQ.L #4,D0", 1, { 0x5980, },
+		1,
+		{
+			{
+				"SUBQ #imm,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_Imm3Bit,
+				ExecutionResource_D0,
+				OperationSize_Long,
+				IeeOperation_Sub,
+				ExecutionResource_D0,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+				
+				4,
+			},
+		},
+	},
+	
+	{ "SUBQ.B #3,([A5])", 2, { 0x5735, 0x0151, },
+		3,
+		{
+			{
+				"LOAD",
+				{ 0, 0, },
+
+				ExecutionResource_A5,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_MemoryOperand,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_AguTemp,
+
+				false,
+				Pairability_pOEP_Only,
+			},
+			{
+				"LEA",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_AguTemp,
+
+				false,
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				OperationSize_None,
+				IeeOperation_None,
+				ExecutionResource_None,
+
+				false,
+				Pairability_pOEP_Only,
+			},
+			{
+				"SUBQ #imm,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_AguTemp,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_Imm3Bit,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Byte,
+				IeeOperation_Sub,
+				ExecutionResource_MemoryOperand,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+			},
+		},
+	},
+
+	
 };
 
 TestSuite testSuites[] =
