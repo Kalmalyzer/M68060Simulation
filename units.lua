@@ -91,6 +91,7 @@ Program {
 	Name = "TestInstructionLengthDecoder",
 	Sources = {
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
 		"M68060InstructionDecoder/TestInstructionLengthDecoder.c",
 	},
 }
@@ -99,6 +100,7 @@ Program {
 	Name = "SoakTestInstructionLengthDecoder",
 	Sources = {
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
 		"M68060InstructionDecoder/SoakTestInstructionLengthDecoder.c",
 	},
 }
@@ -107,6 +109,7 @@ Program {
 	Name = "SoakTestInstructionLengthDecoderAgainstMusashi",
 	Sources = {
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
 		"M68060InstructionDecoder/SoakTestInstructionLengthDecoderAgainstMusashi.c",
 		"Musashi/StandardMusashiCallbacks.c",
 	},
@@ -118,6 +121,7 @@ Program {
 	Name = "InstructionLengthDisassembler",
 	Sources = {
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
 		"M68060InstructionDecoder/InstructionLengthDisassembler.c",
 	},
 }
@@ -132,6 +136,7 @@ Program {
 		"M68060InstructionDecoder/M68060DecodeOpIntoUOps.c",
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
 		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
 		"M68060InstructionDecoder/M68060PairabilityTests.c",
 		"M68060InstructionDecoder/TestPairability.c",
 	},
@@ -147,6 +152,7 @@ Program {
 		"M68060InstructionDecoder/M68060DecodeOpIntoUOps.c",
 		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
 		"M68060InstructionDecoder/TestOpIntoUOpDecoder.c",
 	},
 }
@@ -211,8 +217,9 @@ Program {
 	Name = "TestSimpleOEP",
 	Sources = {
 		"M68060InstructionDecoder/M68060DecodeOpIntoUOps.c",
-		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
 		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
 		"M68060InstructionExecution/DummyMemorySubSystem.c",
 		"M68060InstructionExecution/M68060AguAlu.c",
 		"M68060InstructionExecution/M68060IeeAlu.c",
