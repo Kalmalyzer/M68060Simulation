@@ -2226,10 +2226,107 @@ static const InstructionTestCase immediateTests[] =
 
 };
 
+static const InstructionTestCase integerArithmeticTests[] =
+{
+	{ "ADDQ.L #2,D3", 1, { 0x5483, },
+		1,
+		{
+			{
+				"ADDQ #imm,<ea>",
+				{ 0, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_Imm3Bit,
+				ExecutionResource_D3,
+				OperationSize_Long,
+				IeeOperation_Add,
+				ExecutionResource_D3,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+				
+				2,
+			},
+		},
+	},
+
+	{ "ADDQ.W #5,A3", 1, { 0x5a4b, },
+		1,
+		{
+			{
+				"ADDQ #imm,An",
+				{ 0, 0, },
+
+				ExecutionResource_None,
+				ExecutionResource_None,
+				0,
+				AguIndexSize_None,
+				AguDisplacementSize_None,
+				AguOperation_None,
+				ExecutionResource_None,
+
+				false,
+
+				ExecutionResource_Imm3Bit,
+				ExecutionResource_A3,
+				OperationSize_Word,
+				IeeOperation_AddA,
+				ExecutionResource_A3,
+
+				false,
+				Pairability_pOEP_Or_sOEP,
+				
+				2,
+			},
+		},
+	},
+	
+	{ "ADDQ.B #1,$12(A3,D2.L)", 2, { 0x5233, 0x2812, },
+		1,
+		{
+			{
+				"ADDQ #imm,<ea>",
+				{ 0x0012, 0, },
+
+				ExecutionResource_A3,
+				ExecutionResource_D2,
+				0,
+				AguIndexSize_Long,
+				AguDisplacementSize_S8,
+				AguOperation_OffsetBaseIndexScale,
+				ExecutionResource_None,
+
+				true,
+
+				ExecutionResource_Imm3Bit,
+				ExecutionResource_MemoryOperand,
+				OperationSize_Byte,
+				IeeOperation_Add,
+				ExecutionResource_MemoryOperand,
+
+				true,
+				Pairability_pOEP_Or_sOEP,
+				
+				2,
+			},
+		},
+	},
+};
+
 TestSuite testSuites[] =
 {
 	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
 	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
+	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },
 };
 
 bool areUOpsEquivalent(const UOp* a, const UOp* b)

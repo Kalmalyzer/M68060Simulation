@@ -31,6 +31,8 @@ typedef struct
 
 	Pairability pairability;
 
+	uint8_t imm3Bit;
+	
 } UOp;
 
 #endif

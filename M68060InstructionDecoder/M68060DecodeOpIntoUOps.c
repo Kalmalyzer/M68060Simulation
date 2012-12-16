@@ -64,7 +64,7 @@ typedef enum
 	OpWordClass_EncodedSize_Rn_Ea_2,
 	OpWordClass_EncodedSize_DestEa_Read,
 	OpWordClass_EncodedSize_DestEa_ReadWrite,
-	OpWordClass_DestEa_Alterable,
+	OpWordClass_SrcImm3Bit_DestEa_Alterable,
 	OpWordClass_Byte_DestEa_Data,
 	OpWordClass_DestEa_DataAlterable,
 	OpWordClass_DestEa_MemoryAlterable,
@@ -102,6 +102,8 @@ typedef enum
 	DecodeOperand_DefaultDnLocation,
 	DecodeOperand_DefaultAnLocation,
 	DecodeOperand_Immediate,
+	DecodeOperand_Imm3Bit,
+
 } DecodeOperand;
 
 typedef enum
@@ -150,7 +152,7 @@ static OpWordClassInfo opWordClassInformation[] =
 	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_EncodedSize_Rn_Ea_2,
 	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_All, }, // OpWordClass_EncodedSize_DestEa_Read,
 	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_EncodedSize_DestEa_ReadWrite,
-	{ 0, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_Alterable, }, // OpWordClass_DestEa_Alterable,
+	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_Alterable, DecodeOperand_Imm3Bit, DecodeOperand_DefaultEALocation, DecodeIeeResult_IeeB, }, // OpWordClass_SrcImm3Bit_DestEa_Alterable,
 	{ 0, SizeEncoding_Byte, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_Data, }, // OpWordClass_Byte_DestEa_Data,
 	{ 0, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_DestEa_DataAlterable,
 	{ 0, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_MemoryAlterable, }, // OpWordClass_DestEa_MemoryAlterable,
@@ -189,8 +191,9 @@ static OpWordDecodeInfo opWordDecodeInformation[] =
 	{ 0xf100, 0xd100, "ADD Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_1, IeeOperation_Add },
 
 	{ 0xff00, 0x0600, "ADDI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea_ReadWrite, IeeOperation_Add },
-/*	{ 0xf100, 0x5000, "ADDQ #imm,<ea>", OpWordClass_DestEa_Alterable, },
-	{ 0xf1f8, 0xc140, "EXG Dm,Dn", OpWordClass_NoExtraWords, }, // Shadows AND
+	{ 0xf138, 0x5008, "ADDQ #imm,An", OpWordClass_SrcImm3Bit_DestEa_Alterable, IeeOperation_AddA, },  // Shadows ADDQ #imm,<ea>
+	{ 0xf100, 0x5000, "ADDQ #imm,<ea>", OpWordClass_SrcImm3Bit_DestEa_Alterable, IeeOperation_Add, },
+/*	{ 0xf1f8, 0xc140, "EXG Dm,Dn", OpWordClass_NoExtraWords, }, // Shadows AND
 	{ 0xf1f8, 0xc148, "EXG Am,An", OpWordClass_NoExtraWords, }, // Shadows AND
 	{ 0xf1f8, 0xc188, "EXG Dm,An", OpWordClass_NoExtraWords, }, // Shadows AND
 	{ 0xf1c0, 0xc1c0, "MULS.W <ea>,Dn", OpWordClass_Word_SrcEa, }, // Shadows AND
@@ -315,7 +318,7 @@ static OpWordDecodeInfo opWordDecodeInformation[] =
 	{ 0xf100, 0x9000, "SUB <ea>,Dn", OpWordClass_EncodedSize_Ea_Dn_2, },
 	{ 0xf100, 0x9100, "SUB Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_1, },
 	{ 0xff00, 0x0400, "SUBI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea_ReadWrite, },
-	{ 0xf100, 0x5100, "SUBQ #imm,<ea>", OpWordClass_DestEa_Alterable, },
+	{ 0xf100, 0x5100, "SUBQ #imm,<ea>", OpWordClass_SrcImm3Bit_DestEa_Alterable, },
 
 	{ 0xffc0, 0x4ac0, "TAS <ea>", OpWordClass_DestEa_DataAlterable, },
 
@@ -789,6 +792,14 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 	case DecodeOperand_Immediate:
 		{
 			decodeImmediateOperand(immediateSize, operandSpecifierWords, mainUOp, ieeInput, hasMemoryReference);
+			break;
+		}
+	case DecodeOperand_Imm3Bit:
+		{
+			uint8_t imm3BitValue = (opWord & OpWord_DefaultImm3BitEncoding_Mask) >> OpWord_DefaultImm3BitEncoding_Shift;
+			mainUOp->imm3Bit = (imm3BitValue ? imm3BitValue : 8);
+			*ieeInput = ExecutionResource_Imm3Bit;
+			*hasMemoryReference = false;
 			break;
 		}
 	default:

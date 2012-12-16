@@ -34,6 +34,7 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 		"uOpLong",
 		"AguTemp",
 		"ImmediateTemp",
+		"Imm3Bit",
 	};
 
 	M68060_ASSERT((size_t) executionResource < (sizeof executionResourceStrings / sizeof executionResourceStrings[0]), "Invalid executionResource");

@@ -33,6 +33,8 @@ enum { OpWord_DefaultRegisterEncoding_Shift = 9 };
 enum { OpWord_DefaultRegisterEncoding_Bits = 3 };
 enum { OpWord_DefaultRegisterEncoding_Mask = ((1 << OpWord_DefaultRegisterEncoding_Bits) - 1) << OpWord_DefaultRegisterEncoding_Shift };
 
-
+enum { OpWord_DefaultImm3BitEncoding_Shift = 9 };
+enum { OpWord_DefaultImm3BitEncoding_Bits = 3 };
+enum { OpWord_DefaultImm3BitEncoding_Mask = ((1 << OpWord_DefaultImm3BitEncoding_Bits) - 1) << OpWord_DefaultImm3BitEncoding_Shift };
 
 #endif

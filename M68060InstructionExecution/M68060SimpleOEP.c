@@ -50,6 +50,8 @@ static uint32_t readExecutionResource(ExecutionResource executionResource, const
 			return s_aguTemp;
 		case ExecutionResource_ImmediateTemp:
 			return s_immediateTemp;
+		case ExecutionResource_Imm3Bit:
+			return UOp->imm3Bit;
 		default:
 			M68060_ERROR("ExecutionResource not supported");
 			return 0;

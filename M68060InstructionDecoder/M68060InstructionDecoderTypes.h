@@ -38,6 +38,8 @@ typedef enum
 	ExecutionResource_AguTemp, // Temporary register used when decomposing complex addressing modes into multiple UOps
 	ExecutionResource_ImmediateTemp, // Temporary register used when decomposing instructions with both immediates and displacements into multiple UOps
 
+	ExecutionResource_Imm3Bit, // Special 3-bit immediate operand that is embedded in the UOp, outside of the UOp's extensionWords
+	
 } ExecutionResource;
 
 const char* ExecutionResourceToString(ExecutionResource executionResource);
