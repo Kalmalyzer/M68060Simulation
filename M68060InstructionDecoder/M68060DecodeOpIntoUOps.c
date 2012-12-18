@@ -21,6 +21,9 @@ typedef struct
 
 static void writeUOp(UOpWriteBuffer* UOpWriteBuffer, UOp* UOp)
 {
+	M68060_ASSERT(UOp->aguResult == ExecutionResource_None || UOp->aguOperation != AguOperation_None, "UOps are not allowed to have an AguResult resource specified, but no AguOperation specified");
+	M68060_ASSERT(UOp->ieeResult == ExecutionResource_None || UOp->ieeOperation != IeeOperation_None, "UOps are not allowed to have an IeeResult resource specified, but no IeeOperation specified");
+
 	UOpWriteBuffer->UOps[UOpWriteBuffer->numUOps] = *UOp;
 	UOpWriteBuffer->numUOps++;
 }
