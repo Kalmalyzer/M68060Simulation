@@ -102,6 +102,7 @@ const char* OperationSizeToString(OperationSize operationSize);
 typedef enum
 {
 	IeeOperation_None,
+	IeeOperation_ForwardIeeA,
 	IeeOperation_Add,
 	IeeOperation_AddA,
 	IeeOperation_Sub,

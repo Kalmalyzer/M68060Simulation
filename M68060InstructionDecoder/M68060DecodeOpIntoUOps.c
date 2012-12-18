@@ -143,6 +143,7 @@ static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 			firstOp.memoryRead = true;
 			firstOp.aguOperation = AguOperation_OffsetBaseIndexScale;
 			firstOp.ieeA = ExecutionResource_MemoryOperand;
+			firstOp.ieeOperation = IeeOperation_ForwardIeeA;
 			firstOp.ieeResult = ExecutionResource_AguTemp;
 			firstOp.pairability = Pairability_pOEP_Only;
 
@@ -435,6 +436,7 @@ static void transferIeeAImmediateToSeparateUOp(UOp* mainUOp, UOpWriteBuffer* UOp
 	loadI.extensionWords[0] = mainUOp->extensionWords[0];
 	loadI.extensionWords[1] = mainUOp->extensionWords[1];
 	loadI.ieeA = mainUOp->ieeA;
+	loadI.ieeOperation = IeeOperation_ForwardIeeA;
 	loadI.ieeResult = ExecutionResource_ImmediateTemp;
 	loadI.pairability = Pairability_pOEP_Only;
 	writeUOp(UOpWriteBuffer, &loadI);

@@ -126,6 +126,7 @@ const char* IeeOperationToString(IeeOperation ieeOperation)
 	static const char* ieeOperationStrings[] =
 	{
 		"None",
+		"ForwardIeeA",
 		"Add",
 		"AddA",
 		"Sub",
