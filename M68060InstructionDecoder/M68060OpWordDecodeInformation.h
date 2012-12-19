@@ -32,6 +32,8 @@ typedef enum
 typedef enum
 {
 	OpWordClass_NoExtraWords,
+	OpWordClass_EncodedSize_SrcDn_DestDn,
+	OpWordClass_EncodedSize_SrcAnPreDecrement_DestAnPreDecrement,
 	OpWordClass_Move_B,
 	OpWordClass_Move_W,
 	OpWordClass_Move_L,
@@ -83,6 +85,7 @@ typedef struct
 	
 	IeeOperation ieeOperation;
 	
+	Pairability pairability;
 } OpWordDecodeInfo;
 
 typedef enum
@@ -90,7 +93,10 @@ typedef enum
 	DecodeOperand_None,
 	DecodeOperand_DefaultEALocation,
 	DecodeOperand_DefaultDnLocation,
-	DecodeOperand_DefaultAnLocation,
+	DecodeOperand_DefaultPreDecrementAnLocation,
+	DecodeOperand_SecondaryDnLocation,
+	DecodeOperand_SecondaryAnLocation,
+	DecodeOperand_SecondaryPreDecrementAnLocation,
 	DecodeOperand_Immediate,
 	DecodeOperand_Imm3Bit,
 

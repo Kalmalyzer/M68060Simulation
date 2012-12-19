@@ -36,7 +36,7 @@ typedef enum
 	ExecutionResource_uOpLong, // Both UOp extension words, seen as a 32-bit value
 
 	ExecutionResource_AguTemp, // Temporary register used when decomposing complex addressing modes into multiple UOps
-	ExecutionResource_ImmediateTemp, // Temporary register used when decomposing instructions with both immediates and displacements into multiple UOps
+	ExecutionResource_IeeTemp, // Temporary register used when decomposing instructions with both immediates and displacements into multiple UOps
 
 	ExecutionResource_Imm3Bit, // Special 3-bit immediate operand that is embedded in the UOp, outside of the UOp's extensionWords
 	
@@ -105,8 +105,10 @@ typedef enum
 	IeeOperation_ForwardIeeA,
 	IeeOperation_Add,
 	IeeOperation_AddA,
+	IeeOperation_AddX,
 	IeeOperation_Sub,
 	IeeOperation_SubA,
+	IeeOperation_SubX,
 
 } IeeOperation;
 

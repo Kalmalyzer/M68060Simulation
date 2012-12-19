@@ -33,7 +33,7 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 		"uOpWord1",
 		"uOpLong",
 		"AguTemp",
-		"ImmediateTemp",
+		"IeeTemp",
 		"Imm3Bit",
 	};
 
@@ -129,8 +129,10 @@ const char* IeeOperationToString(IeeOperation ieeOperation)
 		"ForwardIeeA",
 		"Add",
 		"AddA",
+		"AddX",
 		"Sub",
 		"SubA",
+		"SubX",
 	};
 
 	M68060_ASSERT((size_t) ieeOperation < (sizeof ieeOperationStrings / sizeof ieeOperationStrings[0]), "Invalid ieeOperation");

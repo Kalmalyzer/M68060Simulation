@@ -11,7 +11,7 @@
 static uint32_t s_aguResult;
 static uint32_t s_memoryOperand;
 static uint32_t s_aguTemp;
-static uint32_t s_immediateTemp;
+static uint32_t s_ieeTemp;
 
 static uint32_t readExecutionResource(ExecutionResource executionResource, const UOp* UOp)
 {
@@ -48,8 +48,8 @@ static uint32_t readExecutionResource(ExecutionResource executionResource, const
 			return (UOp->extensionWords[0] << 16) + UOp->extensionWords[1];
 		case ExecutionResource_AguTemp:
 			return s_aguTemp;
-		case ExecutionResource_ImmediateTemp:
-			return s_immediateTemp;
+		case ExecutionResource_IeeTemp:
+			return s_ieeTemp;
 		case ExecutionResource_Imm3Bit:
 			return UOp->imm3Bit;
 		default:
@@ -85,8 +85,8 @@ static void writeExecutionResource(ExecutionResource executionResource, uint32_t
 		case ExecutionResource_AguTemp:
 			s_aguTemp = value;
 			break;
-		case ExecutionResource_ImmediateTemp:
-			s_immediateTemp = value;
+		case ExecutionResource_IeeTemp:
+			s_ieeTemp = value;
 			break;
 		case ExecutionResource_MemoryOperand:
 			M68060_WARNING("Ignored MemoryOperand write for now");

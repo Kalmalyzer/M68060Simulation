@@ -29,9 +29,13 @@ enum { OpWord_OpMode_Shift = 6 };
 enum { OpWord_OpMode_Bits = 3 };
 enum { OpWord_OpMode_Mask = ((1 << OpWord_OpMode_Bits) - 1) << OpWord_OpMode_Shift };
 
-enum { OpWord_DefaultRegisterEncoding_Shift = 9 };
+enum { OpWord_DefaultRegisterEncoding_Shift = 0 };
 enum { OpWord_DefaultRegisterEncoding_Bits = 3 };
 enum { OpWord_DefaultRegisterEncoding_Mask = ((1 << OpWord_DefaultRegisterEncoding_Bits) - 1) << OpWord_DefaultRegisterEncoding_Shift };
+
+enum { OpWord_SecondaryRegisterEncoding_Shift = 9 };
+enum { OpWord_SecondaryRegisterEncoding_Bits = 3 };
+enum { OpWord_SecondaryRegisterEncoding_Mask = ((1 << OpWord_SecondaryRegisterEncoding_Bits) - 1) << OpWord_SecondaryRegisterEncoding_Shift };
 
 enum { OpWord_DefaultImm3BitEncoding_Shift = 9 };
 enum { OpWord_DefaultImm3BitEncoding_Bits = 3 };
