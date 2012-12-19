@@ -264,6 +264,18 @@ static const InstructionTestCase immediateTests[] =
 																														{ "ADDI #imm,<ea>",			{ 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_ImmediateTemp,	ExecutionResource_MemoryOperand,	OperationSize_Word,	IeeOperation_Add,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 
+	{ "ADDQ.L #2,D3", 1, { 0x5483, }, 1, {
+																														{ "ADDQ #imm,<ea>",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_Imm3Bit,			ExecutionResource_D3,				OperationSize_Long,	IeeOperation_Add,			ExecutionResource_D3,				false,	Pairability_pOEP_Or_sOEP,	2, },
+	}, },
+
+	{ "ADDQ.L #7,D3", 1, { 0x5e83, }, 1, {
+																														{ "ADDQ #imm,<ea>",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_Imm3Bit,			ExecutionResource_D3,				OperationSize_Long,	IeeOperation_Add,			ExecutionResource_D3,				false,	Pairability_pOEP_Or_sOEP,	7, },
+	}, },
+
+	{ "ADDQ.L #8,D3", 1, { 0x5083, }, 1, {
+																														{ "ADDQ #imm,<ea>",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_Imm3Bit,			ExecutionResource_D3,				OperationSize_Long,	IeeOperation_Add,			ExecutionResource_D3,				false,	Pairability_pOEP_Or_sOEP,	8, },
+	}, },
+
 };
 
 static const InstructionTestCase integerArithmeticTests[] =
