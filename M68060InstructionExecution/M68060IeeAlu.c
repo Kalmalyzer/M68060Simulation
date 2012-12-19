@@ -41,11 +41,24 @@ static void evaluateAddA(OperationSize operationSize, uint32_t ieeAValue, uint32
 	};
 }
 
+static void evaluateSub(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult)
+{
+	evaluateAdd(operationSize, (uint32_t) -ieeAValue, ieeBValue, ieeResult);
+}
+
+static void evaluateSubA(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult)
+{
+	evaluateAddA(operationSize, (uint32_t) -ieeAValue, ieeBValue, ieeResult);
+}
+
 void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult)
 {
 	switch (ieeOperation)
 	{
 		case IeeOperation_None:
+			break;
+		case IeeOperation_ForwardIeeA:
+			*ieeResult = ieeAValue;
 			break;
 		case IeeOperation_Add:
 			{
@@ -55,6 +68,16 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_AddA:
 			{
 				evaluateAddA(operationSize, ieeAValue, ieeBValue, ieeResult);
+				break;
+			}
+		case IeeOperation_Sub:
+			{
+				evaluateSub(operationSize, ieeAValue, ieeBValue, ieeResult);
+				break;
+			}
+		case IeeOperation_SubA:
+			{
+				evaluateSubA(operationSize, ieeAValue, ieeBValue, ieeResult);
 				break;
 			}
 		default:

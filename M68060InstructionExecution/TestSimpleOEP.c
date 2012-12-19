@@ -18,6 +18,7 @@ M68kOp instructionStream[] =
 	{ "ADDA.W #$2,A1", 2, { 0xd2fc, 0x0002, }, },
 	{ "ADD.W (A1),D3", 1, { 0xd651, }, }, 
 	{ "ADDQ.L #2,D3", 1, { 0x5483, }, },
+	{ "SUBQ.L #1,D3", 1, { 0x5383, }, },
 };
 
 void printUOp(const UOp* UOp)
