@@ -130,6 +130,8 @@ const char* IeeOperationToString(IeeOperation ieeOperation)
 		"Add",
 		"AddA",
 		"AddX",
+		"Cmp",
+		"CmpA",
 		"Sub",
 		"SubA",
 		"SubX",

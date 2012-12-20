@@ -10,8 +10,10 @@ static OpWordClassInfo s_opWordClassInformation[] =
 	{ 0, SizeEncoding_Word, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_MoveDestinationEALocation, EAModeMask_Alterable, }, // OpWordClass_Move_W,
 	{ 0, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_MoveDestinationEALocation, EAModeMask_Alterable, }, // OpWordClass_Move_L,
 	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_Data, EAEncoding_None, EAModeMask_None, DecodeOperand_DefaultEALocation, DecodeOperand_SecondaryDnLocation, DecodeIeeResult_IeeB, }, // OpWordClass_EncodedSize_SrcEaData_Dn,
-	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_None, EAModeMask_None, DecodeOperand_DefaultEALocation, DecodeOperand_SecondaryDnLocation, DecodeIeeResult_IeeB, }, // OpWordClass_EncodedSize_SrcEaAll_Dn,
-	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_None, EAModeMask_None, DecodeOperand_DefaultEALocation, DecodeOperand_SecondaryAnLocation, DecodeIeeResult_IeeB, }, // OpWordClass_EncodedSize_SrcEaAll_An,
+	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_None, EAModeMask_None, DecodeOperand_DefaultEALocation, DecodeOperand_SecondaryDnLocation, DecodeIeeResult_None, }, // OpWordClass_EncodedSize_SrcEaAll_DnReadOnly,
+	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_None, EAModeMask_None, DecodeOperand_DefaultEALocation, DecodeOperand_SecondaryDnLocation, DecodeIeeResult_IeeB, }, // OpWordClass_EncodedSize_SrcEaAll_DnReadWrite,
+	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_None, EAModeMask_None, DecodeOperand_DefaultEALocation, DecodeOperand_SecondaryAnLocation, DecodeIeeResult_None, }, // OpWordClass_EncodedSize_SrcEaAll_AnReadOnly,
+	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_DefaultEALocation, EAModeMask_All, EAEncoding_None, EAModeMask_None, DecodeOperand_DefaultEALocation, DecodeOperand_SecondaryAnLocation, DecodeIeeResult_IeeB, }, // OpWordClass_EncodedSize_SrcEaAll_AnReadWrite,
 	{ 1, SizeEncoding_Long, EAEncoding_DefaultEALocation, EAModeMask_Data, EAEncoding_None, EAModeMask_None, }, // OpWordClass_LongMulDiv,
 	{ 1, SizeEncoding_None, EAEncoding_DefaultEALocation, EAModeMask_DnOrControl, EAEncoding_None, EAModeMask_None, }, // OpWordClass_Bitfield_ReadEa,
 	{ 0, SizeEncoding_None, EAEncoding_DefaultEALocation, EAModeMask_Control, EAEncoding_None, EAModeMask_None, }, // OpWordClass_Control,
@@ -56,10 +58,10 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ true, 0xf138, 0xd100, "ADDX Dx,Dy", OpWordClass_EncodedSize_SrcDn_DestDn, IeeOperation_AddX, Pairability_pOEP_Only, }, // Shadows ADD Dn,<ea>
 	{ true, 0xf138, 0xd108, "ADDX -(Ax),-(Ay)", OpWordClass_EncodedSize_SrcAnPreDecrement_DestAnPreDecrement, IeeOperation_AddX, Pairability_pOEP_Only, }, // Shadows ADD Dn,<ea>
 
-	{ true, 0xf1c0, 0xd0c0, "ADDA.W <ea>,An", OpWordClass_EncodedSize_SrcEaAll_An, IeeOperation_AddA, Pairability_pOEP_Or_sOEP, }, // Shadows ADD <ea>,Dn
-	{ true, 0xf1c0, 0xd1c0, "ADDA.L <ea>,An", OpWordClass_EncodedSize_SrcEaAll_An, IeeOperation_AddA, Pairability_pOEP_Or_sOEP, }, // Shadows ADD Dn,<ea>
+	{ true, 0xf1c0, 0xd0c0, "ADDA.W <ea>,An", OpWordClass_EncodedSize_SrcEaAll_AnReadWrite, IeeOperation_AddA, Pairability_pOEP_Or_sOEP, }, // Shadows ADD <ea>,Dn
+	{ true, 0xf1c0, 0xd1c0, "ADDA.L <ea>,An", OpWordClass_EncodedSize_SrcEaAll_AnReadWrite, IeeOperation_AddA, Pairability_pOEP_Or_sOEP, }, // Shadows ADD Dn,<ea>
 
-	{ true, 0xf100, 0xd000, "ADD <ea>,Dn", OpWordClass_EncodedSize_SrcEaAll_Dn, IeeOperation_Add, Pairability_pOEP_Or_sOEP, },
+	{ true, 0xf100, 0xd000, "ADD <ea>,Dn", OpWordClass_EncodedSize_SrcEaAll_DnReadWrite, IeeOperation_Add, Pairability_pOEP_Or_sOEP, },
 
 	{ true, 0xf100, 0xd100, "ADD Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_1, IeeOperation_Add, Pairability_pOEP_Or_sOEP, },
 
@@ -119,9 +121,10 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ false, 0xf1c0, 0xb100, "EOR.B Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_2, }, // Shadows CMP
 	{ false, 0xf1c0, 0xb140, "EOR.W Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_2, }, // Shadows CMP
 	{ false, 0xf1c0, 0xb180, "EOR.L Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_2, }, // Shadows CMP
-	{ false, 0xf1c0, 0xb0c0, "CMPA.W <ea>,An", OpWordClass_EncodedSize_SrcEaAll_An, }, // Shadows CMP <ea>,Dn -- Perhaps possible to collapse with CMPA.L?
-	{ false, 0xf1c0, 0xb1c0, "CMPA.L <ea>,An", OpWordClass_EncodedSize_SrcEaAll_An, }, // Shadows CMP <ea>,Dn
-	{ false, 0xf000, 0xb000, "CMP <ea>,Dn", OpWordClass_EncodedSize_SrcEaAll_Dn, },
+	{ true, 0xf1c0, 0xb0c0, "CMPA.W <ea>,An", OpWordClass_EncodedSize_SrcEaAll_AnReadOnly, IeeOperation_CmpA, Pairability_pOEP_Or_sOEP, }, // Shadows CMP <ea>,Dn -- Perhaps possible to collapse with CMPA.L?
+	{ true, 0xf1c0, 0xb1c0, "CMPA.L <ea>,An", OpWordClass_EncodedSize_SrcEaAll_AnReadOnly, IeeOperation_CmpA, Pairability_pOEP_Or_sOEP, }, // Shadows CMP <ea>,Dn
+	{ true, 0xf000, 0xb000, "CMP <ea>,Dn", OpWordClass_EncodedSize_SrcEaAll_DnReadOnly, IeeOperation_Cmp, Pairability_pOEP_Or_sOEP, },
+
 	{ false, 0xff00, 0x0c00, "CMPI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea_Read, },
 	{ false, 0xf1c0, 0x81c0, "DIVS.W <ea>,Dn", OpWordClass_Word_SrcEa, },
 	{ false, 0xffc0, 0x4c40, "DIVS/DIVU.L <ea>,Dr:Dq (can be 32bit or 64bit division)", OpWordClass_LongMulDiv, },
@@ -189,9 +192,9 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 
 	{ true, 0xf138, 0x9100, "SUBX Dx,Dy", OpWordClass_EncodedSize_SrcDn_DestDn, IeeOperation_SubX, Pairability_pOEP_Only, }, // Shadows SUB Dn,<ea>
 	{ true, 0xf138, 0x9108, "SUBX -(Ax),-(Ay)", OpWordClass_EncodedSize_SrcAnPreDecrement_DestAnPreDecrement, IeeOperation_SubX, Pairability_pOEP_Only, }, // Shadows SUB Dn,<ea>
-	{ true, 0xf1c0, 0x90c0, "SUBA.W <ea>,An", OpWordClass_EncodedSize_SrcEaAll_An, IeeOperation_SubA, Pairability_pOEP_Or_sOEP, }, // Shadows SUB <ea>,Dn
-	{ true, 0xf1c0, 0x91c0, "SUBA.L <ea>,An", OpWordClass_EncodedSize_SrcEaAll_An, IeeOperation_SubA, Pairability_pOEP_Or_sOEP, }, // Shadows SUB Dn,<ea>
-	{ true, 0xf100, 0x9000, "SUB <ea>,Dn", OpWordClass_EncodedSize_SrcEaAll_Dn, IeeOperation_Sub, Pairability_pOEP_Or_sOEP, },
+	{ true, 0xf1c0, 0x90c0, "SUBA.W <ea>,An", OpWordClass_EncodedSize_SrcEaAll_AnReadWrite, IeeOperation_SubA, Pairability_pOEP_Or_sOEP, }, // Shadows SUB <ea>,Dn
+	{ true, 0xf1c0, 0x91c0, "SUBA.L <ea>,An", OpWordClass_EncodedSize_SrcEaAll_AnReadWrite, IeeOperation_SubA, Pairability_pOEP_Or_sOEP, }, // Shadows SUB Dn,<ea>
+	{ true, 0xf100, 0x9000, "SUB <ea>,Dn", OpWordClass_EncodedSize_SrcEaAll_DnReadWrite, IeeOperation_Sub, Pairability_pOEP_Or_sOEP, },
 	{ true, 0xf100, 0x9100, "SUB Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_1, IeeOperation_Sub, Pairability_pOEP_Or_sOEP, },
 	{ true, 0xff00, 0x0400, "SUBI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea_ReadWrite, IeeOperation_Sub, Pairability_pOEP_Or_sOEP, },
 	{ true, 0xf138, 0x5108, "SUBQ #imm,An", OpWordClass_SrcImm3Bit_DestEa_Alterable, IeeOperation_SubA, Pairability_pOEP_Or_sOEP, }, // Shadows SUBQ #imm,<ea>

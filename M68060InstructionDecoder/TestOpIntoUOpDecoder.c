@@ -317,6 +317,14 @@ static const InstructionTestCase integerArithmeticTests[] =
 																														{ "ADDX -(Ax),-(Ay)",		{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A3,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Long, IeeOperation_AddX,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,	0,	},
 	}, },
 
+	{ "CMP.L (A3),D1", 1, { 0xb293, }, 1, {
+																														{ "CMP <ea>,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_D1,				OperationSize_Long,	IeeOperation_Cmp,			ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "CMPA.L D1,A1", 1, { 0xb3c1, }, 1, {
+																														{ "CMPA.L <ea>,An",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D1,				ExecutionResource_A1,				OperationSize_Long,	IeeOperation_CmpA,			ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
 	{ "SUB.B D1,D2", 1, { 0x9401, }, 1, {
 																														{ "SUB <ea>,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D1,				ExecutionResource_D2,				OperationSize_Byte, IeeOperation_Sub,			ExecutionResource_D2,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },

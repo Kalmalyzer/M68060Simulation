@@ -106,6 +106,8 @@ typedef enum
 	IeeOperation_Add,
 	IeeOperation_AddA,
 	IeeOperation_AddX,
+	IeeOperation_Cmp,
+	IeeOperation_CmpA,
 	IeeOperation_Sub,
 	IeeOperation_SubA,
 	IeeOperation_SubX,
