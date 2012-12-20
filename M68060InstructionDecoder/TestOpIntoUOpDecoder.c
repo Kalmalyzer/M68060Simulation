@@ -308,6 +308,15 @@ static const InstructionTestCase integerArithmeticTests[] =
 																														{ "ADDQ #imm,<ea>",			{ 0x0012, 0x0000, },	ExecutionResource_A3,				ExecutionResource_D2,				0,	AguIndexSize_Long,	AguDisplacementSize_S8,		AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_Imm3Bit,			ExecutionResource_MemoryOperand,	OperationSize_Byte, IeeOperation_Add,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	2, },
 	}, },
 
+	{ "ADDX.W D2,D3", 1, { 0xd742, }, 1, {
+																														{ "ADDX Dx,Dy",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D2,				ExecutionResource_D3,				OperationSize_Word, IeeOperation_AddX,			ExecutionResource_D3,				false,	Pairability_pOEP_Only,	0,	},
+	}, },
+
+	{ "ADDX.L -(A1),-(A3)", 1, { 0xd789, }, 2, {
+																														{ "SOURCEUOP",				{ 0x0000, 0x0000, },	ExecutionResource_A1,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A1,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Long, IeeOperation_ForwardIeeA,	ExecutionResource_IeeTemp,			false,	Pairability_pOEP_Only,	0,	},
+																														{ "ADDX -(Ax),-(Ay)",		{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A3,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Long, IeeOperation_AddX,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,	0,	},
+	}, },
+
 	{ "SUB.B D1,D2", 1, { 0x9401, }, 1, {
 																														{ "SUB <ea>,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D1,				ExecutionResource_D2,				OperationSize_Byte, IeeOperation_Sub,			ExecutionResource_D2,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
@@ -342,13 +351,13 @@ static const InstructionTestCase integerArithmeticTests[] =
 																														{ "SUBQ #imm,<ea>",			{ 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_Imm3Bit,			ExecutionResource_MemoryOperand,	OperationSize_Byte, IeeOperation_Sub,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 	
-	{ "ADDX.W D2,D3", 1, { 0xd742, }, 1, {
-																														{ "ADDX Dx,Dy",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D2,				ExecutionResource_D3,				OperationSize_Word, IeeOperation_AddX,			ExecutionResource_D3,				false,	Pairability_pOEP_Only,	0,	},
+	{ "SUBX.W D1,D1", 1, { 0x9341, }, 1, {
+																														{ "SUBX Dx,Dy",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D1,				ExecutionResource_D1,				OperationSize_Word, IeeOperation_SubX,			ExecutionResource_D1,				false,	Pairability_pOEP_Only,	0,	},
 	}, },
 
-	{ "ADDX.L -(A1),-(A3)", 1, { 0xd789, }, 2, {
-																														{ "SOURCEUOP",				{ 0x0000, 0x0000, },	ExecutionResource_A1,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A1,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Long, IeeOperation_ForwardIeeA,	ExecutionResource_IeeTemp,			false,	Pairability_pOEP_Only,	0,	},
-																														{ "ADDX -(Ax),-(Ay)",		{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A3,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Long, IeeOperation_AddX,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,	0,	},
+	{ "SUBX.B -(A4),-(A3)", 1, { 0x970c, }, 2, {
+																														{ "SOURCEUOP",				{ 0x0000, 0x0000, },	ExecutionResource_A4,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A4,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Byte, IeeOperation_ForwardIeeA,	ExecutionResource_IeeTemp,			false,	Pairability_pOEP_Only,	0,	},
+																														{ "SUBX -(Ax),-(Ay)",		{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A3,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Byte, IeeOperation_SubX,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,	0,	},
 	}, },
 };
 

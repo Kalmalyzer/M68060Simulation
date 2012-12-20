@@ -187,8 +187,8 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ false, 0xffff, 0x4e77, "RTR", OpWordClass_NoExtraWords, },
 	{ false, 0xffff, 0x4e75, "RTS", OpWordClass_NoExtraWords, },
 
-	{ false, 0xf138, 0x9100, "SUBX Dx,Dy", OpWordClass_NoExtraWords, }, // Shadows SUB Dn,<ea>
-	{ false, 0xf138, 0x9108, "SUBX -(Ax),-(Ay)", OpWordClass_NoExtraWords, }, // Shadows SUB Dn,<ea>
+	{ true, 0xf138, 0x9100, "SUBX Dx,Dy", OpWordClass_EncodedSize_SrcDn_DestDn, IeeOperation_SubX, Pairability_pOEP_Only, }, // Shadows SUB Dn,<ea>
+	{ true, 0xf138, 0x9108, "SUBX -(Ax),-(Ay)", OpWordClass_EncodedSize_SrcAnPreDecrement_DestAnPreDecrement, IeeOperation_SubX, Pairability_pOEP_Only, }, // Shadows SUB Dn,<ea>
 	{ true, 0xf1c0, 0x90c0, "SUBA.W <ea>,An", OpWordClass_EncodedSize_SrcEaAll_An, IeeOperation_SubA, Pairability_pOEP_Or_sOEP, }, // Shadows SUB <ea>,Dn
 	{ true, 0xf1c0, 0x91c0, "SUBA.L <ea>,An", OpWordClass_EncodedSize_SrcEaAll_An, IeeOperation_SubA, Pairability_pOEP_Or_sOEP, }, // Shadows SUB Dn,<ea>
 	{ true, 0xf100, 0x9000, "SUB <ea>,Dn", OpWordClass_EncodedSize_SrcEaAll_Dn, IeeOperation_Sub, Pairability_pOEP_Or_sOEP, },
