@@ -451,6 +451,14 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			*hasMemoryReference = true;
 			break;
 		}
+	case DecodeOperand_MoveDestinationEALocation:
+		{
+			uint ea6BitMode = (opWord >> 6) & 0x3f;
+			EA6BitMode_Upper3Bits eaUpper3Bits = ea6BitMode & 7;
+			EA6BitMode_Lower3Bits eaLower3Bits = (ea6BitMode >> 3) & 7;
+			decodeEA6BitMode(eaUpper3Bits, eaLower3Bits, immediateSize, operandSpecifierWords, mainUOp, ieeInput, UOpWriteBuffer, hasMemoryReference);
+			break;
+		}
 	case DecodeOperand_Immediate:
 		{
 			decodeImmediateOperand(immediateSize, operandSpecifierWords, mainUOp, ieeInput, hasMemoryReference);
@@ -553,21 +561,30 @@ static bool ea6BitModeHasMemoryReference(EA6BitMode_Upper3Bits eaUpper3Bits, EA6
 	}
 }
 
-static void classifyOperand(uint16_t opWord, DecodeOperand decodeOperand, bool* needsExtensionWords, bool* hasMemoryReference)
+typedef struct
 {
+	bool hasMemoryReference;
+	bool needsExtensionWords;
+
+} PreDecodedOperand;
+
+static PreDecodedOperand preDecodeOperand(uint16_t opWord, DecodeOperand decodeOperand)
+{
+	PreDecodedOperand preDecodedOperand = { 0 };
+	
 	switch (decodeOperand)
 	{
 	case DecodeOperand_None:
-		*needsExtensionWords = false;
-		*hasMemoryReference = false;
+		preDecodedOperand.needsExtensionWords = false;
+		preDecodedOperand.hasMemoryReference = false;
 		break;
 	case DecodeOperand_DefaultEALocation:
 		{
 			uint ea6BitMode = opWord & 0x3f;
 			EA6BitMode_Upper3Bits eaUpper3Bits = (ea6BitMode >> 3) & 7;
 			EA6BitMode_Lower3Bits eaLower3Bits = ea6BitMode & 7;
-			*needsExtensionWords = ea6BitModeNeedsExtensionWords(eaUpper3Bits, eaLower3Bits);
-			*hasMemoryReference = ea6BitModeHasMemoryReference(eaUpper3Bits, eaLower3Bits);
+			preDecodedOperand.needsExtensionWords = ea6BitModeNeedsExtensionWords(eaUpper3Bits, eaLower3Bits);
+			preDecodedOperand.hasMemoryReference = ea6BitModeHasMemoryReference(eaUpper3Bits, eaLower3Bits);
 			break;
 		}
 	case DecodeOperand_DefaultDnLocation:
@@ -575,44 +592,49 @@ static void classifyOperand(uint16_t opWord, DecodeOperand decodeOperand, bool* 
 	case DecodeOperand_SecondaryAnLocation:
 	case DecodeOperand_Imm3Bit:
 		{
-			*needsExtensionWords = false;
-			*hasMemoryReference = false;
+			preDecodedOperand.needsExtensionWords = false;
+			preDecodedOperand.hasMemoryReference = false;
 			break;
 		}
 	case DecodeOperand_DefaultPreDecrementAnLocation:
 	case DecodeOperand_SecondaryPreDecrementAnLocation:
 		{
-			*needsExtensionWords = false;
-			*hasMemoryReference = true;
+			preDecodedOperand.needsExtensionWords = false;
+			preDecodedOperand.hasMemoryReference = true;
+			break;
+		}
+	case DecodeOperand_MoveDestinationEALocation:
+		{
+			uint ea6BitMode = (opWord >> 6) & 0x3f;
+			EA6BitMode_Upper3Bits eaUpper3Bits = ea6BitMode & 7;
+			EA6BitMode_Lower3Bits eaLower3Bits = (ea6BitMode >> 3) & 7;
+			preDecodedOperand.needsExtensionWords = ea6BitModeNeedsExtensionWords(eaUpper3Bits, eaLower3Bits);
+			preDecodedOperand.hasMemoryReference = ea6BitModeHasMemoryReference(eaUpper3Bits, eaLower3Bits);
 			break;
 		}
 	case DecodeOperand_Immediate:
 		{
-			*needsExtensionWords = true;
-			*hasMemoryReference = false;
+			preDecodedOperand.needsExtensionWords = true;
+			preDecodedOperand.hasMemoryReference = false;
 			break;
 		}
 	default:
 		M68060_ERROR("Not yet implemented");
 		break;
 	}
+	
+	return preDecodedOperand;
 }
 
 static bool shouldSplitSourceAndDestOperandReferences(uint16_t opWord, DecodeOperand sourceDecodeOperand, DecodeOperand destinationDecodeOperand)
 {
-	bool sourceOperandNeedsExtensionWords;
-	bool sourceOperandHasMemoryReference;
-
-	bool destinationOperandNeedsExtensionWords;
-	bool destinationOperandHasMemoryReference;
+	PreDecodedOperand sourceOperand = preDecodeOperand(opWord, sourceDecodeOperand);
+	PreDecodedOperand destinationOperand = preDecodeOperand(opWord, destinationDecodeOperand);
 	
-	classifyOperand(opWord, sourceDecodeOperand, &sourceOperandNeedsExtensionWords, &sourceOperandHasMemoryReference);
-	classifyOperand(opWord, destinationDecodeOperand, &destinationOperandNeedsExtensionWords, &destinationOperandHasMemoryReference);
-
-	if (sourceOperandHasMemoryReference && destinationOperandHasMemoryReference)
+	if (sourceOperand.hasMemoryReference && destinationOperand.hasMemoryReference)
 		return true;
 
-	if (sourceOperandNeedsExtensionWords && destinationOperandNeedsExtensionWords)
+	if (sourceOperand.needsExtensionWords && destinationOperand.needsExtensionWords)
 		return true;
 		
 	return false;
@@ -638,12 +660,13 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 
 	if (opWordClassInfo->sourceDecodeOperand != DecodeOperand_None)
 	{
-			uint operandOffset = 1 + instructionLength->numSpecialOperandSpecifierWords;
+			uint sourceExtensionWordsOffset = 1 + instructionLength->numSpecialOperandSpecifierWords;
+	
 			if (splitSourceAndDestOperandReferences)
 			{
 				UOp sourceUOp = { 0 };
 
-				decodeOperand(opWord, opWordClassInfo->sourceDecodeOperand, ieeOperationSize, instructionWords + operandOffset, &sourceUOp, &sourceUOp.ieeA, UOpWriteBuffer, &sourceUOp.memoryRead);
+				decodeOperand(opWord, opWordClassInfo->sourceDecodeOperand, ieeOperationSize, instructionWords + sourceExtensionWordsOffset, &sourceUOp, &sourceUOp.ieeA, UOpWriteBuffer, &sourceUOp.memoryRead);
 
 				sourceUOp.ieeOperation = IeeOperation_ForwardIeeA;
 				sourceUOp.ieeOperationSize = ieeOperationSize;
@@ -656,15 +679,15 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 			}
 			else
 			{
-				decodeOperand(opWord, opWordClassInfo->sourceDecodeOperand, ieeOperationSize, instructionWords + operandOffset, &mainUOp, &mainUOp.ieeA, UOpWriteBuffer, &mainUOp.memoryRead);
+				decodeOperand(opWord, opWordClassInfo->sourceDecodeOperand, ieeOperationSize, instructionWords + sourceExtensionWordsOffset, &mainUOp, &mainUOp.ieeA, UOpWriteBuffer, &mainUOp.memoryRead);
 			}
 	}
 
 	if (opWordClassInfo->destinationDecodeOperand != DecodeOperand_None)
 	{
-			uint operandOffset = 1 + instructionLength->numSpecialOperandSpecifierWords + instructionLength->numSourceEAExtensionWords;
+			uint destinationExtensionWordsOffset = 1 + instructionLength->numSpecialOperandSpecifierWords + instructionLength->numSourceEAExtensionWords;
 			bool hasMemoryReference;
-			decodeOperand(opWord, opWordClassInfo->destinationDecodeOperand, ieeOperationSize, instructionWords + operandOffset, &mainUOp, &mainUOp.ieeB, UOpWriteBuffer, &hasMemoryReference);
+			decodeOperand(opWord, opWordClassInfo->destinationDecodeOperand, ieeOperationSize, instructionWords + destinationExtensionWordsOffset, &mainUOp, &mainUOp.ieeB, UOpWriteBuffer, &hasMemoryReference);
 			mainUOp.memoryWrite = hasMemoryReference;
 			mainUOp.memoryRead |= mainUOp.memoryWrite;
 	}

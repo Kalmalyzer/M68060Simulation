@@ -99,6 +99,7 @@ typedef enum
 	DecodeOperand_SecondaryDnLocation,
 	DecodeOperand_SecondaryAnLocation,
 	DecodeOperand_SecondaryPreDecrementAnLocation,
+	DecodeOperand_MoveDestinationEALocation,
 	DecodeOperand_Immediate,
 	DecodeOperand_Imm3Bit,
 
