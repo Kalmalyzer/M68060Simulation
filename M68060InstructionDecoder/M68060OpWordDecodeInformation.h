@@ -33,6 +33,7 @@ typedef enum
 {
 	OpWordClass_NoExtraWords,
 	OpWordClass_EncodedSize_SrcDn_DestDn,
+	OpWordClass_EncodedSize_SrcAnPostIncrement_DestAnPostIncrementReadOnly,
 	OpWordClass_EncodedSize_SrcAnPreDecrement_DestAnPreDecrement,
 	OpWordClass_Move_B,
 	OpWordClass_Move_W,
@@ -95,9 +96,11 @@ typedef enum
 	DecodeOperand_None,
 	DecodeOperand_DefaultEALocation,
 	DecodeOperand_DefaultDnLocation,
+	DecodeOperand_DefaultPostIncrementAnLocation,
 	DecodeOperand_DefaultPreDecrementAnLocation,
 	DecodeOperand_SecondaryDnLocation,
 	DecodeOperand_SecondaryAnLocation,
+	DecodeOperand_SecondaryPostIncrementAnLocation,
 	DecodeOperand_SecondaryPreDecrementAnLocation,
 	DecodeOperand_MoveDestinationEALocation,
 	DecodeOperand_Immediate,
@@ -107,11 +110,11 @@ typedef enum
 
 typedef enum
 {
-	DecodeIeeResult_None,
-	DecodeIeeResult_IeeA,
-	DecodeIeeResult_IeeB,
+	DestinationOperandAccessType_None,
+	DestinationOperandAccessType_ReadOnly,
+	DestinationOperandAccessType_ReadWrite,
 
-} DecodeIeeResult;
+} DestinationOperandAccessType;
 
 typedef struct
 {
@@ -124,7 +127,7 @@ typedef struct
 
 	DecodeOperand sourceDecodeOperand;
 	DecodeOperand destinationDecodeOperand;
-	DecodeIeeResult decodeIeeResult;
+	DestinationOperandAccessType destinationOperandAccessType;
 	
 } OpWordClassInfo;
 

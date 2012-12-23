@@ -417,6 +417,16 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			*hasMemoryReference = false;
 			break;
 		}
+	case DecodeOperand_DefaultPostIncrementAnLocation:
+		{
+			ExecutionResource an = ExecutionResource_A0 + ((opWord & OpWord_DefaultRegisterEncoding_Mask) >> OpWord_DefaultRegisterEncoding_Shift);
+			mainUOp->aguBase = an;
+			mainUOp->aguOperation = AguOperation_PostIncrement;
+			mainUOp->aguResult = an;
+			*ieeInput = ExecutionResource_MemoryOperand;
+			*hasMemoryReference = true;
+			break;
+		}
 	case DecodeOperand_DefaultPreDecrementAnLocation:
 		{
 			ExecutionResource an = ExecutionResource_A0 + ((opWord & OpWord_DefaultRegisterEncoding_Mask) >> OpWord_DefaultRegisterEncoding_Shift);
@@ -439,6 +449,16 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			ExecutionResource an = ExecutionResource_A0 + ((opWord & OpWord_SecondaryRegisterEncoding_Mask) >> OpWord_SecondaryRegisterEncoding_Shift);
 			*ieeInput = an;
 			*hasMemoryReference = false;
+			break;
+		}
+	case DecodeOperand_SecondaryPostIncrementAnLocation:
+		{
+			ExecutionResource an = ExecutionResource_A0 + ((opWord & OpWord_SecondaryRegisterEncoding_Mask) >> OpWord_SecondaryRegisterEncoding_Shift);
+			mainUOp->aguBase = an;
+			mainUOp->aguOperation = AguOperation_PostIncrement;
+			mainUOp->aguResult = an;
+			*ieeInput = ExecutionResource_MemoryOperand;
+			*hasMemoryReference = true;
 			break;
 		}
 	case DecodeOperand_SecondaryPreDecrementAnLocation:
@@ -478,19 +498,40 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 	}
 }
 
-static ExecutionResource decodeIeeResult(DecodeIeeResult decodeIeeResult, ExecutionResource ieeA, ExecutionResource ieeB)
+static ExecutionResource decodeIeeResult(DestinationOperandAccessType accessType, ExecutionResource ieeB)
 {
-	switch (decodeIeeResult)
+	switch (accessType)
 	{
-	case DecodeIeeResult_None:
+	case DestinationOperandAccessType_None:
 		return ExecutionResource_None;
-	case DecodeIeeResult_IeeA:
-		return ieeA;
-	case DecodeIeeResult_IeeB:
+	case DestinationOperandAccessType_ReadOnly:
+		return ExecutionResource_None;
+	case DestinationOperandAccessType_ReadWrite:
 		return ieeB;
 	default:
-		M68060_ERROR("DecodeIeeResult not supported");
+		M68060_ERROR("DestinationOperandAccessType not supported");
 		return ExecutionResource_None;
+	}
+}
+
+static void decodeMemoryReferences(DestinationOperandAccessType accessType, bool sourceOperandMemoryReference, bool destinationOperandMemoryReference, bool* memoryRead, bool* memoryWrite)
+{
+	switch (accessType)
+	{
+	case DestinationOperandAccessType_None:
+		*memoryRead = sourceOperandMemoryReference;
+		*memoryWrite = false;
+		break;
+	case DestinationOperandAccessType_ReadOnly:
+		*memoryRead = sourceOperandMemoryReference | destinationOperandMemoryReference;
+		*memoryWrite = false;
+		break;
+	case DestinationOperandAccessType_ReadWrite:
+		*memoryRead = sourceOperandMemoryReference | destinationOperandMemoryReference;
+		*memoryWrite = destinationOperandMemoryReference;
+		break;
+	default:
+		M68060_ERROR("DestinationOperandAccessType not supported");
 	}
 }
 
@@ -596,7 +637,9 @@ static PreDecodedOperand preDecodeOperand(uint16_t opWord, DecodeOperand decodeO
 			preDecodedOperand.hasMemoryReference = false;
 			break;
 		}
+	case DecodeOperand_DefaultPostIncrementAnLocation:
 	case DecodeOperand_DefaultPreDecrementAnLocation:
+	case DecodeOperand_SecondaryPostIncrementAnLocation:
 	case DecodeOperand_SecondaryPreDecrementAnLocation:
 		{
 			preDecodedOperand.needsExtensionWords = false;
@@ -648,6 +691,8 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 	UOp mainUOp = { 0 };
 	bool splitSourceAndDestOperandReferences;
 	OperationSize ieeOperationSize;
+	bool sourceOperandMemoryReference = false;
+	bool destinationOperandMemoryReference = false;
 	
 	M68060_ASSERT(opWordDecodeInfo, "No decoding pattern available for instruction");
 	M68060_ASSERT(opWordDecodeInfo->readyForUOpDecoding, "Instruction doesn't support UOp decoding yet");
@@ -679,22 +724,21 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 			}
 			else
 			{
-				decodeOperand(opWord, opWordClassInfo->sourceDecodeOperand, ieeOperationSize, instructionWords + sourceExtensionWordsOffset, &mainUOp, &mainUOp.ieeA, UOpWriteBuffer, &mainUOp.memoryRead);
+				decodeOperand(opWord, opWordClassInfo->sourceDecodeOperand, ieeOperationSize, instructionWords + sourceExtensionWordsOffset, &mainUOp, &mainUOp.ieeA, UOpWriteBuffer, &sourceOperandMemoryReference);
 			}
 	}
 
 	if (opWordClassInfo->destinationDecodeOperand != DecodeOperand_None)
 	{
 			uint destinationExtensionWordsOffset = 1 + instructionLength->numSpecialOperandSpecifierWords + instructionLength->numSourceEAExtensionWords;
-			bool hasMemoryReference;
-			decodeOperand(opWord, opWordClassInfo->destinationDecodeOperand, ieeOperationSize, instructionWords + destinationExtensionWordsOffset, &mainUOp, &mainUOp.ieeB, UOpWriteBuffer, &hasMemoryReference);
-			mainUOp.memoryWrite = hasMemoryReference;
-			mainUOp.memoryRead |= mainUOp.memoryWrite;
+			decodeOperand(opWord, opWordClassInfo->destinationDecodeOperand, ieeOperationSize, instructionWords + destinationExtensionWordsOffset, &mainUOp, &mainUOp.ieeB, UOpWriteBuffer, &destinationOperandMemoryReference);
 	}
 
 	mainUOp.ieeOperation = opWordDecodeInfo->ieeOperation;
 	mainUOp.ieeOperationSize = ieeOperationSize;
-	mainUOp.ieeResult = decodeIeeResult(opWordClassInfo->decodeIeeResult, mainUOp.ieeA, mainUOp.ieeB);
+	
+	mainUOp.ieeResult = decodeIeeResult(opWordClassInfo->destinationOperandAccessType, mainUOp.ieeB);
+	decodeMemoryReferences(opWordClassInfo->destinationOperandAccessType, sourceOperandMemoryReference, destinationOperandMemoryReference, &mainUOp.memoryRead, &mainUOp.memoryWrite);
 	
 	mainUOp.mnemonic = opWordDecodeInfo->description;
 	mainUOp.pairability = opWordDecodeInfo->pairability;

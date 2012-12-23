@@ -329,6 +329,16 @@ static const InstructionTestCase integerArithmeticTests[] =
 																														{ "CMPI #imm,<ea>",			{ 0x1234, 0x5678, },	ExecutionResource_None,				ExecutionResource_None,				0, AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_uOpLong,			ExecutionResource_D1,				OperationSize_Long,	IeeOperation_Cmp,			ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 
+	{ "CMPM.B (A5)+,(A4)+", 1, { 0xb90d, }, 2, {
+																														{ "SOURCEUOP",				{ 0x0000, 0x0000, },	ExecutionResource_A5,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PostIncrement,			ExecutionResource_A5,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Byte, IeeOperation_ForwardIeeA,	ExecutionResource_IeeTemp,			false,	Pairability_pOEP_Only,		0,	},
+																														{ "CMPM (Ax)+,(Ay)+",		{ 0x0000, 0x0000, },	ExecutionResource_A4,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PostIncrement,			ExecutionResource_A4,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Byte, IeeOperation_Cmp,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
+
+	{ "CMPM.L (A3)+,(A2)+", 1, { 0xb58b, }, 2, {
+																														{ "SOURCEUOP",				{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PostIncrement,			ExecutionResource_A3,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Long, IeeOperation_ForwardIeeA,	ExecutionResource_IeeTemp,			false,	Pairability_pOEP_Only,		0,	},
+																														{ "CMPM (Ax)+,(Ay)+",		{ 0x0000, 0x0000, },	ExecutionResource_A2,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PostIncrement,			ExecutionResource_A2,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Long, IeeOperation_Cmp,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
+
 	{ "SUB.B D1,D2", 1, { 0x9401, }, 1, {
 																														{ "SUB <ea>,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D1,				ExecutionResource_D2,				OperationSize_Byte, IeeOperation_Sub,			ExecutionResource_D2,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
