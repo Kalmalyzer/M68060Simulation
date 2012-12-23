@@ -339,6 +339,14 @@ static const InstructionTestCase integerArithmeticTests[] =
 																														{ "CMPM (Ax)+,(Ay)+",		{ 0x0000, 0x0000, },	ExecutionResource_A2,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PostIncrement,			ExecutionResource_A2,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Long, IeeOperation_Cmp,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		0,	},
 	}, },
 
+	{ "NEG.W D7", 1, { 0x4447, }, 1, {
+																														{ "NEG <ea>",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_None,				ExecutionResource_D7,				OperationSize_Word, IeeOperation_Neg,			ExecutionResource_D7,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "NEGX.L D5", 1, { 0x4085, }, 1, {
+																														{ "NEGX <ea>",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_None,				ExecutionResource_D5,				OperationSize_Long, IeeOperation_NegX,			ExecutionResource_D5,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
+
 	{ "SUB.B D1,D2", 1, { 0x9401, }, 1, {
 																														{ "SUB <ea>,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D1,				ExecutionResource_D2,				OperationSize_Byte, IeeOperation_Sub,			ExecutionResource_D2,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
