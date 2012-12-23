@@ -55,7 +55,7 @@ typedef enum
 	OpWordClass_EncodedSize_Imm_Ea_ReadWrite,
 	OpWordClass_EncodedSize_Rn_Ea_1,
 	OpWordClass_EncodedSize_Rn_Ea_2,
-	OpWordClass_EncodedSize_DestEa_Read,
+	OpWordClass_EncodedSize_SrcEaAll_ReadOnly,
 	OpWordClass_EncodedSize_DestEa_ReadWrite,
 	OpWordClass_SrcImm3Bit_DestEa_Alterable,
 	OpWordClass_Byte_DestEa_Data,

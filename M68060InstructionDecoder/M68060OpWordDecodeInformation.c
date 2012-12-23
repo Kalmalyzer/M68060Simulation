@@ -27,7 +27,7 @@ static OpWordClassInfo s_opWordClassInformation[] =
 	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_Immediate, EAModeMask_All, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, DecodeOperand_Immediate, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_ReadWrite, }, // OpWordClass_EncodedSize_Imm_Ea_ReadWrite,
 	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_MemoryAlterable, DecodeOperand_SecondaryDnLocation, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_ReadWrite, }, // OpWordClass_EncodedSize_Rn_Ea_1,
 	{ 0, SizeEncoding_DefaultOpModeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_EncodedSize_Rn_Ea_2,
-	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_All, }, // OpWordClass_EncodedSize_DestEa_Read,
+	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_All, DecodeOperand_DefaultEALocation, DecodeOperand_None, DestinationOperandAccessType_None, }, // OpWordClass_EncodedSize_SrcEaAll_ReadOnly,
 	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, DecodeOperand_None, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_ReadWrite, }, // OpWordClass_EncodedSize_DestEa_ReadWrite,
 	{ 0, SizeEncoding_DefaultOpSizeEncoding, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_Alterable, DecodeOperand_Imm3Bit, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_ReadWrite, }, // OpWordClass_SrcImm3Bit_DestEa_Alterable,
 	{ 0, SizeEncoding_Byte, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_Data, }, // OpWordClass_Byte_DestEa_Data,
@@ -210,7 +210,7 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ false, 0xfff8, 0x4e40, "TRAP #imm", OpWordClass_NoExtraWords, },
 	{ false, 0xffff, 0x4e76, "TRAPV", OpWordClass_NoExtraWords, },
 
-	{ false, 0xff00, 0x4a00, "TST <ea>", OpWordClass_EncodedSize_DestEa_Read, },
+	{ true, 0xff00, 0x4a00, "TST <ea>", OpWordClass_EncodedSize_SrcEaAll_ReadOnly, IeeOperation_Tst, Pairability_pOEP_Or_sOEP, },
 
 	{ false, 0xfff8, 0x4e58, "UNLK An", OpWordClass_NoExtraWords, },
 

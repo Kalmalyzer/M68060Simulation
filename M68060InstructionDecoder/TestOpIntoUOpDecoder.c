@@ -389,6 +389,18 @@ static const InstructionTestCase integerArithmeticTests[] =
 																														{ "SOURCEUOP",				{ 0x0000, 0x0000, },	ExecutionResource_A4,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A4,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Byte, IeeOperation_ForwardIeeA,	ExecutionResource_IeeTemp,			false,	Pairability_pOEP_Only,	0,	},
 																														{ "SUBX -(Ax),-(Ay)",		{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A3,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Byte, IeeOperation_SubX,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,	0,	},
 	}, },
+
+	{ "TST.B D7", 1, { 0x4a07, }, 1, {
+																														{ "TST <ea>",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D7,				ExecutionResource_None,				OperationSize_Byte,	IeeOperation_Tst,			ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "TST.L $1234(A4)", 2, { 0x4aac, 0x1234, }, 1, {
+																														{ "TST <ea>",				{ 0x1234, 0x0000, },	ExecutionResource_A4,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Long,	IeeOperation_Tst,			ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "TST.W (A0)+", 1, { 0x4a58, }, 1, {
+																														{ "TST <ea>",				{ 0x0000, 0x0000, },	ExecutionResource_A0,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PostIncrement,			ExecutionResource_A0,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Word,	IeeOperation_Tst,			ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
 };
 
 static const InstructionTestCase moveTests[] =

@@ -115,6 +115,7 @@ typedef enum
 	IeeOperation_MoveA,
 	IeeOperation_Neg,
 	IeeOperation_NegX,
+	IeeOperation_Tst,
 
 } IeeOperation;
 
