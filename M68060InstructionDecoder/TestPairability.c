@@ -21,10 +21,6 @@ int main(void)
 {
 	static const PairabilityTest pairabilityTests[] =
 	{
-//		{	{ "NOP", 					1, { 0x4e71, }, },	// pOEP-only
-//			{ "ADD.B D0,D0",			1, { 0xd000, }, },	// pOEP|sOEP	<- instruction class mismatch
-//			PairabilityTestResult_Test2Failure_FirstInstructionIs_pOEPOnly },
-
 		{	{ "ADD.B D1,D1",			1, { 0xd201, }, },	// pOEP|sOEP
 			{ "ADD.B D0,D0", 			1, { 0xd000, }, },	// pOEP|sOEP
 			PairabilityTestResult_Success },
@@ -37,11 +33,15 @@ int main(void)
 			{ "ADD.B D0,D0", 			1, { 0xd000, }, },			// pOEP|sOEP
 			PairabilityTestResult_Success },
 
+		{	{ "ADDX.L D1,D1", 			1, { 0xd381, }, },	// pOEP-only
+			{ "ADD.B D0,D0",			1, { 0xd000, }, },	// pOEP|sOEP	<- instruction class mismatch
+			PairabilityTestResult_Test2Failure_FirstInstructionIs_pOEPOnly },
+
 		{	{ "ADD.B D0,D0",			1, { 0xd000, }, },			// pOEP|sOEP
 			{ "ADD.W $1234(PC),D5",		2, { 0xda7a, 0x1234, }, },	// pOEP|sOEP			<- PC relative addressing modes not allowed in sOEP
 			PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing },
 
-		{	{ "ADD.W D0,A2",			1, { 0xd1ca, }, },	// pOEP|sOEP
+		{	{ "ADDA.W D0,A2",			1, { 0xd4c0, }, },	// pOEP|sOEP
 			{ "ADD.W (A3),D1",			1, { 0xd213, }, }, 	// pOEP|sOEP
 			PairabilityTestResult_Success },
 
@@ -49,7 +49,7 @@ int main(void)
 			{ "ADD.W (A3),D1",			1, { 0xd213, }, }, 	// pOEP|sOEP			<- Both instructions have a memory reference
 			PairabilityTestResult_Test4Failure_BothInstructionsReferenceMemory },
 			
-		{	{ "ADDA.W D0,A3",			1, { 0xd7c0, }, },	// pOEP|sOEP
+		{	{ "ADDA.W D0,A3",			1, { 0xd6c0, }, },	// pOEP|sOEP
 			{ "ADD.W (A3),D1",			1, { 0xd213, }, }, 	// pOEP|sOEP			<- Second instruction uses base register which is written by first instruction
 			PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionIeeResult },
 
@@ -66,7 +66,7 @@ int main(void)
 			PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionAguResult },
 
 		{	{ "ADD.B (A0)+,D0",			1, { 0xd018, }, },	// pOEP|sOEP
-			{ "ADDA.W D1,A0",			1, { 0xd1c1, }, },	// pOEP|sOEP	<- register dependency
+			{ "ADDA.W D1,A0",			1, { 0xd0c1, }, },	// pOEP|sOEP	<- register dependency
 			PairabilityTestResult_Test6Failure_SecondInstructionIeeBRegisterDependsOnFirstInstructionAguResult },
 	};
 	
