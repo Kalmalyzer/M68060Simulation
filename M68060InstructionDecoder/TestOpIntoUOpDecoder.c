@@ -413,10 +413,10 @@ static const InstructionTestCase moveTests[] =
 	}, },
 
 	{ "MOVEA.W D2,A2", 1, { 0x3442, }, 1, {
-																														{ "MOVE.W <ea>,<ea>",		{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D2,				ExecutionResource_A2,				OperationSize_Word, IeeOperation_Move,			ExecutionResource_A2,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+																														{ "MOVEA.W <ea>,<ea>",		{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D2,				ExecutionResource_A2,				OperationSize_Word, IeeOperation_MoveA,			ExecutionResource_A2,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 
-	{ "MOVE.L A2,D3", 1, { 0x260a, }, 1, {
+	{ "MOVE.L A2,D3", 1, { 0xd1ca, }, 1, {
 																														{ "MOVE.L <ea>,<ea>",		{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_A2,				ExecutionResource_D3,				OperationSize_Long, IeeOperation_Move,			ExecutionResource_D3,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 };

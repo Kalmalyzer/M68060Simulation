@@ -233,7 +233,8 @@ static const InstructionLengthDecoderTest moveTests[] =
 	{ "MOVE.L #$12345678,([$12345678.L,A1])", { 0x23bc, 0x1234, 0x5678, 0x0171, 0x1234, 0x5678, }, 6, "MOVE.L <ea>,<ea>" },
 	{ "MOVE.L ([$12345678.L,A1]),([$12345678.L,A2])", { 0x25b1, 0x0171, 0x1234, 0x5678, 0x0171, 0x1234, 0x5678, }, 7, "MOVE.L <ea>,<ea>" },
 	{ "MOVE.L ([$12345678.L,PC]),([D0.W],$12345678.L)", { 0x21bb, 0x0171, 0x1234, 0x5678, 0x0193, 0x1234, 0x5678, }, 7, "MOVE.L <ea>,<ea>" },
-	{ "MOVEA.W D2,A2", { 0x3442, }, 1, "MOVE.W <ea>,<ea>" },
+	{ "MOVEA.W D2,A2", { 0x3442, }, 1, "MOVEA.W <ea>,<ea>" },
+	{ "MOVEA.L D2,A2", { 0x2442, }, 1, "MOVEA.L <ea>,<ea>" },
 	{ "MOVE.L A2,D3", { 0x260a, }, 1, "MOVE.L <ea>,<ea>" },
 
 	{ "MOVE CCR,$1234(A3)", { 0x42eb, 0x1234, }, 2, "MOVE CCR,<ea>" },

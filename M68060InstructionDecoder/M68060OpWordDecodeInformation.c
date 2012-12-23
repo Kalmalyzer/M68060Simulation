@@ -141,9 +141,12 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ false, 0xfff8, 0x4e50, "LINK.W An,#imm", OpWordClass_ImmediateWord, },
 	{ false, 0xfff8, 0x4808, "LINK.L An,#imm", OpWordClass_ImmediateLong, },
 
+	{ true, 0xf1c0, 0x2040, "MOVEA.L <ea>,<ea>", OpWordClass_Move_L, IeeOperation_MoveA, Pairability_pOEP_Or_sOEP, }, // Shadows MOVE.L <ea>,<ea>
+	{ true, 0xf1c0, 0x3040, "MOVEA.W <ea>,<ea>", OpWordClass_Move_W, IeeOperation_MoveA, Pairability_pOEP_Or_sOEP, }, // Shadows MOVE.W <ea>,<ea>
+
 	{ true, 0xf000, 0x1000, "MOVE.B <ea>,<ea>", OpWordClass_Move_B, IeeOperation_Move, Pairability_pOEP_Or_sOEP, },
-	{ true, 0xf000, 0x2000, "MOVE.L <ea>,<ea>", OpWordClass_Move_L, IeeOperation_Move, Pairability_pOEP_Or_sOEP, }, // Combined MOVE.L & MOVEA.L
-	{ true, 0xf000, 0x3000, "MOVE.W <ea>,<ea>", OpWordClass_Move_W, IeeOperation_Move, Pairability_pOEP_Or_sOEP, }, // Combined MOVE.W & MOVEA.W
+	{ true, 0xf000, 0x2000, "MOVE.L <ea>,<ea>", OpWordClass_Move_L, IeeOperation_Move, Pairability_pOEP_Or_sOEP, },
+	{ true, 0xf000, 0x3000, "MOVE.W <ea>,<ea>", OpWordClass_Move_W, IeeOperation_Move, Pairability_pOEP_Or_sOEP, },
 
 	{ false, 0xffc0, 0x44c0, "MOVE <ea>,CCR", OpWordClass_Byte_SrcEa, },
 

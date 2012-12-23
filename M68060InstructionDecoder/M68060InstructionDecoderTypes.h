@@ -112,6 +112,7 @@ typedef enum
 	IeeOperation_SubA,
 	IeeOperation_SubX,
 	IeeOperation_Move,
+	IeeOperation_MoveA,
 
 } IeeOperation;
 
