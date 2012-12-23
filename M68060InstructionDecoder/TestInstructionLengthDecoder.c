@@ -179,22 +179,22 @@ static const InstructionLengthDecoderTest integerArithmeticTests[] =
 
 static const InstructionLengthDecoderTest shiftRotateTests[] =
 {
-	{ "ASL.W D0,D1", { 0xe161, }, 1, "ASL/ASR #imm/Dm,Dn" },
-	{ "ASL.L #3,D2", { 0xe782, }, 1, "ASL/ASR #imm/Dm,Dn" },
-	{ "ASR.B #1,D1", { 0xe201, }, 1, "ASL/ASR #imm/Dm,Dn" },
-	{ "ASR.W $1234(A5)", { 0xe0ed, 0x1234, }, 2, "ASL/ASR <ea>" },
+	{ "ASL.W D0,D1", { 0xe161, }, 1, "ASL Dm,Dn" },
+	{ "ASL.L #3,D2", { 0xe782, }, 1, "ASL #imm,Dn" },
+	{ "ASR.B #1,D1", { 0xe201, }, 1, "ASR #imm,Dn" },
+	{ "ASR.W $1234(A5)", { 0xe0ed, 0x1234, }, 2, "ASR <ea>" },
 
-	{ "LSL.L D2,D3", { 0xe5ab, }, 1, "LSL/LSR #imm/Dm,Dn" },
-	{ "LSR.W #2,D7", { 0xe44f, }, 1, "LSL/LSR #imm/Dm,Dn" },
-	{ "LSL.W ([A4])", { 0xe3f4, 0x0151, }, 2, "LSL/LSR <ea>" },
+	{ "LSL.L D2,D3", { 0xe5ab, }, 1, "LSL Dm,Dn" },
+	{ "LSR.W #2,D7", { 0xe44f, }, 1, "LSR #imm,Dn" },
+	{ "LSL.W ([A4])", { 0xe3f4, 0x0151, }, 2, "LSL <ea>" },
 
-	{ "ROL.W #2,D3", { 0xe55b, }, 1, "ROL/ROR #imm/Dm,Dn" },
-	{ "ROR.L D2,D7", { 0xe4bf, }, 1, "ROL/ROR #imm/Dm,Dn" },
-	{ "ROL (A2)", { 0xe7d2, }, 1, "ROL/ROR <ea>" },
+	{ "ROL.W #2,D3", { 0xe55b, }, 1, "ROL #imm,Dn" },
+	{ "ROR.L D2,D7", { 0xe4bf, }, 1, "ROR Dm,Dn" },
+	{ "ROL (A2)", { 0xe7d2, }, 1, "ROL <ea>" },
 
-	{ "ROXL.W #1,D4", { 0xe354, }, 1, "ROXL/ROXR #imm/Dm,Dn" },
-	{ "ROXL ([$12345678,A5])", { 0xe5f5, 0x0171, 0x1234, 0x5678, }, 4, "ROXL/ROXR <ea>" },
-	{ "ROXR.L D2,D2", { 0xe4b2, }, 1, "ROXL/ROXR #imm/Dm,Dn" },
+	{ "ROXL.W #1,D4", { 0xe354, }, 1, "ROXL #imm,Dn" },
+	{ "ROXL ([$12345678,A5])", { 0xe5f5, 0x0171, 0x1234, 0x5678, }, 4, "ROXL <ea>" },
+	{ "ROXR.L D2,D2", { 0xe4b2, }, 1, "ROXR Dm,Dn" },
 };
 
 static const InstructionLengthDecoderTest integerLogicTests[] =

@@ -492,6 +492,14 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			*hasMemoryReference = false;
 			break;
 		}
+	case DecodeOperand_Imm3BitValue1:
+		{
+			uint8_t imm3BitValue = (opWord & OpWord_DefaultImm3BitEncoding_Mask) >> OpWord_DefaultImm3BitEncoding_Shift;
+			mainUOp->imm3Bit = 1;
+			*ieeInput = ExecutionResource_Imm3Bit;
+			*hasMemoryReference = false;
+			break;
+		}
 	default:
 		M68060_ERROR("Not yet implemented");
 		break;
@@ -632,6 +640,7 @@ static PreDecodedOperand preDecodeOperand(uint16_t opWord, DecodeOperand decodeO
 	case DecodeOperand_SecondaryDnLocation:
 	case DecodeOperand_SecondaryAnLocation:
 	case DecodeOperand_Imm3Bit:
+	case DecodeOperand_Imm3BitValue1:
 		{
 			preDecodedOperand.needsExtensionWords = false;
 			preDecodedOperand.hasMemoryReference = false;

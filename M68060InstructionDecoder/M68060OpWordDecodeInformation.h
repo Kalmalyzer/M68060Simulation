@@ -33,6 +33,7 @@ typedef enum
 {
 	OpWordClass_NoExtraWords,
 	OpWordClass_EncodedSize_SrcDn_DestDn,
+	OpWordClass_EncodedSize_SrcDn_DestDn_2,
 	OpWordClass_EncodedSize_SrcAnPostIncrement_DestAnPostIncrementReadOnly,
 	OpWordClass_EncodedSize_SrcAnPreDecrement_DestAnPreDecrement,
 	OpWordClass_Move_B,
@@ -60,8 +61,8 @@ typedef enum
 	OpWordClass_SrcImm3Bit_DestEa_Alterable,
 	OpWordClass_Byte_DestEa_Data,
 	OpWordClass_DestEa_DataAlterable,
-	OpWordClass_DestEa_MemoryAlterable,
-	OpWordClass_EncodedSize,
+	OpWordClass_Word_SrcImmValue1_DestEa_MemoryAlterable,
+	OpWordClass_EncodedSize_SrcImm3Bit_DestDn,
 	OpWordClass_ImmediateByte,
 	OpWordClass_ImmediateWord,
 	OpWordClass_ImmediateLong,
@@ -105,6 +106,7 @@ typedef enum
 	DecodeOperand_MoveDestinationEALocation,
 	DecodeOperand_Immediate,
 	DecodeOperand_Imm3Bit,
+	DecodeOperand_Imm3BitValue1,
 
 } DecodeOperand;
 

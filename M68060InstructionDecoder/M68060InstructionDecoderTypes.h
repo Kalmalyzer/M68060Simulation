@@ -116,6 +116,14 @@ typedef enum
 	IeeOperation_Neg,
 	IeeOperation_NegX,
 	IeeOperation_Tst,
+	IeeOperation_Asl,
+	IeeOperation_Asr,
+	IeeOperation_Lsl,
+	IeeOperation_Lsr,
+	IeeOperation_Rol,
+	IeeOperation_Ror,
+	IeeOperation_Roxl,
+	IeeOperation_Roxr,
 
 } IeeOperation;
 

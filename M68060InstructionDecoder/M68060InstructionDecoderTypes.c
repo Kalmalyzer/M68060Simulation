@@ -140,6 +140,14 @@ const char* IeeOperationToString(IeeOperation ieeOperation)
 		"Neg",
 		"NegX",
 		"Tst",
+		"Asl",
+		"Asr",
+		"Lsl",
+		"Lsr",
+		"Rol",
+		"Ror",
+		"Roxl",
+		"Roxr",
 	};
 
 	M68060_ASSERT((size_t) ieeOperation < (sizeof ieeOperationStrings / sizeof ieeOperationStrings[0]), "Invalid ieeOperation");

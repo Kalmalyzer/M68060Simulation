@@ -406,6 +406,66 @@ static const InstructionTestCase integerArithmeticTests[] =
 	}, },
 };
 
+static const InstructionTestCase shiftRotateTests[] =
+{
+	{ "ASL.W D0,D1", 1, { 0xe161, }, 1, {
+																														{ "ASL Dm,Dn",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D0,				ExecutionResource_D1,				OperationSize_Word,	IeeOperation_Asl,			ExecutionResource_D1,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "ASL.L #3,D2", 1, { 0xe782, }, 1, {
+																														{ "ASL #imm,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_Imm3Bit,			ExecutionResource_D2,				OperationSize_Long,	IeeOperation_Asl,			ExecutionResource_D2,				false,	Pairability_pOEP_Or_sOEP,	3,	},
+	}, },
+
+	{ "ASR.B #1,D1", 1, { 0xe201, }, 1, {
+																														{ "ASR #imm,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_Imm3Bit,			ExecutionResource_D1,				OperationSize_Byte,	IeeOperation_Asr,			ExecutionResource_D1,				false,	Pairability_pOEP_Or_sOEP,	1,	},
+	}, },
+
+	{ "ASR.W $1234(A5)", 2, { 0xe0ed, 0x1234, }, 1, {
+																														{ "ASR <ea>",				{ 0x1234, 0x0000, },	ExecutionResource_A5,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_Imm3Bit,			ExecutionResource_MemoryOperand,	OperationSize_Word,	IeeOperation_Asr,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	1,	},
+	}, },
+
+	{ "LSL.L D2,D3", 1, { 0xe5ab, }, 1, {
+																														{ "LSL Dm,Dn",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D2,				ExecutionResource_D3,				OperationSize_Long,	IeeOperation_Lsl,			ExecutionResource_D3,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "LSR.W #2,D7", 1, { 0xe44f, }, 1, {
+																														{ "LSR #imm,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_Imm3Bit,			ExecutionResource_D7,				OperationSize_Word,	IeeOperation_Lsr,			ExecutionResource_D7,				false,	Pairability_pOEP_Or_sOEP,	2,	},
+	}, },
+
+	{ "LSL.W ([A4])", 2, { 0xe3f4, 0x0151, }, 3, {
+																														{ "LOAD",					{ 0x0000, 0x0000, },	ExecutionResource_A4,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Long,	IeeOperation_ForwardIeeA,	ExecutionResource_AguTemp,			false,	Pairability_pOEP_Only,		0,	},
+																														{ "LEA",					{ 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_AguTemp,			false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		0,	},
+																														{ "LSL <ea>",				{ 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_Imm3Bit,			ExecutionResource_MemoryOperand,	OperationSize_Word,	IeeOperation_Lsl,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	1,	},
+	}, },
+
+	{ "ROL.W #2,D3", 1, { 0xe55b, }, 1, {
+																														{ "ROL #imm,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_Imm3Bit,			ExecutionResource_D3,				OperationSize_Word,	IeeOperation_Rol,			ExecutionResource_D3,				false,	Pairability_pOEP_Or_sOEP,	2,	},
+	}, },
+	
+	{ "ROR.L D2,D7", 1, { 0xe4bf, }, 1, {
+																														{ "ROR Dm,Dn",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D2,				ExecutionResource_D7,				OperationSize_Long,	IeeOperation_Ror,			ExecutionResource_D7,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "ROL (A2)", 1, { 0xe7d2, }, 1, {
+																														{ "ROL <ea>",				{ 0x0000, 0x0000, },	ExecutionResource_A2,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_Imm3Bit,			ExecutionResource_MemoryOperand,	OperationSize_Word,	IeeOperation_Rol,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	1,	},
+	}, },
+
+	{ "ROXL.W #1,D4", 1, { 0xe354, }, 1, {
+																														{ "ROXL #imm,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_Imm3Bit,			ExecutionResource_D4,				OperationSize_Word,	IeeOperation_Roxl,			ExecutionResource_D4,				false,	Pairability_pOEP_Only,		1,	},
+	}, },
+
+	{ "ROXL ([$12345678,A5])", 4, { 0xe5f5, 0x0171, 0x1234, 0x5678, }, 3, {
+																														{ "LOAD",					{ 0x1234, 0x5678, },	ExecutionResource_A5,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S32,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Long,	IeeOperation_ForwardIeeA,	ExecutionResource_AguTemp,			false,	Pairability_pOEP_Only,		0,	},
+																														{ "LEA",					{ 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_AguTemp,			false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		0,	},
+																														{ "ROXL <ea>",				{ 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_Imm3Bit,			ExecutionResource_MemoryOperand,	OperationSize_Word,	IeeOperation_Roxl,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,		1,	},
+	}, },
+
+	{ "ROXR.L D2,D2", 1, { 0xe4b2, }, 1, {
+																														{ "ROXR Dm,Dn",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D2,				ExecutionResource_D2,				OperationSize_Long,	IeeOperation_Roxr,			ExecutionResource_D2,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
+
+};
+
 static const InstructionTestCase moveTests[] =
 {
 	{ "MOVE.W D3,D4", 1, { 0x3803, }, 1, {
@@ -464,6 +524,7 @@ TestSuite testSuites[] =
 	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
 	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
 	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },
+	{ "Shift/rotate tests", shiftRotateTests, (sizeof shiftRotateTests / sizeof shiftRotateTests[0]) },
 //	{ "Move/Exchange tests", moveTests, (sizeof moveTests / sizeof moveTests[0]) },
 };
 
