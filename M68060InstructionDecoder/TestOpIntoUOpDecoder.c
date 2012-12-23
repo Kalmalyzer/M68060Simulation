@@ -431,7 +431,7 @@ TestSuite testSuites[] =
 	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
 	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
 	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },
-	{ "Move/Exchange tests", moveTests, (sizeof moveTests / sizeof moveTests[0]) },
+//	{ "Move/Exchange tests", moveTests, (sizeof moveTests / sizeof moveTests[0]) },
 };
 
 bool areUOpsEquivalent(const UOp* a, const UOp* b)
