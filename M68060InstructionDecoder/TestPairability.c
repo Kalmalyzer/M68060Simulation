@@ -37,6 +37,10 @@ int main(void)
 			{ "ADD.B D0,D0",			1, { 0xd000, }, },	// pOEP|sOEP	<- instruction class mismatch
 			PairabilityTestResult_Test2Failure_FirstInstructionIs_pOEPOnly },
 
+		{	{ "ADD.B D0,D0",			1, { 0xd000, }, },	// pOEP|sOEP
+			{ "ADDX.L D1,D1", 			1, { 0xd381, }, },	// pOEP-only	<- instruction class mismatch
+			PairabilityTestResult_Test2Failure_SecondInstructionIsNot_pOEPOrsOEP },
+
 		{	{ "ADD.B D0,D0",			1, { 0xd000, }, },			// pOEP|sOEP
 			{ "ADD.W $1234(PC),D5",		2, { 0xda7a, 0x1234, }, },	// pOEP|sOEP			<- PC relative addressing modes not allowed in sOEP
 			PairabilityTestResult_Test3Failure_SecondInstructionUsesPCRelativeAddressing },
@@ -53,6 +57,13 @@ int main(void)
 			{ "ADD.W (A3),D1",			1, { 0xd213, }, }, 	// pOEP|sOEP			<- Second instruction uses base register which is written by first instruction
 			PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionIeeResult },
 
+		{	{ "ADD.B D0,D0",			1, { 0xd000, }, },			// pOEP|sOEP
+			{ "ADD.W (A3,D0.L),D1",		2, { 0xd273, 0x0800, }, }, 	// pOEP|sOEP			<- Second instruction uses index register which is written by first instruction
+			PairabilityTestResult_Test5Failure_SecondInstructionIndexRegisterDependsOnFirstInstructionIeeResult },
+
+		// TODO: add testcase for PairabilityTestResult_Test5Failure_SecondInstructionBaseRegisterDependsOnFirstInstructionAguResult
+		// TODO: add testcase for PairabilityTestResult_Test5Failure_SecondInstructionIndexRegisterDependsOnFirstInstructionAguResult
+			
 		{	{ "ADD.B D0,D0",			1, { 0xd000, }, },	// pOEP|sOEP
 			{ "ADD.B D0,D0",			1, { 0xd000, }, },	// pOEP|sOEP	<- register dependency
 			PairabilityTestResult_Test6Failure_SecondInstructionIeeARegisterDependsOnFirstInstructionIeeResult },
