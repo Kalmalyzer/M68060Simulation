@@ -325,6 +325,10 @@ static const InstructionTestCase integerArithmeticTests[] =
 																														{ "CMPA.L <ea>,An",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D1,				ExecutionResource_A1,				OperationSize_Long,	IeeOperation_CmpA,			ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 
+	{ "CMPI.L #$12345678,D1", 3, { 0x0c81, 0x1234, 0x5678, }, 1, {
+																														{ "CMPI #imm,<ea>",			{ 0x1234, 0x5678, },	ExecutionResource_None,				ExecutionResource_None,				0, AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_uOpLong,			ExecutionResource_D1,				OperationSize_Long,	IeeOperation_Cmp,			ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
 	{ "SUB.B D1,D2", 1, { 0x9401, }, 1, {
 																														{ "SUB <ea>,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D1,				ExecutionResource_D2,				OperationSize_Byte, IeeOperation_Sub,			ExecutionResource_D2,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
@@ -416,7 +420,7 @@ static const InstructionTestCase moveTests[] =
 																														{ "MOVEA.W <ea>,<ea>",		{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D2,				ExecutionResource_A2,				OperationSize_Word, IeeOperation_MoveA,			ExecutionResource_A2,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 
-	{ "MOVE.L A2,D3", 1, { 0xd1ca, }, 1, {
+	{ "MOVE.L A2,D3", 1, { 0x260a, }, 1, {
 																														{ "MOVE.L <ea>,<ea>",		{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_A2,				ExecutionResource_D3,				OperationSize_Long, IeeOperation_Move,			ExecutionResource_D3,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 };
