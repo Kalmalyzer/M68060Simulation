@@ -118,6 +118,8 @@ static const InstructionLengthDecoderTest bcdArithmeticTests[] =
 	{ "ABCD D2,D3", { 0xc702, }, 1, "ABCD Dx,Dy" },
 	{ "ABCD -(A1),-(A3)", { 0xc709, }, 1, "ABCD -(Ax),-(Ay)"},
 
+	{ "NBCD (A3)", { 0x4813, }, 1, "NBCD <ea>" },
+
 	{ "SBCD D2,D3", { 0x8702, }, 1, "SBCD Dx,Dy" },
 	{ "SBCD -(A1),-(A3)", { 0x8709, }, 1, "SBCD -(Ax),-(Ay)" },
 
@@ -156,7 +158,6 @@ static const InstructionLengthDecoderTest integerArithmeticTests[] =
 	{ "MULS.L $1234(A1),D0", { 0x4c29, 0x0800, 0x1234 }, 3, "MULS/MULU.L <ea>,Dm:Dn (can be 32bit or 64bit multiply)" },
 	{ "MULS.L $1234(A1),D0:D2", { 0x4c29, 0x2c00, 0x1234 }, 3, "MULS/MULU.L <ea>,Dm:Dn (can be 32bit or 64bit multiply)" },
 
-	{ "NBCD (A3)", { 0x4813, }, 1, "NBCD <ea>" },
 	{ "NEG.W D7", { 0x4447, }, 1, "NEG <ea>" },
 	{ "NEGX.L D5", { 0x4085, }, 1, "NEGX <ea>" },
 
