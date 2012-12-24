@@ -42,6 +42,18 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 	return executionResourceStrings[(int) executionResource];
 }
 
+bool isDnRegister(ExecutionResource executionResource)
+{
+	return (uint) executionResource >= (uint) ExecutionResource_D0
+		&& (uint) executionResource <= (uint) ExecutionResource_D7;
+}
+
+bool isAnRegister(ExecutionResource executionResource)
+{
+	return (uint) executionResource >= (uint) ExecutionResource_A0
+		&& (uint) executionResource <= (uint) ExecutionResource_A7;
+}
+
 bool isRegister(ExecutionResource executionResource)
 {
 	return (uint) executionResource >= (uint) ExecutionResource_D0

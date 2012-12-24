@@ -52,7 +52,7 @@ typedef enum
 	OpWordClass_Long_SrcEa,
 	OpWordClass_BitImmInstruction_Read,
 	OpWordClass_BitImmInstruction_ReadWrite,
-	OpWordClass_EncodedSize_Imm_Ea_Read,
+	OpWordClass_EncodedSize_Imm_Ea_ReadOnly,
 	OpWordClass_EncodedSize_Imm_Ea_ReadWrite,
 	OpWordClass_EncodedSize_Rn_Ea_1,
 	OpWordClass_EncodedSize_Rn_Ea_2,
@@ -115,6 +115,7 @@ typedef enum
 	DestinationOperandAccessType_None,
 	DestinationOperandAccessType_ReadOnly,
 	DestinationOperandAccessType_ReadWrite,
+	DestinationOperandAccessType_WriteOnly,
 
 } DestinationOperandAccessType;
 

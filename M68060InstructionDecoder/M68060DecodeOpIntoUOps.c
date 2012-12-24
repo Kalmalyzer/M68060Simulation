@@ -506,7 +506,49 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 	}
 }
 
-static ExecutionResource decodeIeeResult(DestinationOperandAccessType accessType, ExecutionResource ieeB)
+static DestinationOperandAccessType decodeDestinationOperandAccessType(DestinationOperandAccessType originalAccessType, ExecutionResource destinationExecutionResource, OperationSize operationSize)
+{
+	switch (originalAccessType)
+	{
+	case DestinationOperandAccessType_None:
+		return originalAccessType;
+	case DestinationOperandAccessType_ReadOnly:
+		return originalAccessType;
+	case DestinationOperandAccessType_ReadWrite:
+		return originalAccessType;
+	case DestinationOperandAccessType_WriteOnly:
+		if (destinationExecutionResource == ExecutionResource_MemoryOperand)
+			return originalAccessType;
+		else if (isAnRegister(destinationExecutionResource)
+			|| (isDnRegister(destinationExecutionResource) && operationSize == OperationSize_Long))
+			return originalAccessType;
+		else
+			return DestinationOperandAccessType_ReadWrite;
+	default:
+		M68060_ERROR("DestinationOperandAccessType not supported");
+		return DestinationOperandAccessType_None;
+	}
+}
+
+static ExecutionResource decodeIeeB(DestinationOperandAccessType accessType, ExecutionResource destinationExecutionResource)
+{
+	switch (accessType)
+	{
+	case DestinationOperandAccessType_None:
+		return ExecutionResource_None;
+	case DestinationOperandAccessType_ReadOnly:
+		return destinationExecutionResource;
+	case DestinationOperandAccessType_ReadWrite:
+		return destinationExecutionResource;
+	case DestinationOperandAccessType_WriteOnly:
+		return ExecutionResource_None;
+	default:
+		M68060_ERROR("DestinationOperandAccessType not supported");
+		return ExecutionResource_None;
+	}
+}
+
+static ExecutionResource decodeIeeResult(DestinationOperandAccessType accessType, ExecutionResource destinationExecutionResource)
 {
 	switch (accessType)
 	{
@@ -515,7 +557,9 @@ static ExecutionResource decodeIeeResult(DestinationOperandAccessType accessType
 	case DestinationOperandAccessType_ReadOnly:
 		return ExecutionResource_None;
 	case DestinationOperandAccessType_ReadWrite:
-		return ieeB;
+		return destinationExecutionResource;
+	case DestinationOperandAccessType_WriteOnly:
+		return destinationExecutionResource;
 	default:
 		M68060_ERROR("DestinationOperandAccessType not supported");
 		return ExecutionResource_None;
@@ -536,6 +580,10 @@ static void decodeMemoryReferences(DestinationOperandAccessType accessType, bool
 		break;
 	case DestinationOperandAccessType_ReadWrite:
 		*memoryRead = sourceOperandMemoryReference | destinationOperandMemoryReference;
+		*memoryWrite = destinationOperandMemoryReference;
+		break;
+	case DestinationOperandAccessType_WriteOnly:
+		*memoryRead = sourceOperandMemoryReference;
 		*memoryWrite = destinationOperandMemoryReference;
 		break;
 	default:
@@ -702,6 +750,8 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 	OperationSize ieeOperationSize;
 	bool sourceOperandMemoryReference = false;
 	bool destinationOperandMemoryReference = false;
+	ExecutionResource destinationExecutionResource = ExecutionResource_None;
+	DestinationOperandAccessType destinationOperandAccessType;
 	
 	M68060_ASSERT(opWordDecodeInfo, "No decoding pattern available for instruction");
 	M68060_ASSERT(opWordDecodeInfo->readyForUOpDecoding, "Instruction doesn't support UOp decoding yet");
@@ -740,14 +790,17 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 	if (opWordClassInfo->destinationDecodeOperand != DecodeOperand_None)
 	{
 			uint destinationExtensionWordsOffset = 1 + instructionLength->numSpecialOperandSpecifierWords + instructionLength->numSourceEAExtensionWords;
-			decodeOperand(opWord, opWordClassInfo->destinationDecodeOperand, ieeOperationSize, instructionWords + destinationExtensionWordsOffset, &mainUOp, &mainUOp.ieeB, UOpWriteBuffer, &destinationOperandMemoryReference);
+			decodeOperand(opWord, opWordClassInfo->destinationDecodeOperand, ieeOperationSize, instructionWords + destinationExtensionWordsOffset, &mainUOp, &destinationExecutionResource, UOpWriteBuffer, &destinationOperandMemoryReference);
 	}
 
 	mainUOp.ieeOperation = opWordDecodeInfo->ieeOperation;
 	mainUOp.ieeOperationSize = ieeOperationSize;
+
+	destinationOperandAccessType = decodeDestinationOperandAccessType(opWordClassInfo->destinationOperandAccessType, destinationExecutionResource, ieeOperationSize);
 	
-	mainUOp.ieeResult = decodeIeeResult(opWordClassInfo->destinationOperandAccessType, mainUOp.ieeB);
-	decodeMemoryReferences(opWordClassInfo->destinationOperandAccessType, sourceOperandMemoryReference, destinationOperandMemoryReference, &mainUOp.memoryRead, &mainUOp.memoryWrite);
+	mainUOp.ieeB = decodeIeeB(destinationOperandAccessType, destinationExecutionResource);
+	mainUOp.ieeResult = decodeIeeResult(destinationOperandAccessType, destinationExecutionResource);
+	decodeMemoryReferences(destinationOperandAccessType, sourceOperandMemoryReference, destinationOperandMemoryReference, &mainUOp.memoryRead, &mainUOp.memoryWrite);
 	
 	mainUOp.mnemonic = opWordDecodeInfo->description;
 	mainUOp.pairability = opWordDecodeInfo->pairability;

@@ -44,6 +44,8 @@ typedef enum
 
 const char* ExecutionResourceToString(ExecutionResource executionResource);
 
+bool isDnRegister(ExecutionResource executionResource);
+bool isAnRegister(ExecutionResource executionResource);
 bool isRegister(ExecutionResource executionResource);
 
 typedef enum
