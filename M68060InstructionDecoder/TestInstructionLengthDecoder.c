@@ -201,7 +201,7 @@ static const InstructionLengthDecoderTest integerLogicTests[] =
 {
 	{ "AND.W $1234(A1),D3", { 0xc669, 0x1234, }, 2, "AND <ea>,Dn" },
 	{ "AND.L D3,$1234(A1)", { 0xc7a9, 0x1234, }, 2, "AND Dn,<ea>" },
-	{ "ANDI.L #$12345678,($12345678,D2)", { 0x02b0, 0x1234, 0x5678, 0x21b0, 0x1234, 0x5678, }, 6, "ANDI #imm,<ea>" },
+	{ "ANDI.L #$12345678,($12345678,D2.W)", { 0x02b0, 0x1234, 0x5678, 0x21b0, 0x1234, 0x5678, }, 6, "ANDI #imm,<ea>" },
 
 	{ "ANDI #$12,CCR", { 0x023c, 0x0012, }, 2, "ANDI #imm,CCR" },
 
@@ -213,8 +213,8 @@ static const InstructionLengthDecoderTest integerLogicTests[] =
 	{ "NOT.W -(A5)", { 0x4665, }, 1, "NOT <ea>" },
 
 	{ "OR.L $1234(A3),D2", { 0x84ab, 0x1234, }, 2, "OR <ea>,Dn" },
-	{ "OR.B d2,([A4])", { 0x8534, 0x0151, }, 2, "OR Dn,<ea>" },
-	{ "ORI.W #$1234,d5", { 0x0045, 0x1234, }, 2, "ORI #imm,<ea>" },
+	{ "OR.B D2,([A4])", { 0x8534, 0x0151, }, 2, "OR Dn,<ea>" },
+	{ "ORI.W #$1234,D5", { 0x0045, 0x1234, }, 2, "ORI #imm,<ea>" },
 
 	{ "ORI #$12,CCR", { 0x003c, 0x0012, }, 2, "ORI #imm,CCR" },
 

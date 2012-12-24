@@ -124,6 +124,10 @@ typedef enum
 	IeeOperation_Ror,
 	IeeOperation_Roxl,
 	IeeOperation_Roxr,
+	IeeOperation_And,
+	IeeOperation_Or,
+	IeeOperation_Eor,
+	IeeOperation_Not,
 
 } IeeOperation;
 
