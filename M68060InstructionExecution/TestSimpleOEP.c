@@ -13,11 +13,7 @@ typedef struct
 
 } RegisterValues;
 
-typedef struct
-{
-	const uint8_t data[MaxMemoryRange];
-
-} MemoryRange;
+typedef uint8_t MemoryRange[MaxMemoryRange];
 
 typedef struct
 {
@@ -25,13 +21,13 @@ typedef struct
 	uint totalInstructionWords;
 	const uint16_t instructionWords[16];
 
-	RegisterValues registersBefore;
+	const RegisterValues registersBefore;
 	uint32_t memoryRangeBaseAddress;
 	uint memoryRangeSize;
-	MemoryRange memoryRangeBefore;
+	const MemoryRange memoryRangeBefore;
 	
-	RegisterValues expectedRegistersAfter;
-	MemoryRange expectedMemoryRangeAfter;
+	const RegisterValues expectedRegistersAfter;
+	const MemoryRange expectedMemoryRangeAfter;
 	
 } M68kOpTest;
 
@@ -194,7 +190,7 @@ void runTestSuite(const M68kOpTest* tests, uint numTests, bool printSuccess, boo
 
 			// Initialize simulation
 			for (memoryOffset = 0; memoryOffset < test->memoryRangeSize; ++memoryOffset)
-				writeMemory(test->memoryRangeBaseAddress + memoryOffset, OperationSize_Byte, test->memoryRangeBefore.data[memoryOffset]);
+				writeMemory(test->memoryRangeBaseAddress + memoryOffset, OperationSize_Byte, test->memoryRangeBefore[memoryOffset]);
 			
 			for (registerId = 0; registerId < MaxIntegerRegisters; ++registerId)
 				writeIntegerRegister(ExecutionResource_D0 + registerId, test->registersBefore.rn[registerId]);
@@ -224,7 +220,7 @@ void runTestSuite(const M68kOpTest* tests, uint numTests, bool printSuccess, boo
 				correctFlags = false;
 
 			for (memoryOffset = 0; memoryOffset < test->memoryRangeSize; ++memoryOffset)
-				if (memoryAfter[memoryOffset] != test->expectedMemoryRangeAfter.data[memoryOffset])
+				if (memoryAfter[memoryOffset] != test->expectedMemoryRangeAfter[memoryOffset])
 					correctMemoryContents = false;
 		}
 		
@@ -247,7 +243,7 @@ void runTestSuite(const M68kOpTest* tests, uint numTests, bool printSuccess, boo
 				if (test->memoryRangeSize)
 				{
 					printf("Memory before:\n");
-					printMemory(test->memoryRangeBefore.data, test->memoryRangeSize);
+					printMemory(test->memoryRangeBefore, test->memoryRangeSize);
 				}
 
 				printf("Expected registers after:\n");
@@ -256,7 +252,7 @@ void runTestSuite(const M68kOpTest* tests, uint numTests, bool printSuccess, boo
 				if (test->memoryRangeSize)
 				{
 					printf("Expected memory after:\n");
-					printMemory(test->expectedMemoryRangeAfter.data, test->memoryRangeSize);
+					printMemory(test->expectedMemoryRangeAfter, test->memoryRangeSize);
 				}
 
 				if (!correctRegisters || !correctFlags)
