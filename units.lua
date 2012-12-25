@@ -157,6 +157,24 @@ Program {
 	},
 }
 
+------------------------------------------------------
+-- Commandline utility for opcode -> UOp(s) decoder --
+------------------------------------------------------
+
+Program {
+	Name = "CommandLineOpIntoUOpDecoder",
+	Sources = {
+		"M68060InstructionDecoder/M68060DecodeOpIntoUOps.c",
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
+		"M68060InstructionDecoder/CommandLineOpIntoUOpDecoder.c",
+		"Musashi/StandardMusashiCallbacks.c",
+	},
+	
+	Depends = { "Musashi", },
+}
+
 -------------------------------------------------
 -- Minimal AGU/ALU implementation test program --
 -------------------------------------------------
@@ -244,6 +262,7 @@ Default "InstructionLengthDisassembler"
 Default "TestPairability"
 
 Default "TestOpIntoUOpDecoder"
+Default "CommandLineOpIntoUOpDecoder"
 
 Default "TestAguAlu"
 Default "TestIeeAlu"
