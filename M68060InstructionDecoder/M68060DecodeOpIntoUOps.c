@@ -1,7 +1,4 @@
 
-#ifndef M68060OPWORDDECODER_H
-#define M68060OPWORDDECODER_H
-
 #include "M68060DecodeOpIntoUOps.h"
 #include "../Assert.h"
 #include "../Types.h"
@@ -832,5 +829,3 @@ bool decomposeOpIntoUOps(const uint16_t* instructionWords, uint numInstructionWo
 	return true;
 		
 }
-
-#endif
