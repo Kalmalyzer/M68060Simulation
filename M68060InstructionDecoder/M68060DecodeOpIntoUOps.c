@@ -516,12 +516,12 @@ static DestinationOperandAccessType decodeDestinationOperandAccessType(Destinati
 		return originalAccessType;
 	case DestinationOperandAccessType_ReadWrite:
 		return originalAccessType;
-	case DestinationOperandAccessType_WriteOnly:
+	case DestinationOperandAccessType_WriteOnly_If_WholeOperand:
 		if (destinationExecutionResource == ExecutionResource_MemoryOperand)
-			return originalAccessType;
+			return DestinationOperandAccessType_WriteOnly;
 		else if (isAnRegister(destinationExecutionResource)
 			|| (isDnRegister(destinationExecutionResource) && operationSize == OperationSize_Long))
-			return originalAccessType;
+			return DestinationOperandAccessType_WriteOnly;
 		else
 			return DestinationOperandAccessType_ReadWrite;
 	default:

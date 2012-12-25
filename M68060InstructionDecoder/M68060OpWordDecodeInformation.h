@@ -115,6 +115,7 @@ typedef enum
 	DestinationOperandAccessType_None,
 	DestinationOperandAccessType_ReadOnly,
 	DestinationOperandAccessType_ReadWrite,
+	DestinationOperandAccessType_WriteOnly_If_WholeOperand,
 	DestinationOperandAccessType_WriteOnly,
 
 } DestinationOperandAccessType;
