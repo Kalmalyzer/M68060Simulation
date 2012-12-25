@@ -119,6 +119,23 @@ static void evaluateAddA(OperationSize operationSize, uint32_t ieeAValue, uint32
 	};
 }
 
+static void evaluateAddX(OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	uint32_t operationMask = getOperationMask(operationSize);
+
+	uint32_t resultValue = ieeAValue + ieeBValue + ((flags & Flags_Extend_Mask) ? 1 : 0);
+
+	Minterms overflowMinterms = Minterm_Sm_Dm_InvRm | Minterm_InvSm_InvDm_Rm;
+	Minterms carryMinterms = (Minterm_Sm_Dm_Rm | Minterm_Sm_Dm_InvRm) | (Minterm_Sm_Dm_InvRm | Minterm_Sm_InvDm_InvRm) | (Minterm_Sm_Dm_InvRm | Minterm_InvSm_Dm_InvRm);
+	bool n, z, v, c;
+
+	computeNZVC(ieeAValue, ieeBValue, resultValue, operationMask, overflowMinterms, carryMinterms, &n, &z, &v, &c);
+
+	setFlagsModifierXNZVC(c, n, z && (flags & Flags_Zero_Mask), v, c, flagsModifier);
+	
+	*ieeResult = mask(resultValue, ieeBValue, operationMask);
+}
+
 static void evaluateSub(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	uint32_t operationMask = getOperationMask(operationSize);
@@ -152,6 +169,23 @@ static void evaluateSubA(OperationSize operationSize, uint32_t ieeAValue, uint32
 	};
 }
 
+static void evaluateSubX(OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	uint32_t operationMask = getOperationMask(operationSize);
+
+	uint32_t resultValue = -ieeAValue + ieeBValue + ((flags & Flags_Extend_Mask) ? -1 : 0);
+
+	Minterms overflowMinterms = Minterm_Sm_Dm_InvRm | Minterm_InvSm_InvDm_Rm;
+	Minterms carryMinterms = (Minterm_Sm_Dm_Rm | Minterm_Sm_Dm_InvRm) | (Minterm_Sm_Dm_InvRm | Minterm_Sm_InvDm_InvRm) | (Minterm_Sm_Dm_InvRm | Minterm_InvSm_Dm_InvRm);
+	bool n, z, v, c;
+
+	computeNZVC(ieeAValue, ieeBValue, resultValue, operationMask, overflowMinterms, carryMinterms, &n, &z, &v, &c);
+
+	setFlagsModifierXNZVC(c, n, z && (flags & Flags_Zero_Mask), v, c, flagsModifier);
+	
+	*ieeResult = mask(resultValue, ieeBValue, operationMask);
+}
+
 void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	setEmptyFlagsModifier(flagsModifier);
@@ -172,6 +206,11 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 				evaluateAddA(operationSize, ieeAValue, ieeBValue, ieeResult);
 				break;
 			}
+		case IeeOperation_AddX:
+			{
+				evaluateAddX(operationSize, flags, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
 		case IeeOperation_Sub:
 			{
 				evaluateSub(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
@@ -180,6 +219,11 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_SubA:
 			{
 				evaluateSubA(operationSize, ieeAValue, ieeBValue, ieeResult);
+				break;
+			}
+		case IeeOperation_SubX:
+			{
+				evaluateSubX(operationSize, flags, ieeAValue, ieeBValue, ieeResult, flagsModifier);
 				break;
 			}
 		default:

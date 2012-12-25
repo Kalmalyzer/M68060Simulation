@@ -26,12 +26,17 @@ IeeAluTest tests[] =
 	{ "adda.w 0x8000,0x123456fc", IeeOperation_AddA, OperationSize_Word, 0, 0x00008000, 0x123456fc, 0x1233d6fc, { Flags_All_Mask, 0, }, },
 	{ "adda.w 0xfffe,0x123456fc", IeeOperation_AddA, OperationSize_Word, 0, 0xfffffffe, 0x123456fc, 0x123456fa, { Flags_All_Mask, 0, }, },
 	{ "adda.l 0x10000001,0x123456fc", IeeOperation_AddA, OperationSize_Long, 0, 0x10000001, 0x123456fc, 0x223456fd, { Flags_All_Mask, 0, }, },
+	{ "addx.b 0x12,0x123456fc ()", IeeOperation_AddX, OperationSize_Byte, 0, 0x00000012, 0x123456fc, 0x1234560e, { 0, Flags_Extend_Mask | Flags_Carry_Mask, }, },
+	{ "addx.b 0x12,0x123456fc (X)", IeeOperation_AddX, OperationSize_Byte, Flags_Extend_Mask, 0x00000012, 0x123456fc, 0x1234560f, { 0, Flags_Extend_Mask | Flags_Carry_Mask, }, },
+	{ "addx.b 0,0x12345600 (Z)", IeeOperation_AddX, OperationSize_Byte, Flags_Zero_Mask, 0x00000000, 0x12345600, 0x12345600, { 0, Flags_Zero_Mask, }, },
+	{ "addx.b 0,0x12345600 (XZ)", IeeOperation_AddX, OperationSize_Byte, Flags_Extend_Mask | Flags_Zero_Mask, 0x00000000, 0x12345600, 0x12345601, { 0, 0, }, },
 	{ "sub.b 0x12,0x123456fc", IeeOperation_Sub, OperationSize_Byte, 0, 0x00000012, 0x123456fc, 0x123456ea, { 0, Flags_Negative_Mask, }, },
 	{ "sub.b 0x7f,0x123456fc", IeeOperation_Sub, OperationSize_Byte, 0, 0x0000007f, 0x123456fc, 0x1234567d, { 0, Flags_Overflow_Mask, }, },
 	{ "sub.b 0xff,0x123456fc", IeeOperation_Sub, OperationSize_Byte, 0, 0x000000ff, 0x123456fc, 0x123456fd, { 0, Flags_Extend_Mask | Flags_Negative_Mask | Flags_Carry_Mask, }, },
 	{ "sub.l 0x10000001,0x023456fc", IeeOperation_Sub, OperationSize_Long, 0, 0x10000001, 0x023456fc, 0xf23456fb, { 0, Flags_Extend_Mask | Flags_Negative_Mask | Flags_Carry_Mask, }, },
 	{ "suba.w 0x8000,0x123456fc", IeeOperation_SubA, OperationSize_Word, 0, 0x00008000, 0x123456fc, 0x1234d6fc, { Flags_All_Mask, 0, }, },
 	{ "suba.l 0x10000001,0x123456fc", IeeOperation_SubA, OperationSize_Long, 0, 0x10000001, 0x123456fc, 0x023456fb, { Flags_All_Mask, 0, }, },
+	{ "subx.w 0x1234,0x12345678 (X)", IeeOperation_SubX, OperationSize_Word, Flags_Extend_Mask, 0x00001234, 0x12345678, 0x12344443, { 0, 0, }, },
 };
 
 const char* flagsToString(uint flags)
