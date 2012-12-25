@@ -236,6 +236,22 @@ static void evaluateNegX(OperationSize operationSize, Flags flags, uint32_t ieeB
 	evaluateSubXCommon(operationSize, flags, ieeBValue, 0, ieeResult, flagsModifier);
 }
 
+static void evaluateMove(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	uint32_t operationMask = getOperationMask(operationSize);
+	uint32_t operationHighestBitMask = operationMask - (operationMask >> 1);
+
+	setFlagsModifierNZVC(ieeAValue & operationHighestBitMask, !(ieeAValue & operationMask), false, false, flagsModifier);
+	
+	*ieeResult = mask(ieeAValue, ieeBValue, operationMask);
+}
+
+static void evaluateMoveA(OperationSize operationSize, uint32_t ieeAValue, uint32_t* ieeResult)
+{
+	uint32_t ieeAValue32Bits = extendValueTo32Bits(operationSize, ieeAValue);
+	*ieeResult = ieeAValue32Bits;
+}
+
 static void evaluateTst(OperationSize operationSize, uint32_t ieeBValue, FlagsModifier* flagsModifier)
 {
 	uint32_t operationMask = getOperationMask(operationSize);
@@ -538,6 +554,16 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_SubX:
 			{
 				evaluateSubX(operationSize, flags, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Move:
+			{
+				evaluateMove(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_MoveA:
+			{
+				evaluateMoveA(operationSize, ieeAValue, ieeResult);
 				break;
 			}
 		case IeeOperation_Neg:
