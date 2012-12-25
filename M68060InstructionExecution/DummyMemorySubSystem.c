@@ -2,6 +2,8 @@
 #include "DummyMemorySubSystem.h"
 #include "../Assert.h"
 
+#include <stdlib.h>
+
 enum { MemorySize = 1024*1024 };
 
 static uint8_t s_memory[MemorySize];
@@ -51,6 +53,11 @@ static void writeMemory32(uint32_t address, uint32_t value)
 	s_memory[address + 2] = (value >> 8) & 0xff;
 	s_memory[address + 3] = value & 0xff;
 }
+
+void clearMemory(void)
+{
+	memset(s_memory, 0, sizeof s_memory);
+};
 
 uint32_t readMemory(uint32_t address, OperationSize operationSize)
 {

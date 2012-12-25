@@ -90,7 +90,7 @@ static void writeExecutionResource(ExecutionResource executionResource, uint32_t
 			s_ieeTemp = value;
 			break;
 		case ExecutionResource_MemoryOperand:
-			M68060_WARNING("Ignored MemoryOperand write for now");
+			M68060_ERROR("Cannot write to MemoryOperand");
 			break;
 		case ExecutionResource_AguResult:
 			M68060_WARNING("Ignored AguResult write for now");
@@ -123,6 +123,7 @@ void executeUOp(const UOp* UOp)
 {
 	uint32_t memoryReference = 0;
 	uint32_t ieeResultValue = 0;
+	FlagsModifier flagsModifier;
 
 	// AG stage
 	
@@ -144,7 +145,6 @@ void executeUOp(const UOp* UOp)
 	{
 		uint32_t ieeAValue = readExecutionResource(UOp->ieeA, UOp);
 		uint32_t ieeBValue = readExecutionResource(UOp->ieeB, UOp);
-		FlagsModifier flagsModifier;
 		evaluateIeeAluOperation(UOp->ieeOperation, UOp->ieeOperationSize, s_flags, ieeAValue, ieeBValue, &ieeResultValue, &flagsModifier);
 	}
 
@@ -155,7 +155,28 @@ void executeUOp(const UOp* UOp)
 		
 	if (UOp->aguResult != ExecutionResource_None)
 		writeExecutionResource(UOp->aguResult, s_aguResult);
-	if (UOp->ieeResult != ExecutionResource_None)
+	if (UOp->ieeResult != ExecutionResource_None && UOp->ieeResult != ExecutionResource_MemoryOperand)
 		writeExecutionResource(UOp->ieeResult, ieeResultValue);
 
+	s_flags = applyFlagsModifier(s_flags, &flagsModifier);
 }
+
+void resetSimpleOEP(void)
+{
+	s_aguResult = 0;
+	s_memoryOperand = 0;
+	s_ieeTemp = 0;
+	s_aguTemp = 0;
+	s_flags = 0;
+}
+
+Flags readFlags(void)
+{
+	return s_flags;
+}
+
+void writeFlags(Flags flags)
+{
+	s_flags = flags;
+}
+

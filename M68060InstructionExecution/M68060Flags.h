@@ -26,4 +26,6 @@ typedef uint Flags;
 
 Flags applyFlagsModifier(Flags flags, const FlagsModifier* modifier);
 
+const char* flagsToString(Flags flags);
+
 #endif

@@ -81,18 +81,6 @@ IeeAluTest tests[] =
 	{ "not.w 0x1234ff0f", IeeOperation_Not, OperationSize_Word, 0, 0x00000000, 0x1234ff0f, 0x123400f0, { Flags_Extend_Mask, 0, }, },
 };
 
-const char* flagsToString(uint flags)
-{
-	const char* flagStrings[32] = {
-		"(none)", "C", "V", "VC", "Z", "ZC", "ZV", "ZVC", "N", "NC", "NV", "NVC", "NZ", "NZC", "NZV", "NZVC",
-		"X", "XC", "XV", "XVC", "XZ", "XZC", "XZV", "XZVC", "XN", "XNC", "XNV", "XNVC", "XNZ", "XNZC", "XNZV", "XNZVC",
-	};
-
-	M68060_ASSERT(flags < (sizeof flagStrings / sizeof flagStrings[0]), "Unsupported flags value");
-	
-	return flagStrings[flags];
-};
-
 void runTestSuite(const IeeAluTest* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)
 {
 	uint numSuccessfulTests = 0;
