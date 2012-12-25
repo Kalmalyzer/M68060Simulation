@@ -69,6 +69,10 @@ IeeAluTest tests[] =
 	{ "roxl.w 0,0x1234", IeeOperation_Roxl, OperationSize_Word, Flags_Extend_Mask, 0x00000000, 0x0000001234, 0x00001234, { Flags_Extend_Mask, Flags_Carry_Mask, }, },
 	{ "roxr.l 1,87654321", IeeOperation_Roxr, OperationSize_Long, 0, 0x00000001, 0x87654321, 0x43b2a190, { 0, Flags_Extend_Mask | Flags_Carry_Mask, }, },
 	{ "roxr.l 1,87654321", IeeOperation_Roxr, OperationSize_Long, Flags_Extend_Mask, 0x00000001, 0x87654321, 0xc3b2a190, { 0, Flags_Extend_Mask | Flags_Negative_Mask | Flags_Carry_Mask, }, },
+	{ "and.b 0x0f,0x12345678", IeeOperation_And, OperationSize_Byte, 0, 0x0000000f, 0x12345678, 0x12345608, { Flags_Extend_Mask, 0, }, },
+	{ "or.w 0xff0f,0x12345678", IeeOperation_Or, OperationSize_Word, 0, 0x0000ff0f, 0x12345678, 0x1234ff7f, { Flags_Extend_Mask, Flags_Negative_Mask, }, },
+	{ "eor.w 0xff0f,0x12345678", IeeOperation_Eor, OperationSize_Word, 0, 0x0000ff0f, 0x12345678, 0x1234a977, { Flags_Extend_Mask, Flags_Negative_Mask, }, },
+	{ "not.w 0x1234ff0f", IeeOperation_Not, OperationSize_Word, 0, 0x00000000, 0x1234ff0f, 0x123400f0, { Flags_Extend_Mask, 0, }, },
 };
 
 const char* flagsToString(uint flags)

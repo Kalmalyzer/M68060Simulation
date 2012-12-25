@@ -452,6 +452,35 @@ static void evaluateRoxr(OperationSize operationSize, Flags flags, uint32_t ieeA
 		setFlagsModifierNZVC(negative, zero, false, flags & Flags_Extend_Mask, flagsModifier);
 }
 
+static void evaluateLogicOperationCommon(OperationSize operationSize, uint32_t nonMaskedResult, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	uint32_t operationMask = getOperationMask(operationSize);
+	uint32_t operationHighestBitMask = operationMask - (operationMask >> 1);
+
+	*ieeResult = mask(nonMaskedResult, ieeBValue, operationMask);
+	setFlagsModifierNZVC(nonMaskedResult & operationHighestBitMask, !(nonMaskedResult & operationMask), false, false, flagsModifier);
+}
+
+static void evaluateAnd(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	evaluateLogicOperationCommon(operationSize, ieeAValue & ieeBValue, ieeBValue, ieeResult, flagsModifier);
+}
+
+static void evaluateOr(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	evaluateLogicOperationCommon(operationSize, ieeAValue | ieeBValue, ieeBValue, ieeResult, flagsModifier);
+}
+
+static void evaluateEor(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	evaluateLogicOperationCommon(operationSize, ieeAValue ^ ieeBValue, ieeBValue, ieeResult, flagsModifier);
+}
+
+static void evaluateNot(OperationSize operationSize, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	evaluateLogicOperationCommon(operationSize, ~ieeBValue, ieeBValue, ieeResult, flagsModifier);
+}
+
 void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	setEmptyFlagsModifier(flagsModifier);
@@ -552,6 +581,26 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_Roxr:
 			{
 				evaluateRoxr(operationSize, flags, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_And:
+			{
+				evaluateAnd(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Or:
+			{
+				evaluateOr(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Eor:
+			{
+				evaluateEor(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Not:
+			{
+				evaluateNot(operationSize, ieeBValue, ieeResult, flagsModifier);
 				break;
 			}
 		default:
