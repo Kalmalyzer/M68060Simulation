@@ -236,6 +236,222 @@ static void evaluateNegX(OperationSize operationSize, Flags flags, uint32_t ieeB
 	evaluateSubXCommon(operationSize, flags, ieeBValue, 0, ieeResult, flagsModifier);
 }
 
+typedef enum
+{
+	ShiftRotateOperation_Asl,
+	ShiftRotateOperation_Asr,
+	ShiftRotateOperation_Lsl,
+	ShiftRotateOperation_Lsr,
+	ShiftRotateOperation_Rol,
+	ShiftRotateOperation_Ror,
+	ShiftRotateOperation_Roxl,
+	ShiftRotateOperation_Roxr,
+
+} ShiftRotateOperation;
+
+typedef enum
+{
+	ShiftDirection_Left,
+	ShiftDirection_Right,
+
+} ShiftDirection;
+
+typedef enum
+{
+	ShiftIn_Zero,
+	ShiftIn_Lsb,
+	ShiftIn_Msb,
+	ShiftIn_Extend,
+
+} ShiftIn;
+		
+static void evaluateShiftRotateCommon(ShiftDirection shiftDirection, ShiftIn shiftIn, OperationSize operationSize, bool extend, uint shiftRotateCount, uint32_t ieeBValue, uint32_t* ieeResult, bool* negativeResult, bool* zeroResult, bool* overflowResult, bool* extendResult)
+{
+	uint32_t operationMask = getOperationMask(operationSize);
+	uint32_t operationHighestBitMask = operationMask - (operationMask >> 1);
+
+	if (!shiftRotateCount)
+	{
+		*ieeResult = ieeBValue & operationMask;
+		*overflowResult = false;
+		*extendResult = false;
+	}
+	else
+	{
+		uint32_t operationMask = getOperationMask(operationSize);
+		uint32_t operationHighestBitMask = operationMask - (operationMask >> 1);
+
+		uint32_t result = ieeBValue & operationMask;
+		bool x = extend;
+		bool overflow = false;
+
+		while (shiftRotateCount--)
+		{
+			uint32_t newResult = result;
+			bool newX = false;
+			bool shiftInOne = false;
+			
+			switch (shiftIn)
+			{
+				case ShiftIn_Zero:
+					break;
+				case ShiftIn_Lsb:
+					shiftInOne = (result & 1);
+					break;
+				case ShiftIn_Msb:
+					shiftInOne = (result & operationHighestBitMask);
+					break;
+				case ShiftIn_Extend:
+					shiftInOne = x;
+					break;
+			}
+			
+			if (shiftDirection == ShiftDirection_Left)
+			{
+				newResult = ((result << 1) & operationMask) | (shiftInOne ? 1 : 0);
+				newX = result & operationHighestBitMask;
+			}
+			else
+			{
+				newResult = ((result >> 1) & operationMask) | (shiftInOne ? operationHighestBitMask : 0);
+				newX = result & 1;
+			}
+				
+			overflow = (overflow || ((newResult ^ result) & operationHighestBitMask));
+
+			result = newResult;
+			x = newX;
+		}
+		
+		*ieeResult = result;
+		*overflowResult = overflow;
+		*extendResult = x;
+	}
+	
+	*negativeResult = *ieeResult & operationHighestBitMask;
+	*zeroResult = !(*ieeResult);
+}
+
+static void evaluateAsl(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	bool negative;
+	bool zero;
+	bool overflow;
+	bool extend;
+	uint shiftCount = ieeAValue & 0x3f;
+
+	evaluateShiftRotateCommon(ShiftDirection_Left, ShiftIn_Zero, operationSize, false, shiftCount, ieeBValue, ieeResult, &negative, &zero, &overflow, &extend);
+
+	if (shiftCount)
+		setFlagsModifierXNZVC(extend, negative, zero, overflow, extend, flagsModifier);
+	else
+		setFlagsModifierNZVC(negative, zero, false, false, flagsModifier);
+}
+
+static void evaluateAsr(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	bool negative;
+	bool zero;
+	bool overflow;
+	bool extend;
+	uint shiftCount = ieeAValue & 0x3f;
+
+	evaluateShiftRotateCommon(ShiftDirection_Right, ShiftIn_Msb, operationSize, false, shiftCount, ieeBValue, ieeResult, &negative, &zero, &overflow, &extend);
+
+	if (shiftCount)
+		setFlagsModifierXNZVC(extend, negative, zero, overflow, extend, flagsModifier);
+	else
+		setFlagsModifierNZVC(negative, zero, false, false, flagsModifier);
+}
+
+static void evaluateLsl(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	bool negative;
+	bool zero;
+	bool overflow;
+	bool extend;
+	uint shiftCount = ieeAValue & 0x3f;
+
+	evaluateShiftRotateCommon(ShiftDirection_Left, ShiftIn_Zero, operationSize, false, shiftCount, ieeBValue, ieeResult, &negative, &zero, &overflow, &extend);
+
+	if (shiftCount)
+		setFlagsModifierXNZVC(extend, negative, zero, false, extend, flagsModifier);
+	else
+		setFlagsModifierNZVC(negative, zero, false, false, flagsModifier);
+}
+
+static void evaluateLsr(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	bool negative;
+	bool zero;
+	bool overflow;
+	bool extend;
+	uint shiftCount = ieeAValue & 0x3f;
+
+	evaluateShiftRotateCommon(ShiftDirection_Right, ShiftIn_Zero, operationSize, false, shiftCount, ieeBValue, ieeResult, &negative, &zero, &overflow, &extend);
+
+	if (shiftCount)
+		setFlagsModifierXNZVC(extend, negative, zero, false, extend, flagsModifier);
+	else
+		setFlagsModifierNZVC(negative, zero, false, false, flagsModifier);
+}
+
+static void evaluateRol(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	bool negative;
+	bool zero;
+	bool overflow;
+	bool extend;
+	uint shiftCount = ieeAValue & 0x3f;
+
+	evaluateShiftRotateCommon(ShiftDirection_Left, ShiftIn_Msb, operationSize, false, shiftCount, ieeBValue, ieeResult, &negative, &zero, &overflow, &extend);
+	setFlagsModifierNZVC(negative, zero, false, extend, flagsModifier);
+}
+
+static void evaluateRor(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	bool negative;
+	bool zero;
+	bool overflow;
+	bool extend;
+	uint shiftCount = ieeAValue & 0x3f;
+
+	evaluateShiftRotateCommon(ShiftDirection_Right, ShiftIn_Lsb, operationSize, false, shiftCount, ieeBValue, ieeResult, &negative, &zero, &overflow, &extend);
+	setFlagsModifierNZVC(negative, zero, false, extend, flagsModifier);
+}
+
+static void evaluateRoxl(OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	bool negative;
+	bool zero;
+	bool overflow;
+	bool extend;
+	uint shiftCount = ieeAValue & 0x3f;
+
+	evaluateShiftRotateCommon(ShiftDirection_Left, ShiftIn_Extend, operationSize, flags & Flags_Extend_Mask, shiftCount, ieeBValue, ieeResult, &negative, &zero, &overflow, &extend);
+
+	if (shiftCount)
+		setFlagsModifierXNZVC(extend, negative, zero, false, extend, flagsModifier);
+	else
+		setFlagsModifierNZVC(negative, zero, false, flags & Flags_Extend_Mask, flagsModifier);
+}
+
+static void evaluateRoxr(OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	bool negative;
+	bool zero;
+	bool overflow;
+	bool extend;
+	uint shiftCount = ieeAValue & 0x3f;
+
+	evaluateShiftRotateCommon(ShiftDirection_Right, ShiftIn_Extend, operationSize, flags & Flags_Extend_Mask, shiftCount, ieeBValue, ieeResult, &negative, &zero, &overflow, &extend);
+
+	if (shiftCount)
+		setFlagsModifierXNZVC(extend, negative, zero, false, extend, flagsModifier);
+	else
+		setFlagsModifierNZVC(negative, zero, false, flags & Flags_Extend_Mask, flagsModifier);
+}
+
 void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	setEmptyFlagsModifier(flagsModifier);
@@ -296,6 +512,46 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_NegX:
 			{
 				evaluateNegX(operationSize, flags, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Asl:
+			{
+				evaluateAsl(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Asr:
+			{
+				evaluateAsr(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Lsl:
+			{
+				evaluateLsl(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Lsr:
+			{
+				evaluateLsr(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Rol:
+			{
+				evaluateRol(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Ror:
+			{
+				evaluateRor(operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Roxl:
+			{
+				evaluateRoxl(operationSize, flags, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Roxr:
+			{
+				evaluateRoxr(operationSize, flags, ieeAValue, ieeBValue, ieeResult, flagsModifier);
 				break;
 			}
 		default:
