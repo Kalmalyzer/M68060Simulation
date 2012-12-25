@@ -46,6 +46,8 @@ IeeAluTest tests[] =
 	{ "neg.w 0xff00", IeeOperation_Neg, OperationSize_Word, 0, 0x00000000, 0x0000ff00, 0x00000100, { 0, Flags_Extend_Mask | Flags_Carry_Mask, }, },
 	{ "negx.w 0xff00 ()", IeeOperation_NegX, OperationSize_Word, 0, 0x00000000, 0x0000ff00, 0x00000100, { 0, Flags_Extend_Mask | Flags_Carry_Mask, }, },
 	{ "negx.w 0xff00 (X)", IeeOperation_NegX, OperationSize_Word, Flags_Extend_Mask, 0x00000000, 0x0000ff00, 0x00000101, { 0, Flags_Extend_Mask | Flags_Carry_Mask, }, },
+	{ "tst.w 0x0000ff00", IeeOperation_Tst, OperationSize_Word, 0, 0x00000000, 0x0000ff00, 0x00000000, { Flags_Extend_Mask, Flags_Negative_Mask, }, },
+	{ "tst.w 0xffff0000", IeeOperation_Tst, OperationSize_Word, 0, 0x00000000, 0xffff0000, 0x00000000, { Flags_Extend_Mask, Flags_Zero_Mask, }, },
 	{ "asl.w 0,0x8000", IeeOperation_Asl, OperationSize_Word, 0, 0x00000000, 0x00008000, 0x00008000, { Flags_Extend_Mask, Flags_Negative_Mask, }, },
 	{ "asl.w 0,0x1234", IeeOperation_Asl, OperationSize_Word, 0, 0x00000000, 0x00001234, 0x00001234, { Flags_Extend_Mask, 0, }, },
 	{ "asl.w 64,0x1234", IeeOperation_Asl, OperationSize_Word, 0, 0x00000040, 0x00001234, 0x00001234, { Flags_Extend_Mask, 0, }, },

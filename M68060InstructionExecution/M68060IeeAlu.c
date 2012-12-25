@@ -236,6 +236,13 @@ static void evaluateNegX(OperationSize operationSize, Flags flags, uint32_t ieeB
 	evaluateSubXCommon(operationSize, flags, ieeBValue, 0, ieeResult, flagsModifier);
 }
 
+static void evaluateTst(OperationSize operationSize, uint32_t ieeBValue, FlagsModifier* flagsModifier)
+{
+	uint32_t operationMask = getOperationMask(operationSize);
+	uint32_t operationHighestBitMask = operationMask - (operationMask >> 1);
+	setFlagsModifierNZVC(ieeBValue & operationHighestBitMask, !(ieeBValue & operationMask), false, false, flagsModifier);
+}
+
 typedef enum
 {
 	ShiftRotateOperation_Asl,
@@ -541,6 +548,11 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_NegX:
 			{
 				evaluateNegX(operationSize, flags, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Tst:
+			{
+				evaluateTst(operationSize, ieeBValue, flagsModifier);
 				break;
 			}
 		case IeeOperation_Asl:
