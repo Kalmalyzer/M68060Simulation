@@ -279,7 +279,7 @@ static void evaluateShiftRotateCommon(ShiftDirection shiftDirection, ShiftIn shi
 
 	if (!shiftRotateCount)
 	{
-		*ieeResult = ieeBValue & operationMask;
+		*ieeResult = ieeBValue;
 		*overflowResult = false;
 		*extendResult = false;
 	}
@@ -330,7 +330,7 @@ static void evaluateShiftRotateCommon(ShiftDirection shiftDirection, ShiftIn shi
 			x = newX;
 		}
 		
-		*ieeResult = result;
+		*ieeResult = mask(result, ieeBValue, operationMask);
 		*overflowResult = overflow;
 		*extendResult = x;
 	}
