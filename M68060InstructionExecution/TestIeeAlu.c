@@ -37,6 +37,12 @@ IeeAluTest tests[] =
 	{ "suba.w 0x8000,0x123456fc", IeeOperation_SubA, OperationSize_Word, 0, 0x00008000, 0x123456fc, 0x1234d6fc, { Flags_All_Mask, 0, }, },
 	{ "suba.l 0x10000001,0x123456fc", IeeOperation_SubA, OperationSize_Long, 0, 0x10000001, 0x123456fc, 0x023456fb, { Flags_All_Mask, 0, }, },
 	{ "subx.w 0x1234,0x12345678 (X)", IeeOperation_SubX, OperationSize_Word, Flags_Extend_Mask, 0x00001234, 0x12345678, 0x12344443, { 0, 0, }, },
+	{ "cmp.b 0x7f,0xff", IeeOperation_Cmp, OperationSize_Byte, 0, 0x0000007f, 0x000000ff, 0x00000000, { Flags_Extend_Mask, Flags_Negative_Mask, }, },
+	{ "cmp.b 0x20,0x40", IeeOperation_Cmp, OperationSize_Byte, 0, 0x00000020, 0x00000040, 0x00000000, { Flags_Extend_Mask, 0, }, },
+	{ "cmp.w 0x0040,0x0020", IeeOperation_Cmp, OperationSize_Word, 0, 0x00000040, 0x00000020, 0x00000000, { Flags_Extend_Mask, Flags_Negative_Mask | Flags_Carry_Mask, }, },
+	{ "cmpa.w 0x7fff,0x000f0001", IeeOperation_CmpA, OperationSize_Word, 0, 0x00007fff, 0x000f0001, 0x00000000, { Flags_Extend_Mask, 0, }, },
+	{ "cmpa.w 0x7fff,0x00000001", IeeOperation_CmpA, OperationSize_Word, 0, 0x00007fff, 0x00000001, 0x00000000, { Flags_Extend_Mask, Flags_Negative_Mask | Flags_Carry_Mask, }, },
+	{ "cmpa.w 0x8000,0x00000001", IeeOperation_CmpA, OperationSize_Word, 0, 0x00008000, 0x00000001, 0x00000000, { Flags_Extend_Mask, Flags_Carry_Mask, }, },
 };
 
 const char* flagsToString(uint flags)
@@ -83,7 +89,7 @@ void runTestSuite(const IeeAluTest* tests, uint numTests, bool printSuccess, boo
 			printf("success: Invoking %s yields ieeResult %08X, flagsModifer AND %s, OR %s\n", test->description, ieeResult, flagsToString(flagsModifier.andFlags), flagsToString(flagsModifier.orFlags));
 		if (!success && printFailure)
 		{
-			printf("failure: Invoking %s yields aguResult %08X", test->description, ieeResult);
+			printf("failure: Invoking %s yields ieeResult %08X", test->description, ieeResult);
 			if (!correctIeeResult)
 				printf(" (should be %08X)", test->expectedIeeResult);
 			printf(", flagsModifier AND %s", flagsToString(flagsModifier.andFlags));

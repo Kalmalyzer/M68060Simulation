@@ -43,10 +43,35 @@ static uint32_t mask(uint32_t a, uint32_t b, uint32_t maskField)
 	return (a & maskField) | (b & ~maskField);
 }
 
+static uint32_t extendValueTo32Bits(OperationSize operationSize, uint32_t value)
+{
+	switch (operationSize)
+	{
+		case OperationSize_None:
+			M68060_ERROR("OperationSize not supported");
+		case OperationSize_Byte:
+			return (uint32_t) (int32_t) (int8_t) value;
+		case OperationSize_Word:
+			return (uint32_t) (int32_t) (int16_t) value;
+			break;
+		case OperationSize_Long:
+			return value;
+		default:
+			M68060_ERROR("OperationSize not implemented");
+			return 0;
+	};
+}
+
 static void setEmptyFlagsModifier(FlagsModifier* flagsModifier)
 {
 	flagsModifier->andFlags = Flags_All_Mask;
 	flagsModifier->orFlags = 0;
+}
+
+static void setFlagsModifierNZVC(bool n, bool z, bool v, bool c, FlagsModifier* flagsModifier)
+{
+	flagsModifier->orFlags = (n ? Flags_Negative_Mask : 0) | (z ? Flags_Zero_Mask : 0)| (v ? Flags_Overflow_Mask : 0) | (c ? Flags_Carry_Mask : 0);
+	flagsModifier->andFlags = Flags_Extend_Mask;
 }
 
 static void setFlagsModifierXNZVC(bool x, bool n, bool z, bool v, bool c, FlagsModifier* flagsModifier)
@@ -105,18 +130,8 @@ static void evaluateAdd(OperationSize operationSize, uint32_t ieeAValue, uint32_
 
 static void evaluateAddA(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult)
 {
-	switch (operationSize)
-	{
-		case OperationSize_Word:
-			*ieeResult = ((uint32_t) (int32_t) (int16_t) ieeAValue) + ieeBValue;
-			break;
-		case OperationSize_Long:
-			*ieeResult = ieeAValue + ieeBValue;
-			break;
-		case OperationSize_Byte:
-		case OperationSize_None:
-			M68060_ERROR("OperationSize not implemented");
-	};
+	uint32_t ieeAValue32Bits = extendValueTo32Bits(operationSize, ieeAValue);
+	*ieeResult = ieeAValue32Bits + ieeBValue;
 }
 
 static void evaluateAddX(OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
@@ -134,6 +149,31 @@ static void evaluateAddX(OperationSize operationSize, Flags flags, uint32_t ieeA
 	setFlagsModifierXNZVC(c, n, z && (flags & Flags_Zero_Mask), v, c, flagsModifier);
 	
 	*ieeResult = mask(resultValue, ieeBValue, operationMask);
+}
+
+static void evaluateCmpCommon(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, FlagsModifier* flagsModifier)
+{
+	uint32_t operationMask = getOperationMask(operationSize);
+
+	uint32_t resultValue = -ieeAValue + ieeBValue;
+
+	Minterms overflowMinterms = Minterm_InvSm_Dm_InvRm | Minterm_Sm_InvDm_Rm;
+	Minterms carryMinterms = (Minterm_Sm_InvDm_Rm | Minterm_Sm_InvDm_InvRm) | (Minterm_Sm_Dm_Rm | Minterm_Sm_InvDm_Rm) | (Minterm_Sm_InvDm_Rm | Minterm_InvSm_InvDm_Rm);
+	bool n, z, v, c;
+
+	computeNZVC(ieeAValue, ieeBValue, resultValue, operationMask, overflowMinterms, carryMinterms, &n, &z, &v, &c);
+
+	setFlagsModifierNZVC(n, z, v, c, flagsModifier);
+}
+
+static void evaluateCmp(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, FlagsModifier* flagsModifier)
+{
+	evaluateCmpCommon(operationSize, ieeAValue, ieeBValue, flagsModifier);
+}
+
+static void evaluateCmpA(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, FlagsModifier* flagsModifier)
+{
+	evaluateCmpCommon(OperationSize_Long, extendValueTo32Bits(operationSize, ieeAValue), ieeBValue, flagsModifier);
 }
 
 static void evaluateSub(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
@@ -155,18 +195,8 @@ static void evaluateSub(OperationSize operationSize, uint32_t ieeAValue, uint32_
 
 static void evaluateSubA(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult)
 {
-	switch (operationSize)
-	{
-		case OperationSize_Word:
-			*ieeResult = -((uint32_t) (int32_t) (int16_t) ieeAValue) + ieeBValue;
-			break;
-		case OperationSize_Long:
-			*ieeResult = -ieeAValue + ieeBValue;
-			break;
-		case OperationSize_Byte:
-		case OperationSize_None:
-			M68060_ERROR("OperationSize not implemented");
-	};
+	uint32_t ieeAValue32Bits = extendValueTo32Bits(operationSize, ieeAValue);
+	*ieeResult = -ieeAValue32Bits + ieeBValue;
 }
 
 static void evaluateSubX(OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
@@ -189,6 +219,8 @@ static void evaluateSubX(OperationSize operationSize, Flags flags, uint32_t ieeA
 void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	setEmptyFlagsModifier(flagsModifier);
+	*ieeResult = 0;
+
 	switch (ieeOperation)
 	{
 		case IeeOperation_None:
@@ -209,6 +241,16 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_AddX:
 			{
 				evaluateAddX(operationSize, flags, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Cmp:
+			{
+				evaluateCmp(operationSize, ieeAValue, ieeBValue, flagsModifier);
+				break;
+			}
+		case IeeOperation_CmpA:
+			{
+				evaluateCmpA(operationSize, ieeAValue, ieeBValue, flagsModifier);
 				break;
 			}
 		case IeeOperation_Sub:
