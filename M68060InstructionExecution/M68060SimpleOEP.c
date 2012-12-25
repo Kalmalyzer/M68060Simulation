@@ -12,6 +12,7 @@ static uint32_t s_aguResult;
 static uint32_t s_memoryOperand;
 static uint32_t s_aguTemp;
 static uint32_t s_ieeTemp;
+static Flags s_flags;
 
 static uint32_t readExecutionResource(ExecutionResource executionResource, const UOp* UOp)
 {
@@ -143,7 +144,8 @@ void executeUOp(const UOp* UOp)
 	{
 		uint32_t ieeAValue = readExecutionResource(UOp->ieeA, UOp);
 		uint32_t ieeBValue = readExecutionResource(UOp->ieeB, UOp);
-		evaluateIeeAluOperation(UOp->ieeOperation, UOp->ieeOperationSize, ieeAValue, ieeBValue, &ieeResultValue);
+		FlagsModifier flagsModifier;
+		evaluateIeeAluOperation(UOp->ieeOperation, UOp->ieeOperationSize, s_flags, ieeAValue, ieeBValue, &ieeResultValue, &flagsModifier);
 	}
 
 	// WB stage
