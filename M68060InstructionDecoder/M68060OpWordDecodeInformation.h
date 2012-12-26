@@ -32,6 +32,10 @@ typedef enum
 typedef enum
 {
 	OpWordClass_NoExtraWords,
+	OpWordClass_Long_SrcImm8Bit_DestDn,
+	OpWordClass_Byte_DestDnReadWrite,
+	OpWordClass_Word_DestDnReadWrite,
+	OpWordClass_Long_DestDnReadWrite,
 	OpWordClass_EncodedSize_SrcDn_DestDn,
 	OpWordClass_EncodedSize_SrcDn_DestDn_2,
 	OpWordClass_EncodedSize_SrcAnPostIncrement_DestAnPostIncrementReadOnly,
@@ -47,6 +51,7 @@ typedef enum
 	OpWordClass_LongMulDiv,
 	OpWordClass_Bitfield_ReadEa,
 	OpWordClass_Control,
+	OpWordClass_SrcEaReference_DestAnAguResult,
 	OpWordClass_Byte_SrcEa,
 	OpWordClass_Word_SrcEa,
 	OpWordClass_Long_SrcEa,
@@ -58,6 +63,7 @@ typedef enum
 	OpWordClass_EncodedSize_Rn_Ea_2,
 	OpWordClass_EncodedSize_SrcEaAll_ReadOnly,
 	OpWordClass_EncodedSize_DestEa_ReadWrite,
+	OpWordClass_EncodedSize_DestEa_WriteOnly_If_WholeOperand,
 	OpWordClass_SrcImm3Bit_DestEa_Alterable,
 	OpWordClass_Byte_DestEa_Data,
 	OpWordClass_DestEa_DataAlterable,
@@ -96,6 +102,7 @@ typedef enum
 {
 	DecodeOperand_None,
 	DecodeOperand_DefaultEALocation,
+	DecodeOperand_DefaultEAReferenceLocation,
 	DecodeOperand_DefaultDnLocation,
 	DecodeOperand_DefaultPostIncrementAnLocation,
 	DecodeOperand_DefaultPreDecrementAnLocation,
@@ -103,10 +110,12 @@ typedef enum
 	DecodeOperand_SecondaryAnLocation,
 	DecodeOperand_SecondaryPostIncrementAnLocation,
 	DecodeOperand_SecondaryPreDecrementAnLocation,
+	DecodeOperand_SecondaryAnAguResultLocation,
 	DecodeOperand_MoveDestinationEALocation,
 	DecodeOperand_Immediate,
 	DecodeOperand_Imm3Bit,
 	DecodeOperand_Imm3BitValue1,
+	DecodeOperand_Imm8Bit,
 
 } DecodeOperand;
 

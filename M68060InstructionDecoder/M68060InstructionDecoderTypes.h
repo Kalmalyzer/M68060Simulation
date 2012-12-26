@@ -130,6 +130,8 @@ typedef enum
 	IeeOperation_Or,
 	IeeOperation_Eor,
 	IeeOperation_Not,
+	IeeOperation_Clr,
+	IeeOperation_Ext,
 
 } IeeOperation;
 

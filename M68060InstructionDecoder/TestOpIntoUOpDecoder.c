@@ -571,8 +571,73 @@ static const InstructionTestCase moveTests[] =
 	{ "MOVE.L A2,D3", 1, { 0x260a, }, 1, {
 																														{ "MOVE.L <ea>,<ea>",		{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_A2,				ExecutionResource_None,				OperationSize_Long, IeeOperation_Move,			ExecutionResource_D3,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
+
+	{ "MOVEQ #$12,D2", 1, { 0x7412, }, 1, {
+																														{ "MOVEQ #imm,Dn",			{ 0x0012, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_uOpByte0,			ExecutionResource_None,				OperationSize_Long, IeeOperation_Move,			ExecutionResource_D2,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
 };
 
+static const InstructionTestCase miscellaneousTests[] =
+{
+//	{ "BKPT #4", { 0x484c, }, 1, "BKPT #imm" },
+//	{ "CHK.W $1234(A1),D1", { 0x43a9, 0x1234, }, 2, "CHK.W <ea>,Dn" },
+//	{ "CHK.L #$12345678,D1", { 0x433c, 0x1234, 0x5678, }, 3, "CHK.L <ea>,Dn" },
+	{ "CLR.W $1234(A1)", 2, { 0x4269, 0x1234, }, 1, {
+																														{ "CLR <ea>",				{ 0x1234, 0x0000, },	ExecutionResource_A1,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_Word, IeeOperation_Clr,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "EXT.W D2", 1, { 0x4882, }, 1, {
+																														{ "EXT.W Dn",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_None,				ExecutionResource_D2,				OperationSize_Word, IeeOperation_Ext,			ExecutionResource_D2,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "EXT.L D3", 1, { 0x48c3, }, 1, {
+																														{ "EXT.L Dn",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_None,				ExecutionResource_D3,				OperationSize_Long, IeeOperation_Ext,			ExecutionResource_D3,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "EXTB.L D4", 1, { 0x49c4, }, 1, {
+																														{ "EXTB.L Dn",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_None,				ExecutionResource_D4,				OperationSize_Byte, IeeOperation_Ext,			ExecutionResource_D4,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+//	{ "ILLEGAL", { 0x4afc, }, 1, "ILLEGAL" },
+	
+	{ "LEA $1234(A1),A2", 2, { 0x45e9, 0x1234, }, 1, {
+																														{ "LEA <ea>,An",			{ 0x1234, 0x0000, },	ExecutionResource_A1,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_A2,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_Long, IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "LEA ([A3,D2.L*4],$1234.W),A2", 3, { 0x45f3, 0x2d12, 0x1234, }, 3, {
+																														{ "LOAD",					{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_D2,				2,	AguIndexSize_Long,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Long,	IeeOperation_ForwardIeeA,	ExecutionResource_AguTemp,			false,	Pairability_pOEP_Only,		0,	},
+																														{ "LEA",					{ 0x1234, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_AguTemp,			false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		0,	},
+																														{ "LEA <ea>,An",			{ 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_A2,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_Long, IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+//	{ "LINK.W A3,#$1234", { 0x4e53, 0x1234, }, 2, "LINK.W An,#imm" },
+//	{ "LINK.L A3,#$12345678", { 0x480c, 0x1234, 0x5678, }, 3, "LINK.L An,#imm" },
+
+//	{ "NOP", { 0x4e71, }, 1, "NOP" },
+
+//	{ "PEA $12(A3,D1.W)", { 0x4873, 0x1012, }, 2, "PEA <ea>" },
+	
+//	{ "RTD #$1234", { 0x4e74, 0x1234, }, 2, "RTD #imm" },
+//	{ "RTR", { 0x4e77, }, 1, "RTR" },
+//	{ "RTS", { 0x4e75, }, 1, "RTS" },
+
+//	{ "ST D7", { 0x50c7, }, 1, "Scc <ea>" },
+//	{ "SNE (A2)", { 0x56d2, }, 1, "Scc <ea>" },
+//	{ "SEQ $1234(A3)", { 0x57eb, 0x1234, }, 2, "Scc <ea>" },
+
+//	{ "SWAP D3", { 0x4843, }, 1, "SWAP Dn" },
+
+//	{ "TAS D2", { 0x4ac2, }, 1, "TAS <ea>" },
+//	{ "TAS $12(A5,D3.L)", { 0x4af5, 0x3812, }, 2, "TAS <ea>" },
+
+//	{ "TRAP #3", { 0x4e43, }, 1, "TRAP #imm" },
+//	{ "TRAPNE", { 0x56fc, }, 1, "TRAPcc" },
+//	{ "TRAPGE.W #$1234", { 0x5cfa, 0x1234, }, 2, "TRAPcc.W #imm" },
+//	{ "TRAPLT.L #$12345678", { 0x5dfb, 0x1234, 0x5678, }, 3, "TRAPcc.L #imm" },
+//	{ "TRAPV", { 0x4e76, }, 1, "TRAPV" },
+	
+//	{ "UNLK A3", { 0x4e5b, }, 1, "UNLK An" },
+};
 
 TestSuite testSuites[] =
 {
@@ -582,6 +647,7 @@ TestSuite testSuites[] =
 	{ "Shift/rotate tests", shiftRotateTests, (sizeof shiftRotateTests / sizeof shiftRotateTests[0]) },
 	{ "Integer logic tests", integerLogicTests, (sizeof integerLogicTests / sizeof integerLogicTests[0]) },
 	{ "Move/Exchange tests", moveTests, (sizeof moveTests / sizeof moveTests[0]) },
+	{ "Miscellaneous tests", miscellaneousTests, (sizeof miscellaneousTests / sizeof miscellaneousTests[0]) },
 };
 
 bool areUOpsEquivalent(const UOp* a, const UOp* b)

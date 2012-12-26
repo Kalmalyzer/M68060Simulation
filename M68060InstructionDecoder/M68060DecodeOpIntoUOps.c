@@ -407,6 +407,18 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			decodeEA6BitMode(eaUpper3Bits, eaLower3Bits, immediateSize, operandSpecifierWords, mainUOp, ieeInput, UOpWriteBuffer, hasMemoryReference);
 			break;
 		}
+	case DecodeOperand_DefaultEAReferenceLocation:
+		{
+			uint ea6BitMode = opWord & 0x3f;
+			EA6BitMode_Upper3Bits eaUpper3Bits = (ea6BitMode >> 3) & 7;
+			EA6BitMode_Lower3Bits eaLower3Bits = ea6BitMode & 7;
+			bool dummyHasMemoryReference;
+			ExecutionResource dummyIeeInput;
+			decodeEA6BitMode(eaUpper3Bits, eaLower3Bits, immediateSize, operandSpecifierWords, mainUOp, &dummyIeeInput, UOpWriteBuffer, &dummyHasMemoryReference);
+			M68060_ASSERT(dummyHasMemoryReference, "'EA Reference' addressing mode must be a memory reference");
+			M68060_ASSERT(dummyIeeInput == ExecutionResource_MemoryOperand, "'EA Reference' addressing mode yield ieeInput = MemoryOperand");
+			break;
+		}
 	case DecodeOperand_DefaultDnLocation:
 		{
 			ExecutionResource dn = ExecutionResource_D0 + ((opWord & OpWord_DefaultRegisterEncoding_Mask) >> OpWord_DefaultRegisterEncoding_Shift);
@@ -468,6 +480,14 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			*hasMemoryReference = true;
 			break;
 		}
+	case DecodeOperand_SecondaryAnAguResultLocation:
+		{
+			ExecutionResource an = ExecutionResource_A0 + ((opWord & OpWord_SecondaryRegisterEncoding_Mask) >> OpWord_SecondaryRegisterEncoding_Shift);
+			mainUOp->aguResult = an;
+			*ieeInput = ExecutionResource_None;
+			*hasMemoryReference = false;
+			break;
+		}
 	case DecodeOperand_MoveDestinationEALocation:
 		{
 			uint ea6BitMode = (opWord >> 6) & 0x3f;
@@ -494,6 +514,14 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			uint8_t imm3BitValue = (opWord & OpWord_DefaultImm3BitEncoding_Mask) >> OpWord_DefaultImm3BitEncoding_Shift;
 			mainUOp->imm3Bit = 1;
 			*ieeInput = ExecutionResource_Imm3Bit;
+			*hasMemoryReference = false;
+			break;
+		}
+	case DecodeOperand_Imm8Bit:
+		{
+			uint8_t imm8BitValue = (opWord & OpWord_DefaultImm8BitEncoding_Mask) >> OpWord_DefaultImm8BitEncoding_Shift;
+			mainUOp->extensionWords[0] = imm8BitValue;
+			*ieeInput = ExecutionResource_uOpByte0;
 			*hasMemoryReference = false;
 			break;
 		}
@@ -681,11 +709,22 @@ static PreDecodedOperand preDecodeOperand(uint16_t opWord, DecodeOperand decodeO
 			preDecodedOperand.hasMemoryReference = ea6BitModeHasMemoryReference(eaUpper3Bits, eaLower3Bits);
 			break;
 		}
+	case DecodeOperand_DefaultEAReferenceLocation:
+		{
+			uint ea6BitMode = opWord & 0x3f;
+			EA6BitMode_Upper3Bits eaUpper3Bits = (ea6BitMode >> 3) & 7;
+			EA6BitMode_Lower3Bits eaLower3Bits = ea6BitMode & 7;
+			preDecodedOperand.needsExtensionWords = ea6BitModeNeedsExtensionWords(eaUpper3Bits, eaLower3Bits);
+			preDecodedOperand.hasMemoryReference = false;
+			break;
+		}
 	case DecodeOperand_DefaultDnLocation:
 	case DecodeOperand_SecondaryDnLocation:
 	case DecodeOperand_SecondaryAnLocation:
+	case DecodeOperand_SecondaryAnAguResultLocation:
 	case DecodeOperand_Imm3Bit:
 	case DecodeOperand_Imm3BitValue1:
+	case DecodeOperand_Imm8Bit:
 		{
 			preDecodedOperand.needsExtensionWords = false;
 			preDecodedOperand.hasMemoryReference = false;
