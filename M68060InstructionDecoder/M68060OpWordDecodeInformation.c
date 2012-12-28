@@ -66,8 +66,8 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ false, 0xf0f8, 0x50c8, "DBcc <relative address>", OpWordClass_ImmediateWord, }, // Shadows Scc <ea>
 	{ false, 0xf0c0, 0x50c0, "Scc <ea>", OpWordClass_DestEa_DataAlterable, }, // Shadows ADDQ/SUBQ
 
-	{ false, 0xf1f8, 0xc100, "ABCD Dx,Dy", OpWordClass_NoExtraWords, },
-	{ false, 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", OpWordClass_NoExtraWords, },
+	{ true, 0xf1f8, 0xc100, "ABCD Dx,Dy", OpWordClass_EncodedSize_SrcDn_DestDn, IeeOperation_Abcd, Pairability_pOEP_Only, },
+	{ true, 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", OpWordClass_EncodedSize_SrcAnPreDecrement_DestAnPreDecrement, IeeOperation_Abcd, Pairability_pOEP_Only, },
 	{ true, 0xf138, 0xd100, "ADDX Dx,Dy", OpWordClass_EncodedSize_SrcDn_DestDn, IeeOperation_AddX, Pairability_pOEP_Only, }, // Shadows ADD Dn,<ea>
 	{ true, 0xf138, 0xd108, "ADDX -(Ax),-(Ay)", OpWordClass_EncodedSize_SrcAnPreDecrement_DestAnPreDecrement, IeeOperation_AddX, Pairability_pOEP_Only, }, // Shadows ADD Dn,<ea>
 
@@ -200,7 +200,7 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 
 	{ false, 0xffc0, 0x4c00, "MULS/MULU.L <ea>,Dm:Dn (can be 32bit or 64bit multiply)", OpWordClass_LongMulDiv, },
 
-	{ false, 0xffc0, 0x4800, "NBCD <ea>", OpWordClass_DestEa_DataAlterable, },
+	{ true, 0xffc0, 0x4800, "NBCD <ea>", OpWordClass_EncodedSize_DestEa_ReadWrite, IeeOperation_Nbcd, Pairability_pOEP_Only, },
 	{ true, 0xff00, 0x4400, "NEG <ea>", OpWordClass_EncodedSize_DestEa_ReadWrite, IeeOperation_Neg, Pairability_pOEP_Or_sOEP, },
 	{ true, 0xff00, 0x4000, "NEGX <ea>", OpWordClass_EncodedSize_DestEa_ReadWrite, IeeOperation_NegX, Pairability_pOEP_Only, },
 
@@ -213,8 +213,8 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ false, 0xf1f8, 0x8180, "UNPK Dm,Dn,#imm", OpWordClass_ImmediateWord, }, // Shadows OR
 	{ false, 0xf1f8, 0x8188, "UNPK -(Am),-(An),#imm", OpWordClass_ImmediateWord, }, // Shadows OR
 
-	{ false, 0xf1f8, 0x8100, "SBCD Dx,Dy", OpWordClass_NoExtraWords, }, // Shadows OR
-	{ false, 0xf1f8, 0x8108, "SBCD -(Ax),-(Ay)", OpWordClass_NoExtraWords, }, // Shadows OR
+	{ true, 0xf1f8, 0x8100, "SBCD Dx,Dy", OpWordClass_EncodedSize_SrcDn_DestDn, IeeOperation_Sbcd, Pairability_pOEP_Only, }, // Shadows OR
+	{ true, 0xf1f8, 0x8108, "SBCD -(Ax),-(Ay)", OpWordClass_EncodedSize_SrcAnPreDecrement_DestAnPreDecrement, IeeOperation_Sbcd, Pairability_pOEP_Only, }, // Shadows OR
 
 	{ true, 0xf100, 0x8000, "OR <ea>,Dn", OpWordClass_EncodedSize_SrcEaData_Dn, IeeOperation_Or, Pairability_pOEP_Or_sOEP, },
 	{ true, 0xf100, 0x8100, "OR Dn,<ea>", OpWordClass_EncodedSize_Rn_Ea_1, IeeOperation_Or, Pairability_pOEP_Or_sOEP, },

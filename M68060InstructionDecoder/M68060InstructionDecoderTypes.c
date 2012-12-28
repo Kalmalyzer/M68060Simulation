@@ -170,6 +170,11 @@ const char* IeeOperationToString(IeeOperation ieeOperation)
 		"BClr",
 		"BSet",
 		"BTst",
+		"Abcd",
+		"Sbcd",
+		"Nbcd",
+		"Pack",
+		"Unpk",
 	};
 
 	M68060_ASSERT((size_t) ieeOperation < (sizeof ieeOperationStrings / sizeof ieeOperationStrings[0]), "Invalid ieeOperation");

@@ -298,6 +298,37 @@ static const InstructionTestCase singleBitInstructionTests[] =
 	}, },
 };
 
+static const InstructionTestCase bcdArithmeticTests[] =
+{
+	{ "ABCD D2,D3", 1, { 0xc702, }, 1, { 
+																														{ "ABCD Dx,Dy",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D2,				ExecutionResource_D3,				OperationSize_Byte, IeeOperation_Abcd,			ExecutionResource_D3,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
+
+	{ "ABCD -(A1),-(A3)", 1, { 0xc709, }, 2, {
+																														{ "SOURCEUOP",				{ 0x0000, 0x0000, },	ExecutionResource_A1,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A1,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Byte, IeeOperation_ForwardIeeA,	ExecutionResource_IeeTemp,			false,	Pairability_pOEP_Only,		0,	},
+																														{ "ABCD -(Ax),-(Ay)",		{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A3,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Byte, IeeOperation_Abcd,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,		0,	},
+	}, },
+
+	{ "NBCD (A3)", 1, { 0x4813, }, 1, {
+																														{ "NBCD <ea>",				{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_None,				ExecutionResource_MemoryOperand,	OperationSize_Byte, IeeOperation_Nbcd,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,		0,	},
+	}, },
+
+	{ "SBCD D2,D3", 1, { 0x8702, }, 1, {
+																														{ "SBCD Dx,Dy",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D2,				ExecutionResource_D3,				OperationSize_Byte, IeeOperation_Sbcd,			ExecutionResource_D3,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
+
+	{ "SBCD -(A1),-(A3)", 1, { 0x8709, }, 2, {
+																														{ "SOURCEUOP",				{ 0x0000, 0x0000, },	ExecutionResource_A1,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A1,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Byte, IeeOperation_ForwardIeeA,	ExecutionResource_IeeTemp,			false,	Pairability_pOEP_Only,		0,	},
+																														{ "SBCD -(Ax),-(Ay)",		{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A3,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Byte, IeeOperation_Sbcd,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,		0,	},
+	}, },
+
+//	{ "PACK D1,D2,#$1234", { 0x8541, 0x1234, }, 2, "PACK Dm,Dn,#imm" },
+//	{ "PACK -(A2),-(A1),#$1234", { 0x834a, 0x1234, }, 2, "PACK -(Am),-(An),#imm" },
+
+//	{ "UNPK D2,D3,#$1234", { 0x8782, 0x1234, }, 2, "UNPK Dm,Dn,#imm" },
+//	{ "UNPK -(A7),-(A6),#$1234", { 0x8d8f, 0x1234, }, 2, "UNPK -(Am),-(An),#imm" },
+};
+
 
 static const InstructionTestCase integerArithmeticTests[] =
 {
@@ -665,6 +696,7 @@ TestSuite testSuites[] =
 	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
 	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
 	{ "Single-bit instruction tests", singleBitInstructionTests, (sizeof singleBitInstructionTests / sizeof singleBitInstructionTests[0]) },
+	{ "BCD arithmetic tests", bcdArithmeticTests, (sizeof bcdArithmeticTests / sizeof bcdArithmeticTests[0]) },
 	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },
 	{ "Shift/rotate tests", shiftRotateTests, (sizeof shiftRotateTests / sizeof shiftRotateTests[0]) },
 	{ "Integer logic tests", integerLogicTests, (sizeof integerLogicTests / sizeof integerLogicTests[0]) },

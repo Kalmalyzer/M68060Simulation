@@ -136,6 +136,11 @@ typedef enum
 	IeeOperation_BClr,
 	IeeOperation_BSet,
 	IeeOperation_BTst,
+	IeeOperation_Abcd,
+	IeeOperation_Sbcd,
+	IeeOperation_Nbcd,
+	IeeOperation_Pack,
+	IeeOperation_Unpk,
 
 } IeeOperation;
 
