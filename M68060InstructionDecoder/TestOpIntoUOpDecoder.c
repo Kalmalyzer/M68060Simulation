@@ -230,6 +230,14 @@ static const InstructionTestCase ea6BitTests[] =
 																														{ "ADD Dn,<ea>",			{ 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_D3,				ExecutionResource_MemoryOperand,	OperationSize_Long,	IeeOperation_Add,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 
+	{ "ADD.W (SP)+,D5", 1, { 0xda5f, }, 1, {
+																														{ "ADD <ea>,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_A7,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PostIncrementSP,		ExecutionResource_A7,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_D5,				OperationSize_Word,	IeeOperation_Add,			ExecutionResource_D5,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "ADD.W -(SP),D5", 1, { 0xda67, }, 1, {
+																														{ "ADD <ea>,Dn",			{ 0x0000, 0x0000, },	ExecutionResource_A7,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrementSP,		ExecutionResource_A7,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_D5,				OperationSize_Word,	IeeOperation_Add,			ExecutionResource_D5,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
 };
 
 static const InstructionTestCase immediateTests[] =

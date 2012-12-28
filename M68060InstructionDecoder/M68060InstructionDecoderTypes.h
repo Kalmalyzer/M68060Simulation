@@ -66,6 +66,8 @@ typedef enum
 	AguOperation_PostIncrement,
 	AguOperation_PreDecrement,
 	AguOperation_OffsetBaseIndexScale,
+	AguOperation_PostIncrementSP,
+	AguOperation_PreDecrementSP,
 
 } AguOperation;
 

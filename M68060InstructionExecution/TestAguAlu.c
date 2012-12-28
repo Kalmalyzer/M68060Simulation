@@ -27,6 +27,10 @@ AguAluTest tests[] =
 	{ "xxx.l d8(an,dn.w*2)", AguOperation_OffsetBaseIndexScale, OperationSize_Long, 0x12345678, 0xe010, 1, AguIndexSize_Word, 0x12, AguDisplacementSize_S8, 0x123416AA, 0x123416AA, },
 	{ "xxx.l d8(an,dn.l*4)", AguOperation_OffsetBaseIndexScale, OperationSize_Long, 0x12345678, 0x1234e010, 2, AguIndexSize_Long, 0x12, AguDisplacementSize_S8, 0x5B07D6CA, 0x5B07D6CA, },
 	{ "xxx.l d8(an,dn.w*8)", AguOperation_OffsetBaseIndexScale, OperationSize_Long, 0x12345678, 0xe010, 3, AguIndexSize_Word, 0xf2, AguDisplacementSize_S8, 0x123356EA, 0x123356EA, },
+	{ "xxx.w (sp)+", AguOperation_PostIncrementSP, OperationSize_Word, 0x12345678, 0, 0, AguIndexSize_None, 0, AguDisplacementSize_None, 0x1234567A, 0x12345678, },
+	{ "xxx.l -(sp)", AguOperation_PreDecrementSP, OperationSize_Long, 0x12345678, 0, 0, AguIndexSize_None, 0, AguDisplacementSize_None, 0x12345674, 0x12345674, },
+	{ "xxx.b (sp)+", AguOperation_PostIncrementSP, OperationSize_Byte, 0x12345678, 0, 0, AguIndexSize_None, 0, AguDisplacementSize_None, 0x1234567A, 0x12345678, },
+	{ "xxx.b -(sp)", AguOperation_PreDecrementSP, OperationSize_Byte, 0x12345678, 0, 0, AguIndexSize_None, 0, AguDisplacementSize_None, 0x12345676, 0x12345676, },
 };
 
 void runTestSuite(const AguAluTest* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)

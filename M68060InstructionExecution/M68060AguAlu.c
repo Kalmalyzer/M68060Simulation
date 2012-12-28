@@ -54,30 +54,62 @@ static operationSizeToValue(OperationSize operationSize)
 	}
 }
 
+static operationSizeToValueSP(OperationSize operationSize)
+{
+	switch (operationSize)
+	{
+		case OperationSize_None:
+			return 0;
+		case OperationSize_Byte:
+			return 2;
+		case OperationSize_Word:
+			return 2;
+		case OperationSize_Long:
+			return 4;
+		default:
+			M68060_ERROR("operationSize not supported");
+			return 0;
+	}
+}
+
 void evaluateAguAluOperation(AguOperation aguOperation, OperationSize operationSize, uint32_t baseValue, uint32_t indexValue, uint indexShift, AguIndexSize indexSize,
 	uint32_t displacementValue, AguDisplacementSize displacementSize, uint32_t* aguResult, uint32_t* memoryOperandReference)
 {
 	switch (aguOperation)
 	{
-		case  AguOperation_None:
+		case AguOperation_None:
 			break;
-		case  AguOperation_OffsetBaseIndexScale:
+		case AguOperation_OffsetBaseIndexScale:
 			{
 				uint32_t result = baseValue + (indexValueTo32Bit(indexValue, indexSize) << indexShift) + displacementValueTo32Bit(displacementValue, displacementSize);
 				*aguResult = result;
 				*memoryOperandReference = result;
 				break;
 			}
-		case  AguOperation_PostIncrement:
+		case AguOperation_PostIncrement:
 			{
 				uint32_t incrementedAddress = baseValue + operationSizeToValue(operationSize);
 				*memoryOperandReference = baseValue;
 				*aguResult = incrementedAddress;
 				break;
 			}
-		case  AguOperation_PreDecrement:
+		case AguOperation_PreDecrement:
 			{
 				uint32_t decrementedAddress = baseValue - operationSizeToValue(operationSize);
+				*memoryOperandReference = decrementedAddress;
+				*aguResult = decrementedAddress;
+				break;
+			}
+		case AguOperation_PostIncrementSP:
+			{
+				uint32_t incrementedAddress = baseValue + operationSizeToValueSP(operationSize);
+				*memoryOperandReference = baseValue;
+				*aguResult = incrementedAddress;
+				break;
+			}
+		case AguOperation_PreDecrementSP:
+			{
+				uint32_t decrementedAddress = baseValue - operationSizeToValueSP(operationSize);
 				*memoryOperandReference = decrementedAddress;
 				*aguResult = decrementedAddress;
 				break;

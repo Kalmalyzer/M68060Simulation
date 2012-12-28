@@ -83,6 +83,8 @@ const char* AguOperationToString(AguOperation aguOperation)
 		"PostIncrement",
 		"PreDecrement",
 		"OffsetBaseIndexScale",
+		"PostIncrementSP",
+		"PreDecrementSP",
 	};
 
 	M68060_ASSERT((size_t) aguOperation < (sizeof aguOperationStrings / sizeof aguOperationStrings[0]), "Invalid aguOperation");
