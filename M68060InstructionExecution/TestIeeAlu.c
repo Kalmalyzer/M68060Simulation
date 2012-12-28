@@ -100,6 +100,11 @@ IeeAluTest tests[] =
 	{ "sbcd 0x55,0x67 ()", IeeOperation_Sbcd, OperationSize_Byte, 0, 0x00000055, 0x00000067, 0x00000012, { 0, 0, }, },
 	{ "sbcd 0x57,0x67 (X)", IeeOperation_Sbcd, OperationSize_Byte, Flags_Extend_Mask, 0x00000057, 0x00000067, 0x00000009, { 0, 0, }, },
 	{ "nbcd 0x12 (X)", IeeOperation_Nbcd, OperationSize_Byte, Flags_Extend_Mask, 0x00000000, 0x00000012, 0x00000087, { 0, Flags_Extend_Mask | Flags_Carry_Mask, }, },
+	{ "and 0xfc,CCR (XZV)", IeeOperation_AndToCcr, OperationSize_Byte, Flags_Extend_Mask | Flags_Zero_Mask | Flags_Overflow_Mask, 0x000000fc, 0x00000000, 0x00000000, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Zero_Mask, 0, }, },
+	{ "or 0xf2,CCR (XZV)", IeeOperation_OrToCcr, OperationSize_Byte, Flags_Extend_Mask | Flags_Zero_Mask | Flags_Overflow_Mask, 0x000000f2, 0x00000000, 0x00000000, { Flags_All_Mask, Flags_Extend_Mask | Flags_Overflow_Mask, }, },
+	{ "eor 0xf3,CCR (XZV)", IeeOperation_EorToCcr, OperationSize_Byte, Flags_Extend_Mask | Flags_Zero_Mask | Flags_Overflow_Mask, 0x000000f3, 0x00000000, 0x00000000, { Flags_Negative_Mask | Flags_Zero_Mask | Flags_Carry_Mask, Flags_Carry_Mask, }, },
+	{ "move 0xf3,CCR (XZV)", IeeOperation_MoveToCcr, OperationSize_Byte, Flags_Extend_Mask | Flags_Zero_Mask | Flags_Overflow_Mask, 0x000000f3, 0x00000000, 0x00000000, { Flags_Extend_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, Flags_Extend_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, }, },
+	{ "move from CCR (XZV)", IeeOperation_MoveFromCcr, OperationSize_Byte, Flags_Extend_Mask | Flags_Zero_Mask | Flags_Overflow_Mask, 0x00000000, 0x12345678, 0x12345616, { Flags_All_Mask, 0, }, },
 };
 
 void runTestSuite(const IeeAluTest* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)

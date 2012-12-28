@@ -647,6 +647,39 @@ static void evaluateNbcd(Flags flags, uint32_t ieeBValue, uint32_t* ieeResult, F
 	evaluateSbcd(flags, ieeBValue, 0, ieeResult, flagsModifier);
 }
 
+static void evaluateAndToCcr(uint32_t ieeAValue, FlagsModifier* flagsModifier)
+{
+	flagsModifier->andFlags = ieeAValue & Flags_All_Mask;
+	flagsModifier->orFlags = 0;
+}
+
+static void evaluateOrToCcr(uint32_t ieeAValue, FlagsModifier* flagsModifier)
+{
+	flagsModifier->andFlags = Flags_All_Mask;
+	flagsModifier->orFlags = (ieeAValue & Flags_All_Mask);
+}
+
+static void evaluateEorToCcr(Flags flags, uint32_t ieeAValue, FlagsModifier* flagsModifier)
+{
+	uint bitsToClear = (ieeAValue & flags) & Flags_All_Mask;
+	uint bitsToSet = (ieeAValue & ~flags) & Flags_All_Mask;
+
+	flagsModifier->andFlags = ~bitsToClear & Flags_All_Mask;
+	flagsModifier->orFlags = bitsToSet & Flags_All_Mask;
+}
+
+static void evaluateMoveToCcr(uint32_t ieeAValue, FlagsModifier* flagsModifier)
+{
+	flagsModifier->andFlags = ieeAValue & Flags_All_Mask;
+	flagsModifier->orFlags = ieeAValue & Flags_All_Mask;
+}
+
+static void evaluateMoveFromCcr(Flags flags, uint32_t ieeBValue, uint32_t* ieeResult)
+{
+	uint32_t operationMask = 0xff;
+	*ieeResult = mask(flags & Flags_All_Mask, ieeBValue, operationMask);
+}
+
 void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	setEmptyFlagsModifier(flagsModifier);
@@ -827,6 +860,31 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_Nbcd:
 			{
 				evaluateNbcd(flags, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_AndToCcr:
+			{
+				evaluateAndToCcr(ieeAValue, flagsModifier);
+				break;
+			}
+		case IeeOperation_OrToCcr:
+			{
+				evaluateOrToCcr(ieeAValue, flagsModifier);
+				break;
+			}
+		case IeeOperation_EorToCcr:
+			{
+				evaluateEorToCcr(flags, ieeAValue, flagsModifier);
+				break;
+			}
+		case IeeOperation_MoveToCcr:
+			{
+				evaluateMoveToCcr(ieeAValue, flagsModifier);
+				break;
+			}
+		case IeeOperation_MoveFromCcr:
+			{
+				evaluateMoveFromCcr(flags, ieeBValue, ieeResult);
 				break;
 			}
 		default:
