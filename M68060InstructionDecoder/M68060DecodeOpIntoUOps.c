@@ -501,6 +501,11 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			decodeImmediateOperand(immediateSize, operandSpecifierWords, mainUOp, ieeInput, hasMemoryReference);
 			break;
 		}
+	case DecodeOperand_Immediate_ExtensionWords_Byte:
+		{
+			decodeImmediateOperand(OperationSize_Byte, operandSpecifierWords, mainUOp, ieeInput, hasMemoryReference);
+			break;
+		}
 	case DecodeOperand_Imm3Bit:
 		{
 			uint8_t imm3BitValue = (opWord & OpWord_DefaultImm3BitEncoding_Mask) >> OpWord_DefaultImm3BitEncoding_Shift;
@@ -749,6 +754,12 @@ static PreDecodedOperand preDecodeOperand(uint16_t opWord, DecodeOperand decodeO
 			break;
 		}
 	case DecodeOperand_Immediate:
+		{
+			preDecodedOperand.needsExtensionWords = true;
+			preDecodedOperand.hasMemoryReference = false;
+			break;
+		}
+	case DecodeOperand_Immediate_ExtensionWords_Byte:
 		{
 			preDecodedOperand.needsExtensionWords = true;
 			preDecodedOperand.hasMemoryReference = false;

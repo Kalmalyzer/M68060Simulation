@@ -132,6 +132,10 @@ typedef enum
 	IeeOperation_Not,
 	IeeOperation_Clr,
 	IeeOperation_Ext,
+	IeeOperation_BChg,
+	IeeOperation_BClr,
+	IeeOperation_BSet,
+	IeeOperation_BTst,
 
 } IeeOperation;
 

@@ -183,6 +183,9 @@ static DecodeOperandLengthResult decodeOperandLength(EAMode eaMode, bool firstEx
 					M68060_ERROR("Invalid operation size");
 			}
 			break;
+		case EAMode_Immediate_Byte:
+			*numExtensionWords = 1;
+			break;
 		case EAMode_RelativeBranch:
 			switch (operationSize)
 			{
@@ -229,6 +232,9 @@ static bool decodeOperand(uint16_t opWord, EAEncoding eaEncoding, EAMode* eaMode
 		}
 		case EAEncoding_Immediate:
 			*eaMode = EAMode_Immediate;
+			return true;
+		case EAEncoding_Immediate_Byte:
+			*eaMode = EAMode_Immediate_Byte;
 			return true;
 		case EAEncoding_D16:
 			*eaMode = EAMode_Mem_D16_An;

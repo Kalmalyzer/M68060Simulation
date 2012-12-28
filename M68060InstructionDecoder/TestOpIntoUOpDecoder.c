@@ -278,6 +278,27 @@ static const InstructionTestCase immediateTests[] =
 
 };
 
+static const InstructionTestCase singleBitInstructionTests[] =
+{
+	{ "BTST D1,$12345678.L", 3, { 0x0339, 0x1234, 0x5678, }, 1, {
+																														{ "BTST Dn,<ea>",			{ 0x1234, 0x5678, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S32,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_D1,				ExecutionResource_MemoryOperand,	OperationSize_Byte, IeeOperation_BTst,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
+	
+	{ "BCLR #3,$12345678.L", 4, { 0x08b9, 0x0003, 0x1234, 0x5678, }, 2, {
+																														{ "SOURCEUOP",				{ 0x0003, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_uOpByte0,			ExecutionResource_None,				OperationSize_Byte,	IeeOperation_ForwardIeeA,	ExecutionResource_IeeTemp,			false,	Pairability_pOEP_Only,		0,	},
+																														{ "BCLR #imm,<ea>",			{ 0x1234, 0x5678, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S32,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Byte, IeeOperation_BClr,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+	
+	{ "BCHG D1,D3", 1, { 0x0343, }, 1, {
+																														{ "BCHG Dn,Dm",				{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_D1,				ExecutionResource_D3,				OperationSize_Long, IeeOperation_BChg,			ExecutionResource_D3,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
+	
+	{ "BSET #31,D2", 2, { 0x08c2, 0x001f, 0x1111, 0x2222, 0x3333, }, 1, {
+																														{ "BSET #imm,Dm",			{ 0x001f, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_uOpByte0,			ExecutionResource_D2,				OperationSize_Long, IeeOperation_BSet,			ExecutionResource_D2,				false,	Pairability_pOEP_Or_sOEP,		0,	},
+	}, },
+};
+
+
 static const InstructionTestCase integerArithmeticTests[] =
 {
 	{ "ADD.B D1,D3", 1, { 0xd601, }, 1, {
@@ -643,6 +664,7 @@ TestSuite testSuites[] =
 {
 	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
 	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
+	{ "Single-bit instruction tests", singleBitInstructionTests, (sizeof singleBitInstructionTests / sizeof singleBitInstructionTests[0]) },
 	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },
 	{ "Shift/rotate tests", shiftRotateTests, (sizeof shiftRotateTests / sizeof shiftRotateTests[0]) },
 	{ "Integer logic tests", integerLogicTests, (sizeof integerLogicTests / sizeof integerLogicTests[0]) },

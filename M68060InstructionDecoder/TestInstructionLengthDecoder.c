@@ -96,8 +96,8 @@ static const InstructionLengthDecoderTest singleBitInstructionTests[] =
 {
 	{ "BTST D1,$12345678.L", { 0x0339, 0x1234, 0x5678, }, 3, "BTST Dn,<ea>" },
 	{ "BCLR #3,$12345678.L", { 0x08b9, 0x0003, 0x1234, 0x5678, }, 4, "BCLR #imm,<ea>" },
-	{ "BCHG D1,D3", { 0x0343, }, 1, "BCHG Dn,<ea>" },
-	{ "BSET #31,D2", { 0x08c2, 0x001f, }, 2, "BSET #imm,<ea>" },
+	{ "BCHG D1,D3", { 0x0343, }, 1, "BCHG Dn,Dm" },
+	{ "BSET #31,D2", { 0x08c2, 0x001f, }, 2, "BSET #imm,Dm" },
 };
 
 static const InstructionLengthDecoderTest bitFieldInstructionTests[] =
