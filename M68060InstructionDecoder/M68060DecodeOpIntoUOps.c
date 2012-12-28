@@ -27,6 +27,33 @@ static void writeUOp(UOpWriteBuffer* UOpWriteBuffer, UOp* UOp)
 	if (UOp->aguOperation == AguOperation_PreDecrement && UOp->aguBase == ExecutionResource_A7)
 		UOp->aguOperation = AguOperation_PreDecrementSP;
 	
+	M68060_ASSERT((UOp->aguOperation != AguOperation_PostIncrement && UOp->aguOperation != AguOperation_PreDecrement)
+		|| isRegister(UOp->aguBase), "PostIncrement/PreDecrement must operate on a standard integer register");
+
+	M68060_ASSERT((UOp->aguOperation != AguOperation_PostIncrementSP && UOp->aguOperation != AguOperation_PreDecrementSP)
+		|| (UOp->aguBase == ExecutionResource_A7), "PostIncrementSP/PreDecrementSP must operate on A7");
+
+	M68060_ASSERT((UOp->aguOperation != AguOperation_PostIncrement && UOp->aguOperation != AguOperation_PreDecrement
+		&& UOp->aguOperation != AguOperation_PostIncrementSP && UOp->aguOperation != AguOperation_PreDecrementSP)
+		|| (UOp->aguBase == UOp->aguResult), "PostIncrement/PreDecrement/PostIncrementSP/PreDecrementSP must have the same aguBase and aguResult registers");
+
+	M68060_ASSERT((UOp->aguOperation != AguOperation_PostIncrement && UOp->aguOperation != AguOperation_PreDecrement
+		&& UOp->aguOperation != AguOperation_PostIncrementSP && UOp->aguOperation != AguOperation_PreDecrementSP)
+		|| (UOp->aguIndex == ExecutionResource_None && UOp->aguIndexSize == AguIndexSize_None && UOp->aguIndexShift == 0), "PostIncrement/PreDecrement/PostIncrementSP/PreDecrementSP do not support index registers");
+
+	M68060_ASSERT((UOp->aguOperation != AguOperation_PostIncrement && UOp->aguOperation != AguOperation_PreDecrement
+		&& UOp->aguOperation != AguOperation_PostIncrementSP && UOp->aguOperation != AguOperation_PreDecrementSP)
+		|| (UOp->aguDisplacementSize == AguDisplacementSize_None), "PostIncrement/PreDecrement/PostIncrementSP/PreDecrementSP do not support displacement");
+
+	M68060_ASSERT((!UOp->memoryRead && !UOp->memoryWrite) || (UOp->aguOperation != AguOperation_None),
+		"UOps with memory accesses must have an AGU operation specified");
+
+	M68060_ASSERT((UOp->ieeA != ExecutionResource_MemoryOperand && UOp->ieeB != ExecutionResource_MemoryOperand) || UOp->memoryRead,
+		"UOps with IeeA/IeeB memory operands must also perform memory reads");
+
+	M68060_ASSERT((UOp->ieeResult != ExecutionResource_MemoryOperand) || UOp->memoryWrite,
+		"UOps with IeeResult memory operands must also perform memory writes");
+
 	UOpWriteBuffer->UOps[UOpWriteBuffer->numUOps] = *UOp;
 	UOpWriteBuffer->numUOps++;
 }
