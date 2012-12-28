@@ -71,10 +71,13 @@ typedef enum
 	OpWordClass_Byte_SrcDn_DestEa_Data_ReadOnly,
 	OpWordClass_Long_SrcDn_DestEa_Data_ReadOnly,
 	OpWordClass_DestEa_DataAlterable,
+	OpWordClass_Word_SrcCCR_DestEa_DataAlterable,
 	OpWordClass_Byte_SrcDn_DestEa_DataAlterable_ReadWrite,
 	OpWordClass_Long_SrcDn_DestEa_DataAlterable_ReadWrite,
 	OpWordClass_Word_SrcImmValue1_DestEa_MemoryAlterable,
 	OpWordClass_EncodedSize_SrcImm3Bit_DestDn,
+	OpWordClass_Word_SrcEa_DestNone,
+	OpWordClass_Byte_SrcImmediate_DestCCR,
 	OpWordClass_ImmediateByte,
 	OpWordClass_ImmediateWord,
 	OpWordClass_ImmediateLong,
@@ -123,6 +126,7 @@ typedef enum
 	DecodeOperand_Imm3Bit,
 	DecodeOperand_Imm3BitValue1,
 	DecodeOperand_Imm8Bit,
+	DecodeOperand_CCR,
 
 } DecodeOperand;
 

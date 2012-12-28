@@ -530,6 +530,12 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			*hasMemoryReference = false;
 			break;
 		}
+	case DecodeOperand_CCR:
+		{
+			*ieeInput = ExecutionResource_CCR;
+			*hasMemoryReference = false;
+			break;
+		}
 	default:
 		M68060_ERROR("Not yet implemented");
 		break;
@@ -765,6 +771,10 @@ static PreDecodedOperand preDecodeOperand(uint16_t opWord, DecodeOperand decodeO
 			preDecodedOperand.hasMemoryReference = false;
 			break;
 		}
+	case DecodeOperand_CCR:
+		preDecodedOperand.needsExtensionWords = false;
+		preDecodedOperand.hasMemoryReference = false;
+		break;
 	default:
 		M68060_ERROR("Not yet implemented");
 		break;

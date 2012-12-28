@@ -39,6 +39,8 @@ typedef enum
 	ExecutionResource_IeeTemp, // Temporary register used when decomposing instructions with both immediates and displacements into multiple UOps
 
 	ExecutionResource_Imm3Bit, // Special 3-bit immediate operand that is embedded in the UOp, outside of the UOp's extensionWords
+
+	ExecutionResource_CCR,
 	
 } ExecutionResource;
 
@@ -141,6 +143,11 @@ typedef enum
 	IeeOperation_Nbcd,
 	IeeOperation_Pack,
 	IeeOperation_Unpk,
+	IeeOperation_AndToCcr,
+	IeeOperation_EorToCcr,
+	IeeOperation_OrToCcr,
+	IeeOperation_MoveToCcr,
+	IeeOperation_MoveFromCcr,
 
 } IeeOperation;
 

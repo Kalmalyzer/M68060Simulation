@@ -534,8 +534,10 @@ static const InstructionTestCase integerLogicTests[] =
 																														{ "ANDI #imm,<ea>",			{ 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Long,	IeeOperation_And,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 
-//	{ "ANDI #$12,CCR", 2, { 0x023c, 0x0012, }, 1, {
-
+	{ "ANDI #$12,CCR", 2, { 0x023c, 0x0012, }, 1, {
+																														{ "ANDI #imm,CCR",			{ 0x0012, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_uOpByte0,			ExecutionResource_CCR,				OperationSize_Byte, IeeOperation_AndToCcr,		ExecutionResource_None,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
+	
 	{ "EOR.L D1,(A3)", 1, { 0xb393, }, 1, {
 																														{ "EOR.L Dn,<ea>",			{ 0x0000, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_D1,				ExecutionResource_MemoryOperand,	OperationSize_Long, IeeOperation_Eor,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
@@ -545,7 +547,9 @@ static const InstructionTestCase integerLogicTests[] =
 																														{ "EORI #imm,<ea>",			{ 0x1234, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_IeeTemp,			ExecutionResource_MemoryOperand,	OperationSize_Long, IeeOperation_Eor,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 
-//	{ "EORI #$12,CCR", 2, { 0x0a3c, 0x0012, }, 1, {
+	{ "EORI #$12,CCR", 2, { 0x0a3c, 0x0012, }, 1, {
+																														{ "EORI #imm,CCR",			{ 0x0012, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_uOpByte0,			ExecutionResource_CCR,				OperationSize_Byte, IeeOperation_EorToCcr,		ExecutionResource_None,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
 
 	{ "NOT.W -(A5)", 1, { 0x4665, }, 1, {
 																														{ "NOT <ea>",				{ 0x0000, 0x0000, },	ExecutionResource_A5,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrement,			ExecutionResource_A5,				true,	ExecutionResource_None,				ExecutionResource_MemoryOperand,	OperationSize_Word, IeeOperation_Not,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	0,	},
@@ -565,7 +569,9 @@ static const InstructionTestCase integerLogicTests[] =
 																														{ "ORI #imm,<ea>",			{ 0x1234, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_uOpWord0,			ExecutionResource_D5,				OperationSize_Word, IeeOperation_Or,			ExecutionResource_D5,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 
-//	{ "ORI #$12,CCR", 2, { 0x003c, 0x0012, }, 1, {
+	{ "ORI #$12,CCR", 2, { 0x003c, 0x0012, }, 1, {
+																														{ "ORI #imm,CCR",			{ 0x0012, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_uOpByte0,			ExecutionResource_CCR,				OperationSize_Byte, IeeOperation_OrToCcr,		ExecutionResource_None,				false,	Pairability_pOEP_Only,		0,	},
+	}, },
 
 };
 
@@ -622,6 +628,14 @@ static const InstructionTestCase moveTests[] =
 
 	{ "MOVE.L A2,D3", 1, { 0x260a, }, 1, {
 																														{ "MOVE.L <ea>,<ea>",		{ 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_A2,				ExecutionResource_None,				OperationSize_Long, IeeOperation_Move,			ExecutionResource_D3,				false,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "MOVE CCR,$1234(A3)", 2, { 0x42eb, 0x1234, }, 1, {
+																														{ "MOVE CCR,<ea>",			{ 0x1234, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				false,	ExecutionResource_CCR,				ExecutionResource_None,				OperationSize_Word, IeeOperation_MoveFromCcr,	ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Or_sOEP,	0,	},
+	}, },
+
+	{ "MOVE $1234(A2),CCR", 2, { 0x44ea, 0x1234, }, 1, {
+																														{ "MOVE <ea>,CCR",			{ 0x1234, 0x0000, },	ExecutionResource_A2,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Word, IeeOperation_MoveToCcr,		ExecutionResource_None,				false,	Pairability_pOEP_Or_sOEP,	0,	},
 	}, },
 
 	{ "MOVEQ #$12,D2", 1, { 0x7412, }, 1, {

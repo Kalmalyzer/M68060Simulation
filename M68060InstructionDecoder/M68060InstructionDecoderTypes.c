@@ -35,6 +35,7 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 		"AguTemp",
 		"IeeTemp",
 		"Imm3Bit",
+		"CCR",
 	};
 
 	M68060_ASSERT((size_t) executionResource < (sizeof executionResourceStrings / sizeof executionResourceStrings[0]), "Invalid executionResource");
@@ -175,6 +176,11 @@ const char* IeeOperationToString(IeeOperation ieeOperation)
 		"Nbcd",
 		"Pack",
 		"Unpk",
+		"AndToCcr",
+		"EorToCcr",
+		"OrToCcr",
+		"MoveToCcr",
+		"MoveFromCcr",
 	};
 
 	M68060_ASSERT((size_t) ieeOperation < (sizeof ieeOperationStrings / sizeof ieeOperationStrings[0]), "Invalid ieeOperation");
