@@ -1,0 +1,15 @@
+
+PEA
+===
+
+
+	PEA	(An)	is optimized: it only requires the An value to be present at the beginning of the EX stage.
+	PEA	$xxxx.w	is also optimized; the word->long conversion happens in the EX stage (so the -(sp) calculation can be done in the AG stage).
+	PEA	$xxxx.l	is also optimized; the longword is fetched in the EX stage.
+
+	All other forms of PEA decompose into,
+	SOURCEUOP <addressing mode>,AguTemp
+	STORE  AguTemp,-(SP)
+
+
+
