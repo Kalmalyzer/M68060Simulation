@@ -95,6 +95,11 @@ IeeAluTest tests[] =
 	{ "bclr.l 12,0x12", IeeOperation_BClr, OperationSize_Long, 0, 0x0000000c, 0x00000012, 0x00000012, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, Flags_Zero_Mask, }, },
 	{ "btst.b 12,0x12", IeeOperation_BTst, OperationSize_Byte, 0, 0x0000000c, 0x00000012, 0x00000000, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, 0, }, },
 	{ "btst.l 12,0x12", IeeOperation_BTst, OperationSize_Long, 0, 0x0000000c, 0x00000012, 0x00000000, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, Flags_Zero_Mask, }, },
+	{ "abcd 0x55,0x67 ()", IeeOperation_Abcd, OperationSize_Byte, 0, 0x00000055, 0x00000067, 0x00000022, { 0, Flags_Extend_Mask | Flags_Carry_Mask, }, },
+	{ "abcd 0x55,0x67 (X)", IeeOperation_Abcd, OperationSize_Byte, Flags_Extend_Mask, 0x00000055, 0x00000067, 0x00000023, { 0, Flags_Extend_Mask | Flags_Carry_Mask, }, },
+	{ "sbcd 0x55,0x67 ()", IeeOperation_Sbcd, OperationSize_Byte, 0, 0x00000055, 0x00000067, 0x00000012, { 0, 0, }, },
+	{ "sbcd 0x57,0x67 (X)", IeeOperation_Sbcd, OperationSize_Byte, Flags_Extend_Mask, 0x00000057, 0x00000067, 0x00000009, { 0, 0, }, },
+	{ "nbcd 0x12 (X)", IeeOperation_Nbcd, OperationSize_Byte, Flags_Extend_Mask, 0x00000000, 0x00000012, 0x00000087, { 0, Flags_Extend_Mask | Flags_Carry_Mask, }, },
 };
 
 void runTestSuite(const IeeAluTest* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)

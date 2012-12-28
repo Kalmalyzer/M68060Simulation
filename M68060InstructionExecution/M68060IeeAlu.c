@@ -592,6 +592,61 @@ static void evaluateBitOpCommon(IeeOperation ieeOperation, OperationSize operati
 	setFlagsModifierZ(bitValue ? false : true, flagsModifier);
 }
 
+static void evaluateAbcd(Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	uint32_t operationMask = 0xff;
+
+	uint nonMaskedResult;
+	
+	uint lowNibbleMask = 0x0f;
+	uint lowNibble = (ieeAValue & lowNibbleMask) + (ieeBValue & lowNibbleMask) + ((flags & Flags_Extend_Mask) ? 1 : 0);
+	uint lowCarry = (lowNibble >= 10) ? 1 : 0;
+	
+	uint highNibbleMask = 0xf0;
+	uint highNibble = (ieeAValue & highNibbleMask) + (ieeBValue & highNibbleMask) + (lowCarry ? 0x10 : 0);
+	uint highCarry = (highNibble >= (10 << 4)) ? 1 : 0;
+
+	if (lowCarry)
+		lowNibble -= 10;
+	if (highCarry)
+		highNibble -= (10 << 4);
+	
+	nonMaskedResult = lowNibble + highNibble;
+	
+	setFlagsModifierXNZVC(highCarry, false, !nonMaskedResult, false, highCarry, flagsModifier);
+	*ieeResult = mask(nonMaskedResult, ieeBValue, operationMask);
+}
+
+static void evaluateSbcd(Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	uint32_t operationMask = 0xff;
+
+	uint nonMaskedResult;
+	
+	uint lowNibbleMask = 0x0f;
+	uint lowNibble = -(ieeAValue & lowNibbleMask) + (ieeBValue & lowNibbleMask) - ((flags & Flags_Extend_Mask) ? 1 : 0);
+	uint lowBorrow = (lowNibble >= 10) ? 1 : 0;
+	
+	uint highNibbleMask = 0xf0;
+	uint highNibble = -(ieeAValue & highNibbleMask) + (ieeBValue & highNibbleMask) - (lowBorrow ? 0x10 : 0);
+	uint highBorrow = (highNibble >= (10 << 4)) ? 1 : 0;
+
+	if (lowBorrow)
+		lowNibble += 10;
+	if (highBorrow)
+		highNibble += (10 << 4);
+	
+	nonMaskedResult = lowNibble + highNibble;
+	
+	setFlagsModifierXNZVC(highBorrow, false, !nonMaskedResult, false, highBorrow, flagsModifier);
+	*ieeResult = mask(nonMaskedResult, ieeBValue, operationMask);
+}
+
+static void evaluateNbcd(Flags flags, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	evaluateSbcd(flags, ieeBValue, 0, ieeResult, flagsModifier);
+}
+
 void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	setEmptyFlagsModifier(flagsModifier);
@@ -757,6 +812,21 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_BTst:
 			{
 				evaluateBitOpCommon(IeeOperation_BTst, operationSize, ieeAValue, ieeBValue, 0, flagsModifier);
+				break;
+			}
+		case IeeOperation_Abcd:
+			{
+				evaluateAbcd(flags, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Sbcd:
+			{
+				evaluateSbcd(flags, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Nbcd:
+			{
+				evaluateNbcd(flags, ieeBValue, ieeResult, flagsModifier);
 				break;
 			}
 		default:
