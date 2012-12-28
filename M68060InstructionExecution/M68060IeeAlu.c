@@ -80,6 +80,12 @@ static void setFlagsModifierXNZVC(bool x, bool n, bool z, bool v, bool c, FlagsM
 	flagsModifier->andFlags = 0;
 }
 
+static void setFlagsModifierZ(bool z, FlagsModifier* flagsModifier)
+{
+	flagsModifier->orFlags = (z ? Flags_Zero_Mask : 0);
+	flagsModifier->andFlags = Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask;
+}
+
 static uint getOperationMask(OperationSize operationSize)
 {
 	switch (operationSize)
@@ -504,6 +510,88 @@ static void evaluateNot(OperationSize operationSize, uint32_t ieeBValue, uint32_
 	evaluateLogicOperationCommon(operationSize, ~ieeBValue, ieeBValue, ieeResult, flagsModifier);
 }
 
+static void evaluateClr(OperationSize operationSize, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	uint32_t operationMask = getOperationMask(operationSize);
+	setFlagsModifierNZVC(false, true, false, false, flagsModifier);
+	*ieeResult = mask(0, ieeBValue, operationMask);
+}
+
+static void evaluateExt(OperationSize operationSize, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	uint32_t sourceMask = getOperationMask(operationSize);
+	uint32_t destinationMask;
+	uint32_t destinationHighestBitMask;
+	uint32_t nonMaskedResult;
+
+	switch (operationSize)
+	{
+		case OperationSize_Byte:
+			nonMaskedResult = (uint32_t) (int32_t) (int8_t) ieeBValue;
+			destinationMask = 0xffffffff;
+			break;
+		case OperationSize_Word:
+			nonMaskedResult = (uint32_t) (int32_t) (int8_t) ieeBValue;
+			destinationMask = 0xffff;
+			break;
+		case OperationSize_Long:
+			nonMaskedResult = (uint32_t) (int32_t) (int16_t) ieeBValue;
+			destinationMask = 0xffffffff;
+			break;
+		default:
+			M68060_ERROR("OperationSize not supported");
+	}
+
+	destinationHighestBitMask = destinationMask - (destinationMask >> 1);
+	setFlagsModifierNZVC(nonMaskedResult & destinationHighestBitMask, !(nonMaskedResult & destinationMask), false, false, flagsModifier);
+	*ieeResult = mask(nonMaskedResult, ieeBValue, destinationMask);
+}
+
+static void evaluateBitOpCommon(IeeOperation ieeOperation, OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	uint bitIdMask;
+	uint bitId;
+	uint32_t bitMask;
+	uint32_t bitValue;
+	uint32_t resultValue;
+	
+	switch (operationSize)
+	{
+		case OperationSize_Byte:
+			bitIdMask = 0x7;
+			break;
+		case OperationSize_Long:
+			bitIdMask = 0x1f;
+			break;
+		default:
+			M68060_ERROR("OperationSize not supported");
+	}
+	
+	bitId = ieeAValue & bitIdMask;
+	bitMask = 1U << bitId;
+	
+	bitValue = ieeBValue & bitMask;
+
+	switch (ieeOperation)
+	{
+		case IeeOperation_BChg:
+			*ieeResult = ieeBValue ^ bitMask;
+			break;
+		case IeeOperation_BSet:
+			*ieeResult = ieeBValue | bitMask;
+			break;
+		case IeeOperation_BClr:
+			*ieeResult = ieeBValue & ~bitValue;
+			break;
+		case IeeOperation_BTst:
+			break;
+		default:
+			M68060_ERROR("IeeOperation not supported");
+	}
+	
+	setFlagsModifierZ(bitValue ? false : true, flagsModifier);
+}
+
 void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	setEmptyFlagsModifier(flagsModifier);
@@ -639,6 +727,36 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_Not:
 			{
 				evaluateNot(operationSize, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Clr:
+			{
+				evaluateClr(operationSize, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_Ext:
+			{
+				evaluateExt(operationSize, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_BChg:
+			{
+				evaluateBitOpCommon(IeeOperation_BChg, operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_BSet:
+			{
+				evaluateBitOpCommon(IeeOperation_BSet, operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_BClr:
+			{
+				evaluateBitOpCommon(IeeOperation_BClr, operationSize, ieeAValue, ieeBValue, ieeResult, flagsModifier);
+				break;
+			}
+		case IeeOperation_BTst:
+			{
+				evaluateBitOpCommon(IeeOperation_BTst, operationSize, ieeAValue, ieeBValue, 0, flagsModifier);
 				break;
 			}
 		default:

@@ -79,6 +79,22 @@ IeeAluTest tests[] =
 	{ "or.w 0xff0f,0x12345678", IeeOperation_Or, OperationSize_Word, 0, 0x0000ff0f, 0x12345678, 0x1234ff7f, { Flags_Extend_Mask, Flags_Negative_Mask, }, },
 	{ "eor.w 0xff0f,0x12345678", IeeOperation_Eor, OperationSize_Word, 0, 0x0000ff0f, 0x12345678, 0x1234a977, { Flags_Extend_Mask, Flags_Negative_Mask, }, },
 	{ "not.w 0x1234ff0f", IeeOperation_Not, OperationSize_Word, 0, 0x00000000, 0x1234ff0f, 0x123400f0, { Flags_Extend_Mask, 0, }, },
+	{ "clr.b 0x12345678", IeeOperation_Clr, OperationSize_Byte, 0, 0x00000000, 0x12345678, 0x12345600, { Flags_Extend_Mask, Flags_Zero_Mask, }, },
+	{ "ext.w 0x12345678", IeeOperation_Ext, OperationSize_Word, 0, 0x00000000, 0x12345678, 0x12340078, { Flags_Extend_Mask, 0, }, },
+	{ "ext.l 0x12345678", IeeOperation_Ext, OperationSize_Long, 0, 0x00000000, 0x12345678, 0x00005678, { Flags_Extend_Mask, 0, }, },
+	{ "extb.l 0x12345687", IeeOperation_Ext, OperationSize_Byte, 0, 0x00000000, 0x12345687, 0xffffff87, { Flags_Extend_Mask, Flags_Negative_Mask, }, },
+	{ "bchg.b 1,0x12", IeeOperation_BChg, OperationSize_Byte, 0, 0x00000001, 0x00000012, 0x00000010, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, 0, }, },
+	{ "bchg.b 9,0x12", IeeOperation_BChg, OperationSize_Byte, 0, 0x00000009, 0x00000012, 0x00000010, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, 0, }, },
+	{ "bchg.l 9,0x12", IeeOperation_BChg, OperationSize_Long, 0, 0x00000009, 0x00000012, 0x00000212, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, Flags_Zero_Mask, }, },
+	{ "bset.b 9,0x12", IeeOperation_BSet, OperationSize_Byte, 0, 0x00000009, 0x00000012, 0x00000012, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, 0, }, },
+	{ "bset.l 9,0x12", IeeOperation_BSet, OperationSize_Long, 0, 0x00000009, 0x00000012, 0x00000212, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, Flags_Zero_Mask, }, },
+	{ "bset.b 9,0x12", IeeOperation_BSet, OperationSize_Byte, 0, 0x00000009, 0x00000012, 0x00000012, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, 0, }, },
+	{ "bset.l 31,0x00000000", IeeOperation_BSet, OperationSize_Long, 0, 0x0000001f, 0x00000000, 0x80000000, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, Flags_Zero_Mask, }, },
+	{ "bset.l 33,0x00000000", IeeOperation_BSet, OperationSize_Long, 0, 0x00000021, 0x00000000, 0x00000002, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, Flags_Zero_Mask, }, },
+	{ "bclr.b 12,0x12", IeeOperation_BClr, OperationSize_Byte, 0, 0x0000000c, 0x00000012, 0x00000002, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, 0, }, },
+	{ "bclr.l 12,0x12", IeeOperation_BClr, OperationSize_Long, 0, 0x0000000c, 0x00000012, 0x00000012, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, Flags_Zero_Mask, }, },
+	{ "btst.b 12,0x12", IeeOperation_BTst, OperationSize_Byte, 0, 0x0000000c, 0x00000012, 0x00000000, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, 0, }, },
+	{ "btst.l 12,0x12", IeeOperation_BTst, OperationSize_Long, 0, 0x0000000c, 0x00000012, 0x00000000, { Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, Flags_Zero_Mask, }, },
 };
 
 void runTestSuite(const IeeAluTest* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)
