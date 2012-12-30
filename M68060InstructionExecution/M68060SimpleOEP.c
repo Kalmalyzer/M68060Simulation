@@ -159,7 +159,8 @@ void executeUOp(const UOp* UOp)
 	{
 		uint32_t ieeAValue = readExecutionResource(UOp->ieeA, UOp);
 		uint32_t ieeBValue = readExecutionResource(UOp->ieeB, UOp);
-		evaluateIeeAluOperation(UOp->ieeOperation, UOp->ieeOperationSize, s_flags, ieeAValue, ieeBValue, &ieeResultValue, &flagsModifier);
+		ConditionCode conditionCode = (UOp->opWord & OpWord_DefaultConditionCodeEncoding_Mask) >> OpWord_DefaultConditionCodeEncoding_Shift;
+		evaluateIeeAluOperation(UOp->ieeOperation, UOp->ieeOperationSize, conditionCode, s_flags, ieeAValue, ieeBValue, &ieeResultValue, &flagsModifier);
 	}
 
 	// WB stage

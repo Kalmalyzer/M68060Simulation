@@ -680,7 +680,16 @@ static void evaluateMoveFromCcr(Flags flags, uint32_t ieeBValue, uint32_t* ieeRe
 	*ieeResult = mask(flags & Flags_All_Mask, ieeBValue, operationMask);
 }
 
-void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+static void evaluateScc(ConditionCode conditionCode, Flags flags, uint32_t ieeBValue, uint32_t* ieeResult)
+{
+	uint32_t operationMask = 0xff;
+	bool condition = evaluateConditionCode(conditionCode, flags);
+	uint8_t result = (condition ? 0xff : 0x00);
+
+	*ieeResult = mask(result, ieeBValue, operationMask);
+}
+
+void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, ConditionCode conditionCode, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	setEmptyFlagsModifier(flagsModifier);
 	*ieeResult = 0;
@@ -885,6 +894,11 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_MoveFromCcr:
 			{
 				evaluateMoveFromCcr(flags, ieeBValue, ieeResult);
+				break;
+			}
+		case IeeOperation_Scc:
+			{
+				evaluateScc(conditionCode, flags, ieeBValue, ieeResult);
 				break;
 			}
 		default:

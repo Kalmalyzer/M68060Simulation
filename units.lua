@@ -200,6 +200,7 @@ Program {
 		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
 		"M68060InstructionExecution/M68060IeeAlu.c",
 		"M68060InstructionExecution/TestIeeAlu.c",
+		"M68060ISA/M68060ConditionCode.c",
 		"M68060ISA/M68060Flags.c",
 	},
 }
@@ -248,6 +249,7 @@ Program {
 		"M68060InstructionExecution/M68060IntegerRegisterFile.c",
 		"M68060InstructionExecution/M68060SimpleOEP.c",
 		"M68060InstructionExecution/TestSimpleOEP.c",
+		"M68060ISA/M68060ConditionCode.c",
 		"M68060ISA/M68060Flags.c",
 	},
 }
