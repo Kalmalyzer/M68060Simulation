@@ -420,17 +420,19 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 	}
 
 	
-	if (!validInstruction)
+	if (validInstruction)
+	{
+		instructionLength.totalWords = 1 + instructionLength.numSpecialOperandSpecifierWords
+			 + instructionLength.numSourceEAExtensionWords + instructionLength.numDestinationEAExtensionWords;
+			
+		*outInstructionLength = instructionLength;
+		return true;
+	}
+	else
 	{
 		InstructionLength invalidInstructionLength = { 0, 0, 0, 0, "invalid instruction" } ;
 		
-		instructionLength = invalidInstructionLength;
+		*outInstructionLength = invalidInstructionLength;
+		return false;
 	}
-
-	instructionLength.totalWords = 1 + instructionLength.numSpecialOperandSpecifierWords
-		 + instructionLength.numSourceEAExtensionWords + instructionLength.numDestinationEAExtensionWords;
-		
-	*outInstructionLength = instructionLength;
-	
-	return true;
 }
