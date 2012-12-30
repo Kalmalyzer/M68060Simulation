@@ -34,4 +34,7 @@ typedef struct
 	
 } UOp;
 
+bool areUOpsEquivalent(const UOp* a, const UOp* b);
+void printUOp(const UOp* UOp);
+
 #endif

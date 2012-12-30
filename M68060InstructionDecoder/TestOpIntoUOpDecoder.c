@@ -725,46 +725,6 @@ TestSuite testSuites[] =
 	{ "Miscellaneous tests", miscellaneousTests, (sizeof miscellaneousTests / sizeof miscellaneousTests[0]) },
 };
 
-bool areUOpsEquivalent(const UOp* a, const UOp* b)
-{
-	return
-		!strcmp(a->description, b->description)
-		&& a->opWord == b->opWord
-		&& a->extensionWords[0] == b->extensionWords[0]
-		&& a->extensionWords[1] == b->extensionWords[1]
-		&& a->aguBase == b->aguBase
-		&& a->aguIndex == b->aguIndex
-		&& a->aguIndexShift == b->aguIndexShift
-		&& a->aguIndexSize == b->aguIndexSize
-		&& a->aguDisplacementSize == b->aguDisplacementSize
-		&& a->aguOperation == b->aguOperation
-		&& a->aguResult == b->aguResult
-		&& a->memoryRead == b->memoryRead
-		&& a->ieeA == b->ieeA
-		&& a->ieeB == b->ieeB
-		&& a->ieeOperationSize == b->ieeOperationSize
-		&& a->ieeOperation == b->ieeOperation
-		&& a->ieeResult == b->ieeResult
-		&& a->memoryWrite == b->memoryWrite
-		&& a->pairability == b->pairability;
-}
-
-void printUOp(uint id, const UOp* UOp)
-{
-	printf("    UOp %d: %s\n", id, UOp->description);
-	printf("      OpWord & ExtensionWords: %04x,%04x,%04x\n", UOp->opWord, UOp->extensionWords[0], UOp->extensionWords[1]);
-	printf("      Agu: Base %s, Index %s, IndexShift %d, IndexSize %s, DisplacementSize %s, Operation %s, Result %s\n",
-		ExecutionResourceToString(UOp->aguBase), ExecutionResourceToString(UOp->aguIndex),
-		UOp->aguIndexShift, AguIndexSizeToString(UOp->aguIndexSize), AguDisplacementSizeToString(UOp->aguDisplacementSize),
-		AguOperationToString(UOp->aguOperation), ExecutionResourceToString(UOp->aguResult));
-	printf("      MemoryRead: %s\n", UOp->memoryRead ? "yes" : "no");
-	printf("      Iee: A %s, B %s, OperationSize %s, Operation %s, Result %s\n",
-		ExecutionResourceToString(UOp->ieeA), ExecutionResourceToString(UOp->ieeB),
-		OperationSizeToString(UOp->ieeOperationSize), IeeOperationToString(UOp->ieeOperation), ExecutionResourceToString(UOp->ieeResult));
-	printf("      MemoryWrite: %s\n", UOp->memoryWrite ? "yes" : "no");
-	printf("      Pairability: %s\n", PairabilityToString(UOp->pairability));
-}
-
 void runTestSuite(const InstructionTestCase* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)
 {
 	uint numSuccessfulTests = 0;
@@ -815,12 +775,18 @@ void runTestSuite(const InstructionTestCase* tests, uint numTests, bool printSuc
 					printf("failure: decoding %s should yield the following UOps:\n", InstructionTestCase->description);
 
 					for (UOp = 0; UOp < InstructionTestCase->numUOps; ++UOp)
-						printUOp(UOp, &InstructionTestCase->UOps[UOp]);
+					{
+						printf("UOp %d:\n", UOp);
+						printUOp(&InstructionTestCase->UOps[UOp]);
+					}
 
-					printf("  but yielded the following UOps:\n");
+					printf("...but yielded the following UOps:\n");
 
 					for (UOp = 0; UOp < numUOps; ++UOp)
-						printUOp(UOp, &UOps[UOp]);
+					{
+						printf("UOp %d:\n", UOp);
+						printUOp(&UOps[UOp]);
+					}
 				}
 			}
 		}

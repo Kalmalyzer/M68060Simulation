@@ -3,22 +3,6 @@
 #include "../Musashi/m68kcpu.h"
 #include "../Types.h"
 
-void printUOp(uint id, const UOp* UOp)
-{
-	printf("    UOp %d: %s\n", id, UOp->description);
-	printf("      OpWord & ExtensionWords: %04x,%04x,%04x\n", UOp->opWord, UOp->extensionWords[0], UOp->extensionWords[1]);
-	printf("      Agu: Base %s, Index %s, IndexShift %d, IndexSize %s, DisplacementSize %s, Operation %s, Result %s\n",
-		ExecutionResourceToString(UOp->aguBase), ExecutionResourceToString(UOp->aguIndex),
-		UOp->aguIndexShift, AguIndexSizeToString(UOp->aguIndexSize), AguDisplacementSizeToString(UOp->aguDisplacementSize),
-		AguOperationToString(UOp->aguOperation), ExecutionResourceToString(UOp->aguResult));
-	printf("      MemoryRead: %s\n", UOp->memoryRead ? "yes" : "no");
-	printf("      Iee: A %s, B %s, OperationSize %s, Operation %s, Result %s\n",
-		ExecutionResourceToString(UOp->ieeA), ExecutionResourceToString(UOp->ieeB),
-		OperationSizeToString(UOp->ieeOperationSize), IeeOperationToString(UOp->ieeOperation), ExecutionResourceToString(UOp->ieeResult));
-	printf("      MemoryWrite: %s\n", UOp->memoryWrite ? "yes" : "no");
-	printf("      Pairability: %s\n", PairabilityToString(UOp->pairability));
-}
-
 int main(int argc, char** argv)
 {
 	uint16_t instructionWords[16];
@@ -56,7 +40,10 @@ int main(int argc, char** argv)
 	printf("\nInstruction: %s\n\n", musashiDisassembledInstruction);
 
 	for (UOpId = 0; UOpId < numUOps; ++UOpId)
-		printUOp(UOpId, &UOps[UOpId]);
+	{
+		printf("UOp %d:\n", UOpId);
+		printUOp(&UOps[UOpId]);
+	}
 	
 	return 0;
 }

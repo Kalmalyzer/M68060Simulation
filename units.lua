@@ -153,6 +153,7 @@ Program {
 		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
 		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
+		"M68060InstructionDecoder/M68060UOp.c",
 		"M68060InstructionDecoder/TestOpIntoUOpDecoder.c",
 	},
 }
@@ -168,6 +169,7 @@ Program {
 		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
 		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
 		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
+		"M68060InstructionDecoder/M68060UOp.c",
 		"M68060InstructionDecoder/CommandLineOpIntoUOpDecoder.c",
 		"Musashi/StandardMusashiCallbacks.c",
 	},
