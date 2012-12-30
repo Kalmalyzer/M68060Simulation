@@ -694,9 +694,17 @@ static const InstructionTestCase miscellaneousTests[] =
 //	{ "RTR", { 0x4e77, }, 1, "RTR" },
 //	{ "RTS", { 0x4e75, }, 1, "RTS" },
 
-//	{ "ST D7", { 0x50c7, }, 1, "Scc <ea>" },
-//	{ "SNE (A2)", { 0x56d2, }, 1, "Scc <ea>" },
-//	{ "SEQ $1234(A3)", { 0x57eb, 0x1234, }, 2, "Scc <ea>" },
+	{ "ST D7", 1, { 0x50c7, }, 1, {
+																														{ "Scc <ea>",				0x50c7, { 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_CCR,				ExecutionResource_D7,				OperationSize_Byte, IeeOperation_Scc,			ExecutionResource_D7,				false,	Pairability_pOEP_But_Allows_sOEP,	},
+	}, },
+
+	{ "SNE (A2)", 1, { 0x56d2, }, 1, {
+																														{ "Scc <ea>",				0x56d2, { 0x0000, 0x0000, },	ExecutionResource_A2,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				false,	ExecutionResource_CCR,				ExecutionResource_None,				OperationSize_Byte, IeeOperation_Scc,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_But_Allows_sOEP,	},
+	}, },
+
+	{ "SEQ $1234(A3)", 2, { 0x57eb, 0x1234, }, 1, {
+																														{ "Scc <ea>",				0x57eb, { 0x1234, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				false,	ExecutionResource_CCR,				ExecutionResource_None,				OperationSize_Byte, IeeOperation_Scc,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_But_Allows_sOEP,	},
+	}, },
 
 //	{ "SWAP D3", { 0x4843, }, 1, "SWAP Dn" },
 

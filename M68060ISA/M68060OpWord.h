@@ -45,4 +45,8 @@ enum { OpWord_DefaultImm8BitEncoding_Shift = 0 };
 enum { OpWord_DefaultImm8BitEncoding_Bits = 8 };
 enum { OpWord_DefaultImm8BitEncoding_Mask = ((1 << OpWord_DefaultImm8BitEncoding_Bits) - 1) << OpWord_DefaultImm8BitEncoding_Shift };
 
+enum { OpWord_DefaultConditionCodeEncoding_Shift = 8 };
+enum { OpWord_DefaultConditionCodeEncoding_Bits = 4 };
+enum { OpWord_DefaultConditionCodeEncoding_Mask = ((1 << OpWord_DefaultConditionCodeEncoding_Bits) - 1) << OpWord_DefaultConditionCodeEncoding_Shift };
+
 #endif

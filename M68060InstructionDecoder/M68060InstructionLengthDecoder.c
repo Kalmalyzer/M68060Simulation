@@ -1,9 +1,10 @@
 #include "M68060InstructionLengthDecoder.h"
 #include "../Assert.h"
 
-#include "M68060EA.h"
+#include "../M68060ISA/M68060EA.h"
+#include "../M68060ISA/M68060OpWord.h"
+#include "M68060EAMode.h"
 #include "M68060InstructionDecoderTypes.h"
-#include "M68060OpWord.h"
 #include "M68060OpWordDecodeInformation.h"
 
 //Define this if you want decoding of some illegal EAs to not outright reject the instruction.

@@ -3,7 +3,7 @@
 #define M68060OPWORDDECODEINFORMATION_H
 
 #include "../Types.h"
-#include "M68060EA.h"
+#include "M68060EAMode.h"
 #include "M68060InstructionDecoderTypes.h"
 
 typedef enum
@@ -71,7 +71,8 @@ typedef enum
 	OpWordClass_Byte_SrcDn_DestEa_Data_ReadOnly,
 	OpWordClass_Long_SrcDn_DestEa_Data_ReadOnly,
 	OpWordClass_DestEa_DataAlterable,
-	OpWordClass_Word_SrcCCR_DestEa_DataAlterable,
+	OpWordClass_Byte_SrcCCR_DestEa_DataAlterable_WriteOnly_If_WholeOperand,
+	OpWordClass_Word_SrcCCR_DestEa_DataAlterable_WriteOnly_If_WholeOperand,
 	OpWordClass_Byte_SrcDn_DestEa_DataAlterable_ReadWrite,
 	OpWordClass_Long_SrcDn_DestEa_DataAlterable_ReadWrite,
 	OpWordClass_Word_SrcImmValue1_DestEa_MemoryAlterable,

@@ -185,6 +185,7 @@ const char* IeeOperationToString(IeeOperation ieeOperation)
 		"OrToCcr",
 		"MoveToCcr",
 		"MoveFromCcr",
+		"Scc",
 	};
 
 	M68060_ASSERT((size_t) ieeOperation < (sizeof ieeOperationStrings / sizeof ieeOperationStrings[0]), "Invalid ieeOperation");

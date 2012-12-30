@@ -3,7 +3,7 @@
 #define M68060SIMPLEOEP_H
 
 #include "../M68060InstructionDecoder/M68060UOp.h"
-#include "M68060Flags.h"
+#include "../M68060ISA/M68060Flags.h"
 
 void executeUOp(const UOp* UOp);
 

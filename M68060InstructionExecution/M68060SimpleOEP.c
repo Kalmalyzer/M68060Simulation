@@ -1,12 +1,15 @@
 
 #include "M68060SimpleOEP.h"
+
+#include "../Assert.h"
+
+#include "../M68060ISA/M68060OpWord.h"
+
 #include "M68060IntegerRegisterFile.h"
 #include "M68060AguAlu.h"
 #include "M68060IeeAlu.h"
 #include "DummyMemorySubSystem.h"
 #include "../M68060InstructionDecoder/M68060InstructionDecoderTypes.h"
-#include "../M68060InstructionDecoder/M68060OpWord.h"
-#include "../Assert.h"
 
 
 static uint32_t s_aguResult;

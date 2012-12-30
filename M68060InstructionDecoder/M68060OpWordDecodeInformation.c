@@ -42,7 +42,8 @@ static OpWordClassInfo s_opWordClassInformation[] =
 	{ 0, SizeEncoding_Byte, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_Data, DecodeOperand_SecondaryDnLocation, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_ReadOnly, }, // OpWordClass_Byte_SrcDn_DestEa_Data_ReadOnly,
 	{ 0, SizeEncoding_Long, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_Data, DecodeOperand_SecondaryDnLocation, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_ReadOnly, }, // OpWordClass_Byte_SrcDn_DestEa_Data_ReadOnly,
 	{ 0, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, }, // OpWordClass_DestEa_DataAlterable,
-	{ 0, SizeEncoding_Word, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, DecodeOperand_CCR, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_WriteOnly_If_WholeOperand, }, // OpWordClass_Word_SrcCCR_DestEa_DataAlterable,
+	{ 0, SizeEncoding_Byte, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, DecodeOperand_CCR, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_WriteOnly_If_WholeOperand, }, // OpWordClass_Byte_SrcCCR_DestEa_DataAlterable_WriteOnly_If_WholeOperand,
+	{ 0, SizeEncoding_Word, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, DecodeOperand_CCR, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_WriteOnly_If_WholeOperand, }, // OpWordClass_Word_SrcCCR_DestEa_DataAlterable_WriteOnly_If_WholeOperand,
 	{ 0, SizeEncoding_Byte, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, DecodeOperand_SecondaryDnLocation, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_ReadWrite, }, // OpWordClass_Byte_SrcDn_DestEa_DataAlterable_ReadWrite,
 	{ 0, SizeEncoding_Long, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_DataAlterable, DecodeOperand_SecondaryDnLocation, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_ReadWrite, }, // OpWordClass_Long_SrcDn_DestEa_DataAlterable_ReadWrite,
 	{ 0, SizeEncoding_Word, EAEncoding_None, EAModeMask_None, EAEncoding_DefaultEALocation, EAModeMask_MemoryAlterable, DecodeOperand_Constant1, DecodeOperand_DefaultEALocation, DestinationOperandAccessType_ReadWrite, }, // OpWordClass_Word_SrcImmValue1_DestEa_MemoryAlterable,
@@ -67,7 +68,7 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ false, 0xf0ff, 0x50fa, "TRAPcc.W #imm", OpWordClass_ImmediateWord, }, // Shadows Scc <ea>
 	{ false, 0xf0ff, 0x50fb, "TRAPcc.L #imm", OpWordClass_ImmediateLong, }, // Shadows Scc <ea>
 	{ false, 0xf0f8, 0x50c8, "DBcc <relative address>", OpWordClass_ImmediateWord, }, // Shadows Scc <ea>
-	{ false, 0xf0c0, 0x50c0, "Scc <ea>", OpWordClass_DestEa_DataAlterable, }, // Shadows ADDQ/SUBQ
+	{ true, 0xf0c0, 0x50c0, "Scc <ea>", OpWordClass_Byte_SrcCCR_DestEa_DataAlterable_WriteOnly_If_WholeOperand, IeeOperation_Scc, Pairability_pOEP_But_Allows_sOEP, }, // Shadows ADDQ/SUBQ
 
 	{ true, 0xf1f8, 0xc100, "ABCD Dx,Dy", OpWordClass_EncodedSize_SrcDn_DestDn, IeeOperation_Abcd, Pairability_pOEP_Only, },
 	{ true, 0xf1f8, 0xc108, "ABCD -(Ax),-(Ay)", OpWordClass_EncodedSize_SrcAnPreDecrement_DestAnPreDecrement, IeeOperation_Abcd, Pairability_pOEP_Only, },
@@ -154,7 +155,7 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ true, 0xf138, 0xe118, "ROL #imm,Dn", OpWordClass_EncodedSize_SrcImm3Bit_DestDn, IeeOperation_Rol, Pairability_pOEP_Or_sOEP, },
 	{ true, 0xf138, 0xe138, "ROL Dm,Dn", OpWordClass_EncodedSize_SrcDn_DestDn_2, IeeOperation_Rol, Pairability_pOEP_Or_sOEP, },
 	
-	{ true, 0xffc0, 0x42c0, "MOVE CCR,<ea>", OpWordClass_Word_SrcCCR_DestEa_DataAlterable, IeeOperation_MoveFromCcr, Pairability_pOEP_Or_sOEP, }, // Shadows CLR
+	{ true, 0xffc0, 0x42c0, "MOVE CCR,<ea>", OpWordClass_Word_SrcCCR_DestEa_DataAlterable_WriteOnly_If_WholeOperand, IeeOperation_MoveFromCcr, Pairability_pOEP_Or_sOEP, }, // Shadows CLR
 
 	{ true, 0xff00, 0x4200, "CLR <ea>", OpWordClass_EncodedSize_DestEa_WriteOnly_If_WholeOperand, IeeOperation_Clr, Pairability_pOEP_Or_sOEP, },
 	{ true, 0xf138, 0xb108, "CMPM (Ax)+,(Ay)+", OpWordClass_EncodedSize_SrcAnPostIncrement_DestAnPostIncrementReadOnly, IeeOperation_Cmp, Pairability_pOEP_Only, }, // Shadows EOR

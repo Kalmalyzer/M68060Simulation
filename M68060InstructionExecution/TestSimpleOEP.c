@@ -1,6 +1,5 @@
 
 #include "M68060SimpleOEP.h"
-#include "M68060Flags.h"
 #include "../M68060InstructionDecoder/M68060DecodeOpIntoUOps.h"
 
 enum { MaxMemoryRange = 64 };
