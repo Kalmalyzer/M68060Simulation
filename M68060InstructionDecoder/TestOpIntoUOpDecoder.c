@@ -728,7 +728,7 @@ TestSuite testSuites[] =
 bool areUOpsEquivalent(const UOp* a, const UOp* b)
 {
 	return
-		!strcmp(a->mnemonic, b->mnemonic)
+		!strcmp(a->description, b->description)
 		&& a->opWord == b->opWord
 		&& a->extensionWords[0] == b->extensionWords[0]
 		&& a->extensionWords[1] == b->extensionWords[1]
@@ -751,7 +751,7 @@ bool areUOpsEquivalent(const UOp* a, const UOp* b)
 
 void printUOp(uint id, const UOp* UOp)
 {
-	printf("    UOp %d: %s\n", id, UOp->mnemonic);
+	printf("    UOp %d: %s\n", id, UOp->description);
 	printf("      OpWord & ExtensionWords: %04x,%04x,%04x\n", UOp->opWord, UOp->extensionWords[0], UOp->extensionWords[1]);
 	printf("      Agu: Base %s, Index %s, IndexShift %d, IndexSize %s, DisplacementSize %s, Operation %s, Result %s\n",
 		ExecutionResourceToString(UOp->aguBase), ExecutionResourceToString(UOp->aguIndex),

@@ -5,8 +5,8 @@
 
 void printUOp(uint id, const UOp* UOp)
 {
-	printf("    UOp %d: %s\n", id, UOp->mnemonic);
-	printf("      ExtensionWords: %04x,%04x\n", UOp->extensionWords[0], UOp->extensionWords[1]);
+	printf("    UOp %d: %s\n", id, UOp->description);
+	printf("      OpWord & ExtensionWords: %04x,%04x,%04x\n", UOp->opWord, UOp->extensionWords[0], UOp->extensionWords[1]);
 	printf("      Agu: Base %s, Index %s, IndexShift %d, IndexSize %s, DisplacementSize %s, Operation %s, Result %s\n",
 		ExecutionResourceToString(UOp->aguBase), ExecutionResourceToString(UOp->aguIndex),
 		UOp->aguIndexShift, AguIndexSizeToString(UOp->aguIndexSize), AguDisplacementSizeToString(UOp->aguDisplacementSize),

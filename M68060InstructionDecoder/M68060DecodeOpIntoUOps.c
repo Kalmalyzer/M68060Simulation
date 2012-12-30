@@ -172,7 +172,7 @@ static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 
 		if (hasDoubleIndirection)
 		{
-			firstOp.mnemonic = "LOAD";
+			firstOp.description = "LOAD";
 			firstOp.memoryRead = true;
 			firstOp.aguOperation = AguOperation_OffsetBaseIndexScale;
 			firstOp.ieeA = ExecutionResource_MemoryOperand;
@@ -181,7 +181,7 @@ static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 			firstOp.ieeResult = ExecutionResource_AguTemp;
 			firstOp.pairability = Pairability_pOEP_Only;
 
-			secondOp.mnemonic = "LEA";
+			secondOp.description = "LEA";
 			secondOp.aguBase = ExecutionResource_AguTemp;
 			secondOp.aguOperation = AguOperation_OffsetBaseIndexScale;
 			secondOp.aguResult = ExecutionResource_AguTemp;
@@ -189,7 +189,7 @@ static void decodeBriefOrFullExtensionWord(const uint16_t* operandSpecifierWords
 		}
 		else
 		{
-			firstOp.mnemonic = "LEA";
+			firstOp.description = "LEA";
 			firstOp.aguOperation = AguOperation_OffsetBaseIndexScale;
 			firstOp.aguResult = ExecutionResource_AguTemp;
 			firstOp.pairability = Pairability_pOEP_Only;
@@ -859,7 +859,7 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 				sourceUOp.ieeOperation = IeeOperation_ForwardIeeA;
 				sourceUOp.ieeOperationSize = ieeOperationSize;
 				sourceUOp.ieeResult = ExecutionResource_IeeTemp;
-				sourceUOp.mnemonic = "SOURCEUOP";
+				sourceUOp.description = "SOURCEUOP";
 				sourceUOp.pairability = Pairability_pOEP_Only;
 				writeUOp(UOpWriteBuffer, &sourceUOp);
 
@@ -888,7 +888,7 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 	
 	mainUOp.opWord = opWord;
 	
-	mainUOp.mnemonic = opWordDecodeInfo->description;
+	mainUOp.description = opWordDecodeInfo->description;
 	mainUOp.pairability = opWordDecodeInfo->pairability;
 
 	writeUOp(UOpWriteBuffer, &mainUOp);

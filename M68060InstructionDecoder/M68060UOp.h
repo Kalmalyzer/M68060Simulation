@@ -7,7 +7,7 @@
 
 typedef struct
 {
-	const char* mnemonic;
+	const char* description;
 
 	uint16_t opWord;
 	uint16_t extensionWords[2];
