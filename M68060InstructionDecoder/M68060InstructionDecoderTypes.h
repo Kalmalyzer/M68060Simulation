@@ -38,7 +38,10 @@ typedef enum
 	ExecutionResource_AguTemp, // Temporary register used when decomposing complex addressing modes into multiple UOps
 	ExecutionResource_IeeTemp, // Temporary register used when decomposing instructions with both immediates and displacements into multiple UOps
 
-	ExecutionResource_Imm3Bit, // Special 3-bit immediate operand that is embedded in the UOp, outside of the UOp's extensionWords
+	ExecutionResource_ImmOpWord3Bit, // Special 3-bit immediate operand that is embedded in the OpWord
+	ExecutionResource_ImmOpWord8Bit, // Special 8-bit immediate operand that is embedded in the OpWord
+
+	ExecutionResource_Constant1, // Constant value "1"
 
 	ExecutionResource_CCR,
 	

@@ -539,27 +539,21 @@ static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, Operatio
 			decodeImmediateOperand(OperationSize_Byte, operandSpecifierWords, mainUOp, ieeInput, hasMemoryReference);
 			break;
 		}
-	case DecodeOperand_Imm3Bit:
+	case DecodeOperand_ImmOpWord3Bit:
 		{
-			uint8_t imm3BitValue = (opWord & OpWord_DefaultImm3BitEncoding_Mask) >> OpWord_DefaultImm3BitEncoding_Shift;
-			mainUOp->imm3Bit = (imm3BitValue ? imm3BitValue : 8);
-			*ieeInput = ExecutionResource_Imm3Bit;
+			*ieeInput = ExecutionResource_ImmOpWord3Bit;
 			*hasMemoryReference = false;
 			break;
 		}
-	case DecodeOperand_Imm3BitValue1:
+	case DecodeOperand_Constant1:
 		{
-			uint8_t imm3BitValue = (opWord & OpWord_DefaultImm3BitEncoding_Mask) >> OpWord_DefaultImm3BitEncoding_Shift;
-			mainUOp->imm3Bit = 1;
-			*ieeInput = ExecutionResource_Imm3Bit;
+			*ieeInput = ExecutionResource_Constant1;
 			*hasMemoryReference = false;
 			break;
 		}
-	case DecodeOperand_Imm8Bit:
+	case DecodeOperand_ImmOpWord8Bit:
 		{
-			uint8_t imm8BitValue = (opWord & OpWord_DefaultImm8BitEncoding_Mask) >> OpWord_DefaultImm8BitEncoding_Shift;
-			mainUOp->extensionWords[0] = imm8BitValue;
-			*ieeInput = ExecutionResource_uOpByte0;
+			*ieeInput = ExecutionResource_ImmOpWord8Bit;
 			*hasMemoryReference = false;
 			break;
 		}
@@ -766,9 +760,9 @@ static PreDecodedOperand preDecodeOperand(uint16_t opWord, DecodeOperand decodeO
 	case DecodeOperand_SecondaryDnLocation:
 	case DecodeOperand_SecondaryAnLocation:
 	case DecodeOperand_SecondaryAnAguResultLocation:
-	case DecodeOperand_Imm3Bit:
-	case DecodeOperand_Imm3BitValue1:
-	case DecodeOperand_Imm8Bit:
+	case DecodeOperand_ImmOpWord3Bit:
+	case DecodeOperand_Constant1:
+	case DecodeOperand_ImmOpWord8Bit:
 		{
 			preDecodedOperand.needsExtensionWords = false;
 			preDecodedOperand.hasMemoryReference = false;
@@ -891,6 +885,8 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 	mainUOp.ieeB = decodeIeeB(destinationOperandAccessType, destinationExecutionResource);
 	mainUOp.ieeResult = decodeIeeResult(destinationOperandAccessType, destinationExecutionResource);
 	decodeMemoryReferences(destinationOperandAccessType, sourceOperandMemoryReference, destinationOperandMemoryReference, &mainUOp.memoryRead, &mainUOp.memoryWrite);
+	
+	mainUOp.opWord = opWord;
 	
 	mainUOp.mnemonic = opWordDecodeInfo->description;
 	mainUOp.pairability = opWordDecodeInfo->pairability;

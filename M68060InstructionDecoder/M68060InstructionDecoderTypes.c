@@ -34,7 +34,9 @@ const char* ExecutionResourceToString(ExecutionResource executionResource)
 		"uOpLong",
 		"AguTemp",
 		"IeeTemp",
-		"Imm3Bit",
+		"ImmOpWord3Bit",
+		"ImmOpWord8Bit",
+		"Constant1",
 		"CCR",
 	};
 

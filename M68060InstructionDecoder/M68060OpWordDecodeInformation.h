@@ -123,9 +123,9 @@ typedef enum
 	DecodeOperand_MoveDestinationEALocation,
 	DecodeOperand_Immediate,
 	DecodeOperand_Immediate_ExtensionWords_Byte,
-	DecodeOperand_Imm3Bit,
-	DecodeOperand_Imm3BitValue1,
-	DecodeOperand_Imm8Bit,
+	DecodeOperand_ImmOpWord3Bit,
+	DecodeOperand_Constant1,
+	DecodeOperand_ImmOpWord8Bit,
 	DecodeOperand_CCR,
 
 } DecodeOperand;

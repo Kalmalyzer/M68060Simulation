@@ -9,6 +9,7 @@ typedef struct
 {
 	const char* mnemonic;
 
+	uint16_t opWord;
 	uint16_t extensionWords[2];
 	
 	ExecutionResource aguBase;
@@ -30,8 +31,6 @@ typedef struct
 	bool memoryWrite;
 
 	Pairability pairability;
-
-	uint8_t imm3Bit;
 	
 } UOp;
 

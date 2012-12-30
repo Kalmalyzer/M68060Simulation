@@ -5,6 +5,7 @@
 #include "M68060IeeAlu.h"
 #include "DummyMemorySubSystem.h"
 #include "../M68060InstructionDecoder/M68060InstructionDecoderTypes.h"
+#include "../M68060InstructionDecoder/M68060OpWord.h"
 #include "../Assert.h"
 
 
@@ -51,8 +52,18 @@ static uint32_t readExecutionResource(ExecutionResource executionResource, const
 			return s_aguTemp;
 		case ExecutionResource_IeeTemp:
 			return s_ieeTemp;
-		case ExecutionResource_Imm3Bit:
-			return UOp->imm3Bit;
+		case ExecutionResource_ImmOpWord3Bit:
+			{
+				uint value = (UOp->opWord & OpWord_DefaultImm3BitEncoding_Mask) >> OpWord_DefaultImm3BitEncoding_Shift;
+				return (value ? value : 8);
+			}
+		case ExecutionResource_ImmOpWord8Bit:
+			{
+				int8_t value = (UOp->opWord & OpWord_DefaultImm8BitEncoding_Mask) >> OpWord_DefaultImm8BitEncoding_Shift;
+				return (uint32_t) (int32_t) value;
+			}
+		case ExecutionResource_Constant1:
+			return 1;
 		default:
 			M68060_ERROR("ExecutionResource not supported");
 			return 0;
