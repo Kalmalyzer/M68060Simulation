@@ -706,7 +706,9 @@ static const InstructionTestCase miscellaneousTests[] =
 																														{ "Scc <ea>",				0x57eb, { 0x1234, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				false,	ExecutionResource_CCR,				ExecutionResource_None,				OperationSize_Byte, IeeOperation_Scc,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_But_Allows_sOEP,	},
 	}, },
 
-//	{ "SWAP D3", { 0x4843, }, 1, "SWAP Dn" },
+	{ "SWAP D3", 1, { 0x4843, }, 1, {
+																														{ "SWAP Dn",				0x4843, { 0x0000, 0x0000, },	ExecutionResource_None,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_None,					ExecutionResource_None,				false,	ExecutionResource_None,				ExecutionResource_D3,				OperationSize_Long, IeeOperation_Swap,			ExecutionResource_D3,				false,	Pairability_pOEP_Only,				},
+	}, },
 
 //	{ "TAS D2", { 0x4ac2, }, 1, "TAS <ea>" },
 //	{ "TAS $12(A5,D3.L)", { 0x4af5, 0x3812, }, 2, "TAS <ea>" },

@@ -689,6 +689,16 @@ static void evaluateScc(ConditionCode conditionCode, Flags flags, uint32_t ieeBV
 	*ieeResult = mask(result, ieeBValue, operationMask);
 }
 
+static void evaluateSwap(uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
+{
+	uint32_t operationMask = getOperationMask(OperationSize_Long);
+	uint32_t operationHighestBitMask = operationMask - (operationMask >> 1);
+	uint32_t result = (ieeBValue << 16) | (ieeBValue >> 16);
+	
+	*ieeResult = result;
+	setFlagsModifierNZVC(result & operationHighestBitMask, !(result& operationMask), false, false, flagsModifier);
+}
+
 void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationSize, ConditionCode conditionCode, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	setEmptyFlagsModifier(flagsModifier);
@@ -899,6 +909,11 @@ void evaluateIeeAluOperation(IeeOperation ieeOperation, OperationSize operationS
 		case IeeOperation_Scc:
 			{
 				evaluateScc(conditionCode, flags, ieeBValue, ieeResult);
+				break;
+			}
+		case IeeOperation_Swap:
+			{
+				evaluateSwap(ieeBValue, ieeResult, flagsModifier);
 				break;
 			}
 		default:

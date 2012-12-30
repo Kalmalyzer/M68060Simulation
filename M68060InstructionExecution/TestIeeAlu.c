@@ -110,6 +110,7 @@ IeeAluTest tests[] =
 	{ "SF 0x12345678 ()", IeeOperation_Scc, OperationSize_Byte, ConditionCode_F, 0, 0x00000000, 0x12345678, 0x12345600, { Flags_All_Mask, 0, }, },
 	{ "SNE 0x12345678 (XNZVC)", IeeOperation_Scc, OperationSize_Byte, ConditionCode_Ne, Flags_Extend_Mask | Flags_Negative_Mask | Flags_Zero_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, 0x00000000, 0x12345678, 0x12345600, { Flags_All_Mask, 0, }, },
 	{ "SNE 0x12345678 (XNVC)", IeeOperation_Scc, OperationSize_Byte, ConditionCode_Ne, Flags_Extend_Mask | Flags_Negative_Mask | Flags_Overflow_Mask | Flags_Carry_Mask, 0x00000000, 0x12345678, 0x123456ff, { Flags_All_Mask, 0, }, },
+	{ "swap 0x12345678", IeeOperation_Swap, OperationSize_Long, 0, 0, 0x00000000, 0x12345678, 0x56781234, { Flags_Extend_Mask, 0, }, },
 };
 
 void runTestSuite(const IeeAluTest* tests, uint numTests, bool printSuccess, bool printFailure, uint* accumulatedSuccessfulTests, uint* accumulatedTotalTests)

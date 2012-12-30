@@ -154,6 +154,7 @@ typedef enum
 	IeeOperation_MoveToCcr,
 	IeeOperation_MoveFromCcr,
 	IeeOperation_Scc,
+	IeeOperation_Swap,
 
 } IeeOperation;
 

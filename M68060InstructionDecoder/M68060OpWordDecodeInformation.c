@@ -226,7 +226,7 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ true, 0xffff, 0x003c, "ORI #imm,CCR", OpWordClass_Byte_SrcImmediate_DestCCR, IeeOperation_OrToCcr, Pairability_pOEP_Only, }, // Shadows ANDI #imm,<ea>
 	{ true, 0xff00, 0x0000, "ORI #imm,<ea>", OpWordClass_EncodedSize_Imm_Ea_ReadWrite, IeeOperation_Or, Pairability_pOEP_Or_sOEP, },
 
-	{ false, 0xfff8, 0x4840, "SWAP Dn", OpWordClass_NoExtraWords, }, // Shadows PEA
+	{ true, 0xfff8, 0x4840, "SWAP Dn", OpWordClass_Long_DestDnReadWrite, IeeOperation_Swap, Pairability_pOEP_Only, }, // Shadows PEA
 
 	{ false, 0xffc0, 0x4840, "PEA <ea>", OpWordClass_Control, },
 
