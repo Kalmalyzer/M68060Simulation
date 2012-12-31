@@ -29,6 +29,7 @@ bool areUOpsEquivalent(const UOp* a, const UOp* b)
 
 void printUOp(const UOp* UOp)
 {
+	printf("Description: %s\n", UOp->description);
 	printf("OpWord & ExtensionWords: %04x,%04x,%04x\n", UOp->opWord, UOp->extensionWords[0], UOp->extensionWords[1]);
 	printf("Agu: Base %s, Index %s, IndexShift %d, IndexSize %s, DisplacementSize %s, Operation %s, Result %s\n",
 		ExecutionResourceToString(UOp->aguBase), ExecutionResourceToString(UOp->aguIndex),
