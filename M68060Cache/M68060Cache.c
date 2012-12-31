@@ -2,6 +2,8 @@
 #include "M68060Cache.h"
 
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 
 static M68060Cache Cache;
 

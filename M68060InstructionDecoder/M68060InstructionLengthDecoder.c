@@ -488,7 +488,6 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 	const OpWordDecodeInfo* opWordDecodeInfo;
 	const BranchDecodeInfo* branchDecodeInfo;
 	uint16_t opWord;
-	uint operandOffset;
 	InstructionLength instructionLength = { 0 };
 	bool validInstruction = true;
 

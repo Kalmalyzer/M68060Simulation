@@ -2,6 +2,9 @@
 #include "M68060InstructionLengthDecoder.h"
 #include "../Types.h"
 
+#include <stdio.h>
+#include <string.h>
+
 typedef struct
 {
 	const char* instruction;

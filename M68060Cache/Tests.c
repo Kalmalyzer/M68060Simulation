@@ -1,6 +1,9 @@
 
 #include "M68060Cache.h"
 
+#include <stdio.h>
+#include <string.h>
+
 bool withinRange(uint32_t value, uint32_t ref, float minRatio, float maxRatio)
 {
 	return (float) value >= (ref * minRatio) && (float) value <= (ref * maxRatio);
@@ -8,16 +11,16 @@ bool withinRange(uint32_t value, uint32_t ref, float minRatio, float maxRatio)
 
 void test7(M68060Cache* cache)
 {
-	int totalLineAccesses = 0;
-	int totalLineHits = 0;
-	int totalLineMisses = 0;
-	int totalLineReads = 0;
-	int totalLineWriteBacks = 0;
+	uint totalLineAccesses = 0;
+	uint totalLineHits = 0;
+	uint totalLineMisses = 0;
+	uint totalLineReads = 0;
+	uint totalLineWriteBacks = 0;
 	uint32_t i;
-	int start = 0x10000;
-	int size = 4;
-	int stride = 4;
-	int count = 2048;
+	uint start = 0x10000;
+	uint size = 4;
+	uint stride = 4;
+	uint count = 2048;
 
 	M68060Cache_invalidate(cache);
 	
@@ -28,14 +31,14 @@ void test7(M68060Cache* cache)
 		M68060Cache_write(cache, address, size, &result);
 
 		{
-			int numLineAccesses = result.numAccesses;
-			int numLineHits = (result.numAccesses > 1) ? ((int) result.accesses[0].hit + (int) result.accesses[1].hit) : (int) result.accesses[0].hit;
-			int numLineMisses = result.numAccesses - numLineHits;
-			int numLineReads = (result.numAccesses > 1) ? ((int) result.accesses[0].allocatedNewLine + (int) result.accesses[1].allocatedNewLine) : (int) result.accesses[0].allocatedNewLine;
-			int numLineWriteBacks = (result.numAccesses > 1) ? ((int) result.accesses[0].evictedDirtyLine + (int) result.accesses[1].evictedDirtyLine) : (int) result.accesses[0].evictedDirtyLine;
+			uint numLineAccesses = result.numAccesses;
+			uint numLineHits = (result.numAccesses > 1) ? ((uint) result.accesses[0].hit + (uint) result.accesses[1].hit) : (uint) result.accesses[0].hit;
+			uint numLineMisses = result.numAccesses - numLineHits;
+			uint numLineReads = (result.numAccesses > 1) ? ((uint) result.accesses[0].allocatedNewLine + (uint) result.accesses[1].allocatedNewLine) : (uint) result.accesses[0].allocatedNewLine;
+			uint numLineWriteBacks = (result.numAccesses > 1) ? ((uint) result.accesses[0].evictedDirtyLine + (uint) result.accesses[1].evictedDirtyLine) : (uint) result.accesses[0].evictedDirtyLine;
 			
-			printf("Reading from 0x%08x - line accesses: %d - line hits: %d - line misses: %d - line reads: %d - line writebacks: %d\n",
-				address, numLineAccesses, numLineHits, numLineMisses, numLineReads, numLineWriteBacks);
+//			printf("Reading from 0x%08x - line accesses: %u - line hits: %u - line misses: %u - line reads: %u - line writebacks: %u\n",
+//				address, numLineAccesses, numLineHits, numLineMisses, numLineReads, numLineWriteBacks);
 				
 			totalLineAccesses += numLineAccesses;
 			totalLineHits += numLineHits;
@@ -56,7 +59,7 @@ void test7(M68060Cache* cache)
 	}
 } 
 
-void readStride(M68060Cache* cache, uint32_t start, int size, int stride, int count)
+void readStride(M68060Cache* cache, uint32_t start, uint size, uint stride, uint count)
 {
 	uint32_t i;
 
@@ -68,7 +71,7 @@ void readStride(M68060Cache* cache, uint32_t start, int size, int stride, int co
 	}
 } 
 
-void writeStride(M68060Cache* cache, uint32_t start, int size, int stride, int count)
+void writeStride(M68060Cache* cache, uint32_t start, uint size, uint stride, uint count)
 {
 	uint32_t i;
 
@@ -82,9 +85,6 @@ void writeStride(M68060Cache* cache, uint32_t start, int size, int stride, int c
 
 void primeCacheWithReads(M68060Cache* cache, uint32_t baseAddress)
 {
-	uint32_t address;
-	M68060CacheAccessResult result;
-
 	M68060Cache_invalidate(cache);
 	readStride(cache, baseAddress, 1, 16, 512);
 }
@@ -93,7 +93,7 @@ bool test1(M68060Cache* cache)
 {
 	M68060CacheMetrics oldMetrics;
 	M68060CacheMetrics metricsDiff;
-	int i;
+	uint i;
 
 	primeCacheWithReads(cache, 0x10000);
 
@@ -111,7 +111,7 @@ bool test1(M68060Cache* cache)
 		|| metricsDiff.dirtyLineEvictions != 0
 		|| metricsDiff.lineAllocations != 0)
 	{
-		printf("In-cache 8kB read test failed. Metrics for %d repeats:\n", i);
+		printf("In-cache 8kB read test failed. Metrics for %u repeats:\n", i);
 		M68060CacheMetrics_print(&metricsDiff);
 		return false;
 	}
@@ -159,9 +159,9 @@ bool test3(M68060Cache* cache)
 {
 	M68060CacheMetrics oldMetrics;
 	M68060CacheMetrics metricsDiff;
-	int i;
+	uint i;
 	float thrashRatio;
-	int size = 64*1024;
+	uint size = 64*1024;
 	float minRatio = 0.98f;
 	float maxRatio = 1.02f;
 
@@ -204,7 +204,7 @@ bool test4(M68060Cache* cache)
 {
 	M68060CacheMetrics oldMetrics;
 	M68060CacheMetrics metricsDiff;
-	int i;
+	uint i;
 
 	M68060Cache_invalidate(cache);
 	writeStride(cache, 0x10000, 4, 4, 2048);
@@ -223,7 +223,7 @@ bool test4(M68060Cache* cache)
 		|| metricsDiff.dirtyLineEvictions != 0
 		|| metricsDiff.lineAllocations != 0)
 	{
-		printf("In-cache 8kB write test failed. Metrics for %d repeats:\n", i);
+		printf("In-cache 8kB write test failed. Metrics for %u repeats:\n", i);
 		M68060CacheMetrics_print(&metricsDiff);
 		return false;
 	}
@@ -271,9 +271,9 @@ bool test6(M68060Cache* cache)
 {
 	M68060CacheMetrics oldMetrics;
 	M68060CacheMetrics metricsDiff;
-	int i;
+	uint i;
 	float thrashRatio;
-	int size = 64*1024;
+	uint size = 64*1024;
 	float minRatio = 0.98f;
 	float maxRatio = 1.02f;
 

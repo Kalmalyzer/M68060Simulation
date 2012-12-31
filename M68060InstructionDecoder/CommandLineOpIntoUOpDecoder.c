@@ -3,6 +3,8 @@
 #include "../Musashi/m68kcpu.h"
 #include "../Types.h"
 
+#include <stdlib.h>
+
 int main(int argc, char** argv)
 {
 	uint16_t instructionWords[16];
@@ -25,7 +27,7 @@ int main(int argc, char** argv)
 	}
 	
 	for (word = 0; word < numWords; ++word)
-		instructionWords[word] = strtol(argv[word + 1], &end, 16);
+		instructionWords[word] = (uint16_t) strtol(argv[word + 1], &end, 16);
 
 	if (!decomposeOpIntoUOps(instructionWords, numWords, UOps, &numUOps))
 	{

@@ -2,7 +2,7 @@
 #include "DummyMemorySubSystem.h"
 #include "../Assert.h"
 
-#include <stdlib.h>
+#include <string.h>
 
 enum { MemorySize = 1024*1024 };
 

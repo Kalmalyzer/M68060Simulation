@@ -1,6 +1,11 @@
 
 #include "M68060SimpleOEP.h"
+
+#include "DummyMemorySubSystem.h"
+#include "M68060IntegerRegisterFile.h"
 #include "../M68060InstructionDecoder/M68060DecodeOpIntoUOps.h"
+
+#include <stdio.h>
 
 enum { MaxMemoryRange = 64 };
 enum { MaxIntegerRegisters = 16 };

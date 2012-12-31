@@ -463,7 +463,8 @@ unsigned int m68k_get_reg(void* context, m68k_register_t regnum)
 			return M68K_CPU_TYPE_INVALID;
 	}
 
-	//return 0;
+	// NOTREACHED
+	return 0;
 }
 
 void m68k_set_reg(m68k_register_t regnum, unsigned int value)

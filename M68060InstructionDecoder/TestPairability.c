@@ -3,6 +3,9 @@
 #include "M68060PairabilityTests.h"
 #include "../Types.h"
 
+#include <stdio.h>
+
+
 typedef struct
 {
 	const char* description;

@@ -1,6 +1,8 @@
 
 #include "M68060AguAlu.h"
 
+#include <stdio.h>
+
 typedef struct
 {
 	const char* description;

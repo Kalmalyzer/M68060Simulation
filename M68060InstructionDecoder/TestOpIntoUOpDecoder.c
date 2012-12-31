@@ -2,6 +2,8 @@
 #include "M68060DecodeOpIntoUOps.h"
 #include "../Types.h"
 
+#include <stdio.h>
+
 typedef struct 
 {
 	const char* description;
@@ -801,7 +803,7 @@ void runTestSuite(const InstructionTestCase* tests, uint numTests, bool printSuc
 		else
 		{
 			bool decodedUOpsMatchReference = true;
-			int UOp;
+			uint UOp;
 
 			if (numUOps != InstructionTestCase->numUOps)
 				decodedUOpsMatchReference = false;

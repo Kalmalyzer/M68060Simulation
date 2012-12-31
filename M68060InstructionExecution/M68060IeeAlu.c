@@ -161,7 +161,7 @@ static void evaluateCmpCommon(OperationSize operationSize, uint32_t ieeAValue, u
 {
 	uint32_t operationMask = getOperationMask(operationSize);
 
-	uint32_t resultValue = -ieeAValue + ieeBValue;
+	uint32_t resultValue = ((uint32_t) - (int32_t) ieeAValue) + ieeBValue;
 
 	Minterms overflowMinterms = Minterm_InvSm_Dm_InvRm | Minterm_Sm_InvDm_Rm;
 	Minterms carryMinterms = (Minterm_Sm_InvDm_Rm | Minterm_Sm_InvDm_InvRm) | (Minterm_Sm_Dm_Rm | Minterm_Sm_InvDm_Rm) | (Minterm_Sm_InvDm_Rm | Minterm_InvSm_InvDm_Rm);
@@ -186,7 +186,7 @@ static void evaluateSubCommon(OperationSize operationSize, uint32_t ieeAValue, u
 {
 	uint32_t operationMask = getOperationMask(operationSize);
 
-	uint32_t resultValue = -ieeAValue + ieeBValue;
+	uint32_t resultValue = ((uint32_t) - (int32_t) ieeAValue) + ieeBValue;
 
 	Minterms overflowMinterms = Minterm_InvSm_Dm_InvRm | Minterm_Sm_InvDm_Rm;
 	Minterms carryMinterms = (Minterm_Sm_InvDm_Rm | Minterm_Sm_InvDm_InvRm) | (Minterm_Sm_Dm_Rm | Minterm_Sm_InvDm_Rm) | (Minterm_Sm_InvDm_Rm | Minterm_InvSm_InvDm_Rm);
@@ -207,14 +207,14 @@ static void evaluateSub(OperationSize operationSize, uint32_t ieeAValue, uint32_
 static void evaluateSubA(OperationSize operationSize, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult)
 {
 	uint32_t ieeAValue32Bits = extendValueTo32Bits(operationSize, ieeAValue);
-	*ieeResult = -ieeAValue32Bits + ieeBValue;
+	*ieeResult = ((uint32_t) - (int32_t) ieeAValue32Bits) + ieeBValue;
 }
 
 static void evaluateSubXCommon(OperationSize operationSize, Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, uint32_t* ieeResult, FlagsModifier* flagsModifier)
 {
 	uint32_t operationMask = getOperationMask(operationSize);
 
-	uint32_t resultValue = -ieeAValue + ieeBValue + ((flags & Flags_Extend_Mask) ? 1 : 0);
+	uint32_t resultValue = ((uint32_t) - (int32_t) ieeAValue) + ieeBValue + ((flags & Flags_Extend_Mask) ? 1 : 0);
 
 	Minterms overflowMinterms = Minterm_Sm_Dm_InvRm | Minterm_InvSm_InvDm_Rm;
 	Minterms carryMinterms = (Minterm_Sm_Dm_Rm | Minterm_Sm_Dm_InvRm) | (Minterm_Sm_Dm_InvRm | Minterm_Sm_InvDm_InvRm) | (Minterm_Sm_Dm_InvRm | Minterm_InvSm_Dm_InvRm);
@@ -553,7 +553,6 @@ static void evaluateBitOpCommon(IeeOperation ieeOperation, OperationSize operati
 	uint bitId;
 	uint32_t bitMask;
 	uint32_t bitValue;
-	uint32_t resultValue;
 	
 	switch (operationSize)
 	{
@@ -624,11 +623,11 @@ static void evaluateSbcd(Flags flags, uint32_t ieeAValue, uint32_t ieeBValue, ui
 	uint nonMaskedResult;
 	
 	uint lowNibbleMask = 0x0f;
-	uint lowNibble = -(ieeAValue & lowNibbleMask) + (ieeBValue & lowNibbleMask) - ((flags & Flags_Extend_Mask) ? 1 : 0);
+	uint lowNibble = ((uint32_t) - (int32_t) (ieeAValue & lowNibbleMask)) + (ieeBValue & lowNibbleMask) - ((flags & Flags_Extend_Mask) ? 1 : 0);
 	uint lowBorrow = (lowNibble >= 10) ? 1 : 0;
 	
 	uint highNibbleMask = 0xf0;
-	uint highNibble = -(ieeAValue & highNibbleMask) + (ieeBValue & highNibbleMask) - (lowBorrow ? 0x10 : 0);
+	uint highNibble = ((uint32_t) - (int32_t) (ieeAValue & highNibbleMask)) + (ieeBValue & highNibbleMask) - (lowBorrow ? 0x10 : 0);
 	uint highBorrow = (highNibble >= (10 << 4)) ? 1 : 0;
 
 	if (lowBorrow)
