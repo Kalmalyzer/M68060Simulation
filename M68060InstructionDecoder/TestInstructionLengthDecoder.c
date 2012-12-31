@@ -76,13 +76,13 @@ static const InstructionLengthDecoderTest immediateTests[] =
 
 static const InstructionLengthDecoderTest relativeBranchTests[] =
 {
-	{ "BRA.S *+$12", { 0x6012, }, 1, "Bcc <relative address>" },
+	{ "BRA.S *+$12", { 0x6012, }, 1, "BRA <relative address>" },
 	{ "BNE.W *+$1234", { 0x6600, 0x1234, }, 2, "Bcc <relative address>" },
 	{ "BEQ.L *+$12345678", { 0x67ff, 0x1234, 0x5678, }, 3, "Bcc <relative address>" },
 	{ "BSR.S *+$12", { 0x6112, }, 1, "BSR <relative address>" },
 	{ "BSR.W *+$1234", { 0x6100, 0x1234, }, 2, "BSR <relative address>" },
 	{ "BSR.L *+$12345678", { 0x61ff, 0x1234, 0x5678, }, 3, "BSR <relative address>" },
-	{ "DBRA *+$12", { 0x51c9, 0x1234, }, 2, "DBcc <relative address>" },
+	{ "DBRA *+$12", { 0x51c9, 0x1234, }, 2, "DBra <relative address>" },
 	{ "DBEQ *+$12", { 0x57ca, 0x1234, }, 2, "DBcc <relative address>" },
 };
 

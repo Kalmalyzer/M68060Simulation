@@ -6,6 +6,9 @@
 #include "M68060EAMode.h"
 #include "M68060InstructionDecoderTypes.h"
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Pre-decode information for general operations
+
 typedef enum
 {
 	EAEncoding_None,
@@ -82,7 +85,6 @@ typedef enum
 	OpWordClass_ImmediateByte,
 	OpWordClass_ImmediateWord,
 	OpWordClass_ImmediateLong,
-	OpWordClass_RelativeBranch,
 	OpWordClass_D16An,
 	OpWordClass_1SpecialWord,
 	OpWordClass_2SpecialWords,
@@ -158,5 +160,53 @@ typedef struct
 
 const OpWordClassInfo* getOpWordClassInformation(OpWordClass opWordClass);
 const OpWordDecodeInfo* getOpWordDecodeInformation(uint16_t opWord);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Pre-decode information for branches
+
+typedef enum
+{
+	BranchClass_Bsr,
+	BranchClass_Bra,
+	BranchClass_Bcc,
+	BranchClass_Jmp,
+	BranchClass_Jsr,
+	BranchClass_DBra,
+	BranchClass_DBcc,
+
+} BranchClass;
+
+typedef enum
+{
+	BranchDestinationEncoding_Relative_BranchSize,
+	BranchDestinationEncoding_Relative_Word,
+	BranchDestinationEncoding_AbsoluteEA,
+
+} BranchDestinationEncoding;
+
+typedef struct
+{
+	BranchDestinationEncoding branchDestinationEncoding;
+	SizeEncoding sizeEncoding;
+	bool pushNextPc;
+	bool hasConditionCodeTest;
+	
+} BranchClassInfo;
+
+typedef struct
+{
+	bool readyForUOpDecoding;
+
+	uint16_t mask;
+	uint16_t match;
+
+	const char* description;
+	
+	BranchClass class;
+
+} BranchDecodeInfo;
+
+const BranchClassInfo* getBranchClassInformation(BranchClass branchClass);
+const BranchDecodeInfo* getBranchDecodeInformation(uint16_t opWord);
 
 #endif

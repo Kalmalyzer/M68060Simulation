@@ -1,6 +1,9 @@
 
 #include "M68060OpWordDecodeInformation.h"
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Pre-decode information for general operations
+
 static OpWordClassInfo s_opWordClassInformation[] =
 {
 	{ 0, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_None, EAModeMask_None, }, // OpWordClass_NoExtraWords
@@ -53,7 +56,6 @@ static OpWordClassInfo s_opWordClassInformation[] =
 	{ 0, SizeEncoding_Byte, EAEncoding_Immediate, EAModeMask_All, EAEncoding_None, EAModeMask_None, }, // OpWordClass_ImmediateByte,
 	{ 0, SizeEncoding_Word, EAEncoding_Immediate, EAModeMask_All, EAEncoding_None, EAModeMask_None, }, // OpWordClass_ImmediateWord,
 	{ 0, SizeEncoding_Long, EAEncoding_Immediate, EAModeMask_All, EAEncoding_None, EAModeMask_None, }, // OpWordClass_ImmediateLong,
-	{ 0, SizeEncoding_RelativeBranchEncoding, EAEncoding_RelativeBranch, EAModeMask_RelativeBranch, EAEncoding_None, EAModeMask_None, }, // OpWordClass_RelativeBranch,
 	{ 0, SizeEncoding_Word, EAEncoding_D16, EAModeMask_All, EAEncoding_None, EAModeMask_None, }, // OpWordClass_D16An
 	{ 1, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_None, EAModeMask_None, }, // OpWordClass_1SpecialWord
 	{ 2, SizeEncoding_None, EAEncoding_None, EAModeMask_None, EAEncoding_None, EAModeMask_None, }, // OpWordClass_2SpecialWords
@@ -67,7 +69,7 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ false, 0xf0ff, 0x50fc, "TRAPcc", OpWordClass_NoExtraWords, }, // Shadows Scc <ea>
 	{ false, 0xf0ff, 0x50fa, "TRAPcc.W #imm", OpWordClass_ImmediateWord, }, // Shadows Scc <ea>
 	{ false, 0xf0ff, 0x50fb, "TRAPcc.L #imm", OpWordClass_ImmediateLong, }, // Shadows Scc <ea>
-	{ false, 0xf0f8, 0x50c8, "DBcc <relative address>", OpWordClass_ImmediateWord, }, // Shadows Scc <ea>
+	{ false, 0xf0f8, 0x50c8, "Error: this should be DBCC, but that is located in another table", OpWordClass_ImmediateWord, }, // Shadows Scc <ea>
 	{ true, 0xf0c0, 0x50c0, "Scc <ea>", OpWordClass_Byte_SrcCCR_DestEa_DataAlterable_WriteOnly_If_WholeOperand, IeeOperation_Scc, Pairability_pOEP_But_Allows_sOEP, }, // Shadows ADDQ/SUBQ
 
 	{ true, 0xf1f8, 0xc100, "ABCD Dx,Dy", OpWordClass_EncodedSize_SrcDn_DestDn, IeeOperation_Abcd, Pairability_pOEP_Only, },
@@ -109,8 +111,6 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ true, 0xffc0, 0xe6c0, "ROR <ea>", OpWordClass_Word_SrcImmValue1_DestEa_MemoryAlterable, IeeOperation_Ror, Pairability_pOEP_Or_sOEP, }, // Shadows ASL/ASR/LSL/LSR/ROL/ROR/ROXL/ROXR #imm/Dm,Dn
 	{ true, 0xffc0, 0xe7c0, "ROL <ea>", OpWordClass_Word_SrcImmValue1_DestEa_MemoryAlterable, IeeOperation_Rol, Pairability_pOEP_Or_sOEP, }, // Shadows ASL/ASR/LSL/LSR/ROL/ROR/ROXL/ROXR #imm/Dm,Dn
 
-	{ false, 0xff00, 0x6100, "BSR <relative address>", OpWordClass_RelativeBranch, }, // Shadows Bcc
-	{ false, 0xf000, 0x6000, "Bcc <relative address>", OpWordClass_RelativeBranch, },
 	{ false, 0xf138, 0x0108, "MOVEP Dx <-> d16(An)", OpWordClass_D16An, }, // Shadows BCLR/BCHG Dn,...
 	{ true, 0xf1f8, 0x0140, "BCHG Dn,Dm", OpWordClass_Long_SrcDn_DestEa_DataAlterable_ReadWrite, IeeOperation_BChg, Pairability_pOEP_Only, }, // Shadows BCHG Dn,<ea>
 	{ true, 0xf1c0, 0x0140, "BCHG Dn,<ea>", OpWordClass_Byte_SrcDn_DestEa_DataAlterable_ReadWrite, IeeOperation_BChg, Pairability_pOEP_Only, },
@@ -177,8 +177,6 @@ static OpWordDecodeInfo s_opWordDecodeInformation[] =
 	{ true, 0xfff8, 0x48c0, "EXT.L Dn", OpWordClass_Long_DestDnReadWrite, IeeOperation_Ext, Pairability_pOEP_Or_sOEP, },
 	{ true, 0xfff8, 0x49c0, "EXTB.L Dn", OpWordClass_Byte_DestDnReadWrite, IeeOperation_Ext, Pairability_pOEP_Or_sOEP, },
 	{ false, 0xffff, 0x4afc, "ILLEGAL", OpWordClass_NoExtraWords, },
-	{ false, 0xffc0, 0x4ec0, "JMP <ea>", OpWordClass_Control, },
-	{ false, 0xffc0, 0x4e80, "JSR <ea>", OpWordClass_Control, },
 	{ true, 0xf1c0, 0x41c0, "LEA <ea>,An", OpWordClass_SrcEaReference_DestAnAguResult, },
 	{ false, 0xfff8, 0x4e50, "LINK.W An,#imm", OpWordClass_ImmediateWord, },
 	{ false, 0xfff8, 0x4808, "LINK.L An,#imm", OpWordClass_ImmediateLong, },
@@ -276,3 +274,49 @@ const OpWordDecodeInfo* getOpWordDecodeInformation(uint16_t opWord)
 	else
 		return opWordDecodeInfo;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Pre-decode information for branches
+
+BranchClassInfo s_branchClassInformation[] =
+{
+	{ BranchDestinationEncoding_Relative_BranchSize, SizeEncoding_RelativeBranchEncoding, true, false, }, // BranchClass_Bsr
+	{ BranchDestinationEncoding_Relative_BranchSize, SizeEncoding_RelativeBranchEncoding, false, false, }, // BranchClass_Bra
+	{ BranchDestinationEncoding_Relative_BranchSize, SizeEncoding_RelativeBranchEncoding, false, true, }, // BranchClass_Bcc
+	{ BranchDestinationEncoding_AbsoluteEA, SizeEncoding_None, false, false, }, // BranchClass_Jmp
+	{ BranchDestinationEncoding_AbsoluteEA, SizeEncoding_None, true, false, }, // BranchClass_Jsr
+	{ BranchDestinationEncoding_Relative_Word, SizeEncoding_Word, false, false, }, // BranchClass_DBra
+	{ BranchDestinationEncoding_Relative_Word, SizeEncoding_Word, false, true, }, // BranchClass_DBcc
+};
+
+static BranchDecodeInfo s_branchDecodeInformation[] =
+{
+	{ true, 0xff00, 0x6100, "BSR <relative address>", BranchClass_Bsr, }, // Shadows Bcc
+	{ true, 0xff00, 0x6000, "BRA <relative address>", BranchClass_Bra, }, // Shadows Bcc
+	{ true, 0xf000, 0x6000, "Bcc <relative address>", BranchClass_Bcc, },
+	{ true, 0xffc0, 0x4ec0, "JMP <ea>", BranchClass_Jmp, },
+	{ true, 0xffc0, 0x4e80, "JSR <ea>", BranchClass_Jsr, },
+	{ false, 0xfff8, 0x51c8, "DBra <relative address>", BranchClass_DBra, }, // Shadows Scc <ea> & DBcc
+	{ false, 0xf0f8, 0x50c8, "DBcc <relative address>", BranchClass_DBcc, }, // Shadows Scc <ea>
+};
+
+const BranchClassInfo* getBranchClassInformation(BranchClass branchClass)
+{
+	return &s_branchClassInformation[branchClass];
+}
+
+const BranchDecodeInfo* getBranchDecodeInformation(uint16_t branch)
+{
+	const BranchDecodeInfo* branchDecodeInfo = s_branchDecodeInformation;
+	
+	while ((branch & branchDecodeInfo->mask) != branchDecodeInfo->match)
+	{
+		branchDecodeInfo++;
+	}
+	
+	if (branchDecodeInfo->mask == 0 && branchDecodeInfo->match == 0)
+		return 0;
+	else
+		return branchDecodeInfo;
+}
+

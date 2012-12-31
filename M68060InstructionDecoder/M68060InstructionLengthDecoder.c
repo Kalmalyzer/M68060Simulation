@@ -339,51 +339,59 @@ static bool isValidEAMode(EAMode eaMode, EAModeMask eaModeMask)
 	return (eaMode == EAMode_None || ((1U << eaMode) & eaModeMask));
 }
 
-bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWords, uint numInstructionWordsAvailable, InstructionLength* outInstructionLength)
+static bool decodeOpWord(uint16_t opWord, const OpWordDecodeInfo* opWordDecodeInfo, const uint16_t* instructionWords, uint numInstructionWordsAvailable, InstructionLength* outInstructionLength)
 {
-	const OpWordDecodeInfo* opWordDecodeInfo;
-	const OpWordClassInfo* opWordClassInfo;
-	uint16_t opWord;
+	const OpWordClassInfo* opWordClassInfo = getOpWordClassInformation(opWordDecodeInfo->class);
 	uint operandOffset;
 	InstructionLength instructionLength = { 0 };
 	bool validInstruction = true;
+	bool validOperationSize;
+	OperationSize operationSize;
 
-	M68060_ASSERT(numInstructionWordsAvailable > 0, "Must supply at least one instruction word");
+	instructionLength.numSpecialOperandSpecifierWords = opWordClassInfo->numSpecialOperandSpecifierWords;
+	instructionLength.description = opWordDecodeInfo->description;
 
-	opWord = instructionWords[0];
+	validOperationSize = decodeOperationSize(opWord, opWordClassInfo->sizeEncoding, &operationSize);
 
-	opWordDecodeInfo = getOpWordDecodeInformation(opWord);
-
-	if (!opWordDecodeInfo)
-	{
+	if (!validOperationSize)
 		validInstruction = false;
-	}
-	else
+	
+	operandOffset = 1 + instructionLength.numSpecialOperandSpecifierWords;
+
+	if (validInstruction)
 	{
-		bool validOperationSize;
-		OperationSize operationSize;
-		opWordClassInfo = getOpWordClassInformation(opWordDecodeInfo->class);
+		EAMode eaMode;
+		bool validEaMode = decodeOperand(opWord, opWordClassInfo->sourceEAEncoding, &eaMode);
+		bool firstExtensionWordAvailable = (operandOffset < numInstructionWordsAvailable);
+		uint16_t firstExtensionWord = (firstExtensionWordAvailable ? instructionWords[operandOffset] : 0);
 
-		instructionLength.numSpecialOperandSpecifierWords = opWordClassInfo->numSpecialOperandSpecifierWords;
-		instructionLength.description = opWordDecodeInfo->description;
+		if (validEaMode && isValidEAMode(eaMode, opWordClassInfo->sourceEAModeMask))
+		{
+			DecodeOperandLengthResult decodeOperandLengthResult = decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, operationSize, &instructionLength.numSourceEAExtensionWords);
 
-		validOperationSize = decodeOperationSize(opWord, opWordClassInfo->sizeEncoding, &operationSize);
-
-		if (!validOperationSize)
+			if (decodeOperandLengthResult == DecodeOperandLengthResult_InsufficientData)
+				return false;
+			else if (decodeOperandLengthResult == DecodeOperandLengthResult_InvalidInstruction)
+				validInstruction = false;
+		}
+		else
 			validInstruction = false;
-		
-		operandOffset = 1 + instructionLength.numSpecialOperandSpecifierWords;
+	}
 
-		if (validInstruction)
+	if (validInstruction)
+	{
+	
+		operandOffset += instructionLength.numSourceEAExtensionWords;
+
 		{
 			EAMode eaMode;
-			bool validEaMode = decodeOperand(opWord, opWordClassInfo->sourceEAEncoding, &eaMode);
+			bool validEaMode = decodeOperand(opWord, opWordClassInfo->destinationEAEncoding, &eaMode);
 			bool firstExtensionWordAvailable = (operandOffset < numInstructionWordsAvailable);
 			uint16_t firstExtensionWord = (firstExtensionWordAvailable ? instructionWords[operandOffset] : 0);
 
-			if (validEaMode && isValidEAMode(eaMode, opWordClassInfo->sourceEAModeMask))
+			if (validEaMode && isValidEAMode(eaMode, opWordClassInfo->destinationEAModeMask))
 			{
-				DecodeOperandLengthResult decodeOperandLengthResult = decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, operationSize, &instructionLength.numSourceEAExtensionWords);
+				DecodeOperandLengthResult decodeOperandLengthResult = decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, operationSize, &instructionLength.numDestinationEAExtensionWords);
 
 				if (decodeOperandLengthResult == DecodeOperandLengthResult_InsufficientData)
 					return false;
@@ -393,33 +401,7 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 			else
 				validInstruction = false;
 		}
-
-		if (validInstruction)
-		{
-		
-			operandOffset += instructionLength.numSourceEAExtensionWords;
-
-			{
-				EAMode eaMode;
-				bool validEaMode = decodeOperand(opWord, opWordClassInfo->destinationEAEncoding, &eaMode);
-				bool firstExtensionWordAvailable = (operandOffset < numInstructionWordsAvailable);
-				uint16_t firstExtensionWord = (firstExtensionWordAvailable ? instructionWords[operandOffset] : 0);
-
-				if (validEaMode && isValidEAMode(eaMode, opWordClassInfo->destinationEAModeMask))
-				{
-					DecodeOperandLengthResult decodeOperandLengthResult = decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, operationSize, &instructionLength.numDestinationEAExtensionWords);
-
-					if (decodeOperandLengthResult == DecodeOperandLengthResult_InsufficientData)
-						return false;
-					else if (decodeOperandLengthResult == DecodeOperandLengthResult_InvalidInstruction)
-						validInstruction = false;
-				}
-				else
-					validInstruction = false;
-			}
-		}
 	}
-
 	
 	if (validInstruction)
 	{
@@ -436,4 +418,91 @@ bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWord
 		*outInstructionLength = invalidInstructionLength;
 		return false;
 	}
+}
+
+static bool decodeBranch(uint16_t opWord, const BranchDecodeInfo* branchDecodeInfo, const uint16_t* instructionWords, uint numInstructionWordsAvailable, InstructionLength* outInstructionLength)
+{
+	const BranchClassInfo* branchClassInfo = getBranchClassInformation(branchDecodeInfo->class);
+	InstructionLength instructionLength = { 0 };
+	bool validInstruction = true;
+
+	instructionLength.description = branchDecodeInfo->description;
+
+	switch (branchClassInfo->branchDestinationEncoding)
+	{
+		case BranchDestinationEncoding_AbsoluteEA:
+		{
+			uint operandOffset = 1;
+			EAMode eaMode;
+			bool validEaMode = decodeOperand(opWord, EAEncoding_DefaultEALocation, &eaMode);
+			bool firstExtensionWordAvailable = (operandOffset < numInstructionWordsAvailable);
+			uint16_t firstExtensionWord = (firstExtensionWordAvailable ? instructionWords[operandOffset] : 0);
+
+			if (validEaMode && isValidEAMode(eaMode, EAModeMask_Control))
+			{
+				DecodeOperandLengthResult decodeOperandLengthResult = decodeOperandLength(eaMode, firstExtensionWordAvailable, firstExtensionWord, OperationSize_None, &instructionLength.numSourceEAExtensionWords);
+
+				if (decodeOperandLengthResult == DecodeOperandLengthResult_InsufficientData)
+					return false;
+				else if (decodeOperandLengthResult == DecodeOperandLengthResult_InvalidInstruction)
+					validInstruction = false;
+			}
+			else
+				validInstruction = false;
+			break;
+		}
+		case BranchDestinationEncoding_Relative_BranchSize:
+		{
+			if ((opWord & 0xff) == 0xff)
+				instructionLength.numSourceEAExtensionWords = 2;
+			else if ((opWord & 0xff) == 0x00)
+				instructionLength.numSourceEAExtensionWords = 1;
+			else 
+				instructionLength.numSourceEAExtensionWords = 0;
+			break;
+		}
+		case BranchDestinationEncoding_Relative_Word:
+			instructionLength.numSourceEAExtensionWords = 1;
+			break;
+	}
+
+	if (validInstruction)
+	{
+		instructionLength.totalWords = 1 + instructionLength.numSpecialOperandSpecifierWords
+			 + instructionLength.numSourceEAExtensionWords + instructionLength.numDestinationEAExtensionWords;
+			
+		*outInstructionLength = instructionLength;
+		return true;
+	}
+	else
+	{
+		InstructionLength invalidInstructionLength = { 0, 0, 0, 0, "invalid instruction" } ;
+		
+		*outInstructionLength = invalidInstructionLength;
+		return false;
+	}
+}
+
+bool decodeInstructionLengthFromInstructionWords(const uint16_t* instructionWords, uint numInstructionWordsAvailable, InstructionLength* outInstructionLength)
+{
+	const OpWordDecodeInfo* opWordDecodeInfo;
+	const BranchDecodeInfo* branchDecodeInfo;
+	uint16_t opWord;
+	uint operandOffset;
+	InstructionLength instructionLength = { 0 };
+	bool validInstruction = true;
+
+	M68060_ASSERT(numInstructionWordsAvailable > 0, "Must supply at least one instruction word");
+
+	opWord = instructionWords[0];
+
+	branchDecodeInfo = getBranchDecodeInformation(opWord);
+	if (branchDecodeInfo)
+		return decodeBranch(opWord, branchDecodeInfo, instructionWords, numInstructionWordsAvailable, outInstructionLength);
+	
+	opWordDecodeInfo = getOpWordDecodeInformation(opWord);
+	if (opWordDecodeInfo)
+		return decodeOpWord(opWord, opWordDecodeInfo, instructionWords, numInstructionWordsAvailable, outInstructionLength);
+
+	return false;
 }

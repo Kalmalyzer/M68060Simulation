@@ -286,6 +286,46 @@ static const InstructionTestCase immediateTests[] =
 
 };
 
+static const InstructionTestCase relativeBranchTests[] =
+{
+	{ "BRA.S *+$12", 1, { 0x6012, }, 1, {
+																														{ "BRA <relative address>",	0x6012, { 0x0012, 0x0000, },	ExecutionResource_PC,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S8,		AguOperation_OffsetBaseIndexScale,	ExecutionResource_PC,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		},
+	}, },
+	{ "BNE.W *+$1234", 2, { 0x6600, 0x1234, }, 1, {
+																														{ "Bcc <relative address>",	0x6600, { 0x1234, 0x0000, },	ExecutionResource_PC,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_PC,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_Bcc,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		},
+	}, },
+	{ "BEQ.L *+$12345678", 3, { 0x67ff, 0x1234, 0x5678, }, 1, {
+																														{ "Bcc <relative address>",	0x67ff, { 0x1234, 0x5678, },	ExecutionResource_PC,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S32,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_PC,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_Bcc,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		},
+	}, },
+	{ "BSR.S *+$12", 1, { 0x6112, }, 2, {
+																														{ "BSR <relative address>",	0x6112, { 0x0012, 0x0000, },	ExecutionResource_PC,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S8,		AguOperation_OffsetBaseIndexScale,	ExecutionResource_PC,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		},
+																														{ "PUSH NEXT PC",			0x0000, { 0x0000, 0x0000, },	ExecutionResource_A7,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrementSP,		ExecutionResource_A7,				false,	ExecutionResource_uOpLong,			ExecutionResource_PC,				OperationSize_Long,	IeeOperation_AddA,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,		},
+	}, },
+	{ "BSR.W *+$1234", 2, { 0x6100, 0x1234, }, 2, {
+																														{ "BSR <relative address>",	0x6100, { 0x1234, 0x0000, },	ExecutionResource_PC,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_PC,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		},
+																														{ "PUSH NEXT PC",			0x0000, { 0x0000, 0x0002, },	ExecutionResource_A7,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrementSP,		ExecutionResource_A7,				false,	ExecutionResource_uOpLong,			ExecutionResource_PC,				OperationSize_Long,	IeeOperation_AddA,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,		},
+	}, },
+	{ "BSR.L *+$12345678", 3, { 0x61ff, 0x1234, 0x5678, }, 2, {
+																														{ "BSR <relative address>",	0x61ff, { 0x1234, 0x5678, },	ExecutionResource_PC,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S32,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_PC,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		},
+																														{ "PUSH NEXT PC",			0x0000, { 0x0000, 0x0004, },	ExecutionResource_A7,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrementSP,		ExecutionResource_A7,				false,	ExecutionResource_uOpLong,			ExecutionResource_PC,				OperationSize_Long,	IeeOperation_AddA,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,		},
+	}, },
+//	{ "DBRA *+$12", { 0x51c9, 0x1234, }, 2, "DBra <relative address>" },
+//	{ "DBEQ *+$12", { 0x57ca, 0x1234, }, 2, "DBcc <relative address>" },
+};
+
+static const InstructionTestCase absoluteJumpTests[] =
+{
+	{ "JMP $1234(A3)", 2, { 0x4eeb, 0x1234, }, 1, {
+																														{ "JMP <ea>",				0x4eeb, { 0x1234, 0x0000, },	ExecutionResource_A3,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S16,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_PC,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		},
+	}, },
+	{ "JSR ([$12345678.L,PC])", 4, { 0x4ebb, 0x0171, 0x1234, 0x5678, }, 4, {
+																														{ "LOAD",					0x0000, { 0x1234, 0x5678, },	ExecutionResource_PC,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_S32,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_None,				true,	ExecutionResource_MemoryOperand,	ExecutionResource_None,				OperationSize_Long,	IeeOperation_ForwardIeeA,	ExecutionResource_AguTemp,			false,	Pairability_pOEP_Only,		},
+																														{ "LEA",					0x0000, { 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_AguTemp,			false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		},
+																														{ "JSR <ea>",				0x4ebb, { 0x0000, 0x0000, },	ExecutionResource_AguTemp,			ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_OffsetBaseIndexScale,	ExecutionResource_PC,				false,	ExecutionResource_None,				ExecutionResource_None,				OperationSize_None,	IeeOperation_None,			ExecutionResource_None,				false,	Pairability_pOEP_Only,		},
+																														{ "PUSH NEXT PC",			0x0000, { 0x0000, 0x0006, },	ExecutionResource_A7,				ExecutionResource_None,				0,	AguIndexSize_None,	AguDisplacementSize_None,	AguOperation_PreDecrementSP,		ExecutionResource_A7,				false,	ExecutionResource_uOpLong,			ExecutionResource_PC,				OperationSize_Long,	IeeOperation_AddA,			ExecutionResource_MemoryOperand,	true,	Pairability_pOEP_Only,		},
+	}, },
+};
+
 static const InstructionTestCase singleBitInstructionTests[] =
 {
 	{ "BTST D1,$12345678.L", 3, { 0x0339, 0x1234, 0x5678, }, 1, {
@@ -726,6 +766,8 @@ TestSuite testSuites[] =
 {
 	{ "6-bit EA decoding tests", ea6BitTests, (sizeof ea6BitTests / sizeof ea6BitTests[0]) },
 	{ "Immediate source operand tests", immediateTests, (sizeof immediateTests / sizeof immediateTests[0]) },
+	{ "Relative branch tests", relativeBranchTests, (sizeof relativeBranchTests / sizeof relativeBranchTests[0]) },
+	{ "Absolute jump tests", absoluteJumpTests, (sizeof absoluteJumpTests / sizeof absoluteJumpTests[0]) },
 	{ "Single-bit instruction tests", singleBitInstructionTests, (sizeof singleBitInstructionTests / sizeof singleBitInstructionTests[0]) },
 	{ "BCD arithmetic tests", bcdArithmeticTests, (sizeof bcdArithmeticTests / sizeof bcdArithmeticTests[0]) },
 	{ "Integer arithmetic tests", integerArithmeticTests, (sizeof integerArithmeticTests / sizeof integerArithmeticTests[0]) },

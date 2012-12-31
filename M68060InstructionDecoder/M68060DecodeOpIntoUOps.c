@@ -59,6 +59,17 @@ static void writeUOp(UOpWriteBuffer* UOpWriteBuffer, UOp* UOp)
 	UOpWriteBuffer->numUOps++;
 }
 
+static OperationSize decodeRelativeBranchSize(uint16_t opWord)
+{
+	uint displacement8Bit = (opWord & 0xff);
+	if (displacement8Bit == 0x00)
+		 return OperationSize_Word;
+	else if (displacement8Bit == 0xff)
+		return OperationSize_Long;
+	else
+		return OperationSize_Byte;
+}
+
 static bool decodeIeeOperationSize(uint16_t opWord, SizeEncoding sizeEncoding, OperationSize* ieeOperationSize)
 {
 	switch (sizeEncoding)
@@ -129,13 +140,7 @@ static bool decodeIeeOperationSize(uint16_t opWord, SizeEncoding sizeEncoding, O
 			}
 		case SizeEncoding_RelativeBranchEncoding:
 			{
-				uint displacement8Bit = (opWord & 0xff);
-				if (displacement8Bit == 0x00)
-					*ieeOperationSize = OperationSize_Word;
-				else if (displacement8Bit == 0xff)
-					*ieeOperationSize = OperationSize_Long;
-				else
-					*ieeOperationSize = OperationSize_Byte;
+				*ieeOperationSize = decodeRelativeBranchSize(opWord);
 				return true;
 			}
 		default:
@@ -421,6 +426,29 @@ static void decodeImmediateOperand(OperationSize immediateSize, const uint16_t* 
 			break;
 	}
 	*hasMemoryReference = false;
+}
+
+static void decodeRelativeBranchOperand(OperationSize branchSize, uint16_t opWord, const uint16_t* operandSpecifierWords, UOp* mainUOp)
+{
+	switch (branchSize)
+	{
+		case OperationSize_Byte:
+			mainUOp->extensionWords[0] = opWord & 0xff;
+			mainUOp->aguDisplacementSize = AguDisplacementSize_S8;
+			break;
+		case OperationSize_Word:
+			mainUOp->extensionWords[0] = operandSpecifierWords[0];
+			mainUOp->aguDisplacementSize = AguDisplacementSize_S16;
+			break;
+		case OperationSize_Long:
+			mainUOp->extensionWords[0] = operandSpecifierWords[0];
+			mainUOp->extensionWords[1] = operandSpecifierWords[1];
+			mainUOp->aguDisplacementSize = AguDisplacementSize_S32;
+			break;
+	}
+	
+	mainUOp->aguBase = ExecutionResource_PC;
+	mainUOp->aguOperation = AguOperation_OffsetBaseIndexScale;
 }
 
 static void decodeOperand(uint16_t opWord, DecodeOperand decodeOperand, OperationSize immediateSize, const uint16_t* operandSpecifierWords, UOp* mainUOp, ExecutionResource* ieeInput, UOpWriteBuffer* UOpWriteBuffer, bool* hasMemoryReference)
@@ -825,10 +853,8 @@ static bool shouldSplitSourceAndDestOperandReferences(uint16_t opWord, DecodeOpe
 	return false;
 }
 
-static void decodeUOps(const uint16_t* instructionWords, const InstructionLength* instructionLength, UOpWriteBuffer* UOpWriteBuffer)
+static void decodeOpWord(uint16_t opWord, const OpWordDecodeInfo* opWordDecodeInfo, const uint16_t* instructionWords, const InstructionLength* instructionLength, UOpWriteBuffer* UOpWriteBuffer)
 {
-	uint16_t opWord = *instructionWords;
-	const OpWordDecodeInfo* opWordDecodeInfo = getOpWordDecodeInformation(opWord);
 	const OpWordClassInfo* opWordClassInfo;
 	UOp mainUOp = { 0 };
 	bool splitSourceAndDestOperandReferences;
@@ -838,7 +864,6 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 	ExecutionResource destinationExecutionResource = ExecutionResource_None;
 	DestinationOperandAccessType destinationOperandAccessType;
 	
-	M68060_ASSERT(opWordDecodeInfo, "No decoding pattern available for instruction");
 	M68060_ASSERT(opWordDecodeInfo->readyForUOpDecoding, "Instruction doesn't support UOp decoding yet");
 
 	opWordClassInfo = getOpWordClassInformation(opWordDecodeInfo->class);
@@ -893,6 +918,96 @@ static void decodeUOps(const uint16_t* instructionWords, const InstructionLength
 	mainUOp.pairability = opWordDecodeInfo->pairability;
 
 	writeUOp(UOpWriteBuffer, &mainUOp);
+}
+
+static void decodeBranch(uint16_t opWord, const BranchDecodeInfo* branchDecodeInfo, const uint16_t* instructionWords, const InstructionLength* instructionLength, UOpWriteBuffer* UOpWriteBuffer)
+{
+	const BranchClassInfo* branchClassInfo;
+	UOp mainUOp = { 0 };
+	uint operandOffset = 1;
+	const uint16_t* operandSpecifierWords = instructionWords + operandOffset;
+	
+	M68060_ASSERT(branchDecodeInfo->readyForUOpDecoding, "Instruction doesn't support UOp decoding yet");
+
+	branchClassInfo = getBranchClassInformation(branchDecodeInfo->class);
+
+	switch (branchClassInfo->branchDestinationEncoding)
+	{
+		case BranchDestinationEncoding_AbsoluteEA:
+		{
+			bool sourceOperandMemoryReference;
+
+			decodeOperand(opWord, DecodeOperand_DefaultEAReferenceLocation, OperationSize_None, operandSpecifierWords, &mainUOp, &mainUOp.ieeA, UOpWriteBuffer, &sourceOperandMemoryReference);
+			break;
+		}
+		case BranchDestinationEncoding_Relative_BranchSize:
+		{
+			OperationSize branchSize = decodeRelativeBranchSize(opWord);
+			decodeRelativeBranchOperand(branchSize, opWord, operandSpecifierWords, &mainUOp);
+			break;
+		}
+		case BranchDestinationEncoding_Relative_Word:
+		{
+			decodeRelativeBranchOperand(OperationSize_Word, opWord, operandSpecifierWords, &mainUOp);
+			break;
+		}
+	}
+
+	if (branchClassInfo->hasConditionCodeTest)
+		mainUOp.ieeOperation = IeeOperation_Bcc;
+
+	mainUOp.opWord = opWord;
+	mainUOp.aguResult = ExecutionResource_PC;
+
+	mainUOp.description = branchDecodeInfo->description;
+	mainUOp.pairability = Pairability_pOEP_Only; // TODO: choose this more cleverly
+
+	writeUOp(UOpWriteBuffer, &mainUOp);
+
+	if (branchClassInfo->pushNextPc)
+	{
+		UOp pushNextPc = { 0 };
+
+		pushNextPc.description = "PUSH NEXT PC";
+		pushNextPc.extensionWords[0] = 0;
+		pushNextPc.extensionWords[1] = (instructionLength->totalWords - 1) * 2;
+		pushNextPc.aguBase = ExecutionResource_A7;
+		pushNextPc.aguOperation = AguOperation_PreDecrementSP;
+		pushNextPc.aguResult = ExecutionResource_A7;
+		pushNextPc.ieeA = ExecutionResource_uOpLong;
+		pushNextPc.ieeB = ExecutionResource_PC;
+		pushNextPc.ieeOperationSize = OperationSize_Long;
+		pushNextPc.ieeOperation = IeeOperation_AddA;
+		pushNextPc.ieeResult = ExecutionResource_MemoryOperand;
+		pushNextPc.memoryWrite = true;
+		pushNextPc.pairability = Pairability_pOEP_Only;
+		writeUOp(UOpWriteBuffer, &pushNextPc); // TODO: choose this more cleverly
+	}
+}
+
+static void decodeUOps(const uint16_t* instructionWords, const InstructionLength* instructionLength, UOpWriteBuffer* UOpWriteBuffer)
+{
+	uint16_t opWord = *instructionWords;
+
+	{
+		const BranchDecodeInfo* branchDecodeInfo = getBranchDecodeInformation(opWord);
+		if (branchDecodeInfo)
+		{
+			decodeBranch(opWord, branchDecodeInfo, instructionWords, instructionLength, UOpWriteBuffer);
+			return;
+		}
+	}
+
+	{
+		const OpWordDecodeInfo* opWordDecodeInfo = getOpWordDecodeInformation(opWord);
+		if (opWordDecodeInfo)
+		{
+			decodeOpWord(opWord, opWordDecodeInfo, instructionWords, instructionLength, UOpWriteBuffer);
+			return;
+		}
+	}
+
+	M68060_ERROR("No decoding pattern available for instruction");
 }
 
 bool decomposeOpIntoUOps(const uint16_t* instructionWords, uint numInstructionWordsAvailable, UOp* UOps, uint* numUOps)
