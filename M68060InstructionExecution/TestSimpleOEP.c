@@ -203,7 +203,7 @@ void runTestSuite(const M68kOpTest* tests, uint numTests, bool printSuccess, boo
 
 			// Run UOps
 			for (UOpId = 0; UOpId < numUOps; ++UOpId)
-				executeUOp(&UOps[UOpId]);
+				executeUOp(&UOps[UOpId], 0, 0);
 
 			// Capture simulation state
 			for (registerId = 0; registerId < MaxIntegerRegisters; ++registerId)

@@ -133,7 +133,7 @@ static ExecutionResource translateAguDisplacementSizeToExecutionResource(AguDisp
 	}
 }
 
-void executeUOp(const UOp* UOp)
+void executeUOp(const UOp* UOp, uint32_t pc, uint32_t nextPc)
 {
 	uint32_t memoryReference = 0;
 	uint32_t ieeResultValue = 0;

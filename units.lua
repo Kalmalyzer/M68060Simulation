@@ -256,6 +256,31 @@ Program {
 
 --------------------------------------------------------------------------------------------------------
 
+-----------------------------
+-- Simple CPU test program --
+-----------------------------
+
+Program {
+	Name = "TestSimpleCpu",
+	Sources = {
+		"M68060CpuModules/M68060SimpleCpu.c",
+		"M68060CpuModules/TestSimpleCpu.c",
+		"M68060InstructionDecoder/M68060DecodeOpIntoUOps.c",
+		"M68060InstructionDecoder/M68060InstructionDecoderTypes.c",
+		"M68060InstructionDecoder/M68060InstructionLengthDecoder.c",
+		"M68060InstructionDecoder/M68060OpWordDecodeInformation.c",
+		"M68060InstructionExecution/DummyMemorySubSystem.c",
+		"M68060InstructionExecution/M68060AguAlu.c",
+		"M68060InstructionExecution/M68060FlagsModifier.c",
+		"M68060InstructionExecution/M68060IeeAlu.c",
+		"M68060InstructionExecution/M68060IntegerRegisterFile.c",
+		"M68060InstructionExecution/M68060SimpleOEP.c",
+		"M68060ISA/M68060ConditionCode.c",
+		"M68060ISA/M68060Flags.c",
+	},
+}
+
+--------------------------------------------------------------------------------------------------------
 Default "Musashi"
 Default "TestMusashi"
 
@@ -277,3 +302,5 @@ Default "TestIntegerRegisterFile"
 Default "TestDummyMemorySubSystem"
 
 Default "TestSimpleOEP"
+
+Default "TestSimpleCpu"
