@@ -2,7 +2,14 @@
 #include "M68060IntegerRegisterFile.h"
 #include "../Assert.h"
 
+#include <string.h>
+
 static uint32_t s_registerFile[16];
+
+void clearIntegerRegisters(void)
+{
+	memset(s_registerFile, 0, sizeof s_registerFile);
+}
 
 uint32_t readIntegerRegister(ExecutionResource reg)
 {
