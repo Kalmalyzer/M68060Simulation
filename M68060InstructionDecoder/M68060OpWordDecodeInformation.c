@@ -298,6 +298,8 @@ static BranchDecodeInfo s_branchDecodeInformation[] =
 	{ true, 0xffc0, 0x4e80, "JSR <ea>", BranchClass_Jsr, },
 	{ false, 0xfff8, 0x51c8, "DBra <relative address>", BranchClass_DBra, }, // Shadows Scc <ea> & DBcc
 	{ false, 0xf0f8, 0x50c8, "DBcc <relative address>", BranchClass_DBcc, }, // Shadows Scc <ea>
+
+	{ true, 0, 0, "No matching branch instruction", },
 };
 
 const BranchClassInfo* getBranchClassInformation(BranchClass branchClass)
